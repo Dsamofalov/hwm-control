@@ -11,11 +11,6 @@
   },
   "blockers": [
     {
-      "id": "github-actions-billing-blocked",
-      "scope": ["Dsamofalov/hwm-control", "Dsamofalov/hwm-context", "Dsamofalov/hwm-lab"],
-      "capabilities": ["GitHub Actions job start", "I01 CI acceptance"]
-    },
-    {
       "id": "github-governance-mutation-unavailable",
       "scope": ["Dsamofalov/hwm-control", "Dsamofalov/hwm-context", "Dsamofalov/hwm-lab"],
       "capabilities": ["branch protection mutation", "ruleset mutation", "required-check enforcement"]
