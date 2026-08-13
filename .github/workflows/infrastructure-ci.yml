@@ -17,9 +17,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Install contract validator
+        run: python -m pip install --disable-pip-version-check 'jsonschema==4.23.0'
       - name: Show imported baseline SHA-256
         run: sha256sum baseline/I00_BASELINE.json
       - name: Validate I01 bootstrap invariants
         run: python control/validate_bootstrap.py .
-      - name: Run bootstrap tests
+      - name: Run bootstrap and contract tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v

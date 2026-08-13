@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Minimal deterministic I01 bootstrap validator. Not a project state builder."""
+"""Minimal deterministic bootstrap validator through completed I02."""
 from __future__ import annotations
 
 import hashlib
@@ -21,6 +21,15 @@ SOURCE_MERGE = "8fd669336b36064e842252d69fb4016cc526a9d4"
 SOURCE_BLOB = "856020a759e2018741d83af13f1536732f6a1ed7"
 FUNCTIONAL_SHA = "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
 BASELINE_SCHEMA = "hwm-infra-baseline/bootstrap-v0"
+EXPECTED_SCHEMA_VERSIONS = {
+    "bootstrap_baseline": BASELINE_SCHEMA,
+    "job": "hwm-job/v1",
+    "result": "hwm-result/v1",
+    "task": "hwm-task/v1",
+    "claim": "hwm-claim/v1",
+    "knowledge_delta": "hwm-knowledge-delta/v1",
+    "project_state": "hwm-project-state/v1",
+}
 
 
 def load_json(path: Path, errors: list[str]):
@@ -41,7 +50,7 @@ def validate(root: Path) -> list[str]:
 
     for path in (baseline_path, provenance_path, status_path, spec_path, issue_template):
         if not path.is_file():
-            errors.append(f"missing required I01 file: {path.relative_to(root)}")
+            errors.append(f"missing required bootstrap file: {path.relative_to(root)}")
 
     baseline = load_json(baseline_path, errors) if baseline_path.is_file() else None
     provenance = load_json(provenance_path, errors) if provenance_path.is_file() else None
@@ -88,21 +97,21 @@ def validate(root: Path) -> list[str]:
                 "BUILD_STATUS top-level keys must be exactly temporary bootstrap keys: "
                 + ",".join(sorted(ALLOWED_BUILD_STATUS_KEYS))
             )
-        if status.get("current_infrastructure_milestone") != "I02":
-            errors.append("final I01 BUILD_STATUS must point to next milestone I02")
-        if status.get("completed_task_ids") != ["I00", "I01"]:
-            errors.append("final I01 BUILD_STATUS must mark I00 and I01 completed")
+        if status.get("current_infrastructure_milestone") != "I03":
+            errors.append("completed I02 BUILD_STATUS must point to next milestone I03")
+        if status.get("completed_task_ids") != ["I00", "I01", "I02"]:
+            errors.append("completed I02 BUILD_STATUS must mark I00, I01, and I02 completed")
         if status.get("active_task_ids") != []:
-            errors.append("I02 must not be active before the next infrastructure task starts")
-        if status.get("current_schema_versions") != {"bootstrap_baseline": BASELINE_SCHEMA}:
-            errors.append("BUILD_STATUS schema versions exceed I01 bootstrap scope")
+            errors.append("active tasks must be empty after I02 completion")
+        if status.get("current_schema_versions") != EXPECTED_SCHEMA_VERSIONS:
+            errors.append("BUILD_STATUS schema versions do not match I02 contracts")
         heads = status.get("exact_relevant_heads", {})
         if heads.get("product_main_reference") != SOURCE_MERGE:
             errors.append("BUILD_STATUS product main reference mismatch")
         if heads.get("authoritative_functional_checkpoint") != FUNCTIONAL_SHA:
             errors.append("BUILD_STATUS functional checkpoint mismatch")
         if status.get("blockers") != []:
-            errors.append("resolved I01 blockers must not remain in final BUILD_STATUS")
+            errors.append("completed I02 BUILD_STATUS must not retain blockers")
 
     if spec_path.is_file():
         spec = spec_path.read_text(encoding="utf-8")
@@ -127,7 +136,7 @@ def main(argv: list[str]) -> int:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
         return 1
-    print("I01 bootstrap validation: PASS")
+    print("I02 bootstrap validation: PASS")
     return 0
 
 
