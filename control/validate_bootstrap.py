@@ -88,12 +88,12 @@ def validate(root: Path) -> list[str]:
                 "BUILD_STATUS top-level keys must be exactly temporary bootstrap keys: "
                 + ",".join(sorted(ALLOWED_BUILD_STATUS_KEYS))
             )
-        if status.get("current_infrastructure_milestone") != "I01":
-            errors.append("BUILD_STATUS milestone must remain I01 while I01 blockers exist")
-        if status.get("completed_task_ids") != ["I00"]:
-            errors.append("only I00 may be completed until I01 acceptance is met")
-        if status.get("active_task_ids") != ["I01"]:
-            errors.append("I01 must be the only active bootstrap task")
+        if status.get("current_infrastructure_milestone") != "I02":
+            errors.append("final I01 BUILD_STATUS must point to next milestone I02")
+        if status.get("completed_task_ids") != ["I00", "I01"]:
+            errors.append("final I01 BUILD_STATUS must mark I00 and I01 completed")
+        if status.get("active_task_ids") != []:
+            errors.append("I02 must not be active before the next infrastructure task starts")
         if status.get("current_schema_versions") != {"bootstrap_baseline": BASELINE_SCHEMA}:
             errors.append("BUILD_STATUS schema versions exceed I01 bootstrap scope")
         heads = status.get("exact_relevant_heads", {})
@@ -101,8 +101,8 @@ def validate(root: Path) -> list[str]:
             errors.append("BUILD_STATUS product main reference mismatch")
         if heads.get("authoritative_functional_checkpoint") != FUNCTIONAL_SHA:
             errors.append("BUILD_STATUS functional checkpoint mismatch")
-        if not status.get("blockers"):
-            errors.append("BUILD_STATUS must record real unresolved I01 blockers")
+        if status.get("blockers") != []:
+            errors.append("resolved I01 blockers must not remain in final BUILD_STATUS")
 
     if spec_path.is_file():
         spec = spec_path.read_text(encoding="utf-8")
