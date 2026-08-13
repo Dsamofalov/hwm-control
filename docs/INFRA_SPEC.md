@@ -462,6 +462,8 @@ Forbidden in those public surfaces:
 - sensitive raw evidence;
 - secret-bearing configuration or environment dumps.
 
+Standard Git author/committer attribution metadata is expected to be public and is permitted; the personal-data prohibition applies to repository files, Issues, PR bodies/comments, Actions logs/artifacts, and generated public artifacts.
+
 Raw corpus may be published only after an explicit safety determination. Otherwise it remains an external/local immutable input and public manifests reference it only through disclosure-safe metadata/provenance.
 
 Public visibility never authorizes a workflow to expose a credential, and private/local storage never makes untrusted candidate execution acceptable.
