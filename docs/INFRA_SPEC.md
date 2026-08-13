@@ -2,7 +2,7 @@
 
 **Project:** HeroesWM PvE Battle Solver / Advisor  
 **Product repository:** `Dsamofalov/hwm_predictor`  
-**Document version:** 0.2  
+**Document version:** 0.3  
 **Date:** 2026-08-13  
 **Status:** infrastructure design / implementation blueprint  
 **Primary product objective source:** `HeroesWM_Solver_TZ_Status_0.3.0.md`
@@ -170,6 +170,8 @@ This removes one major source of duplicated state and merge drift.
 
 The target topology has four logical repositories.
 
+Repository visibility is deliberately **not** a trust boundary. The three service repositories are public so their operational state, Issues, PRs, Actions logs, non-secret manifests, context/wiki/graph outputs, and other disclosure-safe artifacts can be inspected directly. Trusted status is established by protected workflow code, protected branches, exact source SHA, actor/event policy, CODEOWNERS/review policy where available, and narrowly scoped credentials.
+
 ## 5.1 `hwm_predictor` — product
 
 Purpose:
@@ -198,7 +200,7 @@ Must not contain:
 
 ---
 
-## 5.2 `hwm-control` — private trusted control plane
+## 5.2 `hwm-control` — public trusted control plane
 
 Purpose:
 - deterministic state builder;
@@ -215,7 +217,7 @@ Purpose:
 
 This repository is the **root of operational control**.
 
-Ordinary product-development conversations must have read access and narrowly constrained job-request capabilities, but must not be able to modify trusted gatekeeper logic as part of ordinary product tasks.
+Its contents are public, but T1 authority is limited to changes that pass the configured protected-branch/workflow path. Ordinary product-development conversations may read it and use narrowly constrained job-request capabilities, but must not be able to modify trusted gatekeeper logic as part of ordinary product tasks.
 
 Suggested structure:
 
@@ -262,7 +264,7 @@ hwm-control/
 
 ---
 
-## 5.3 `hwm-context` — private bot-owned materialized knowledge
+## 5.3 `hwm-context` — public bot-owned materialized knowledge
 
 Purpose:
 - fast bootstrap for fresh conversations;
@@ -273,7 +275,7 @@ Purpose:
 - graph metadata;
 - state snapshots useful to agents.
 
-Writes should normally be performed only by trusted context automation.
+Writes should normally be performed only by trusted context automation following protected workflow/main policy. Public visibility does not make this repository authoritative and does not grant ordinary product agents write credentials.
 
 Suggested structure:
 
@@ -319,19 +321,22 @@ hwm-context/
 
 This repository is a **materialized read model**.
 Deleting and rebuilding it from authoritative sources should be possible.
+All committed/generated content must satisfy the public-data boundary in section 7.4.
 
 ---
 
-## 5.4 `hwm-lab` — private trusted Windows/evidence worker
+## 5.4 `hwm-lab` — public trusted evidence/lab policy plane
 
 Purpose:
-- heavyweight corpus replay;
-- trusted post-merge Windows validation;
+- policy and code for heavyweight corpus replay when the required evidence input is available;
+- trusted post-merge validation;
 - evidence audits;
-- long-running regression;
+- long-running regression where the selected executor supports it;
 - experimental mechanics analysis;
-- optional disposable product execution workers;
+- optional disposable product execution;
 - Graphify heavy build if desired.
+
+The repository does **not** imply that a local Windows worker, raw corpus, browser profile, account state, or persistent trusted runner already exists or is required. Reproducible jobs should default to GitHub-hosted runners. Local-only execution is a later capability decision under I11/I12.
 
 Suggested structure:
 
@@ -345,10 +350,6 @@ hwm-lab/
     query_evidence/
     live_validation_helper/
 
-  images/
-    windows-runner/
-    hyperv-template/
-
   manifests/
     evidence/
     corpus/
@@ -358,38 +359,25 @@ hwm-lab/
     sandbox/
 ```
 
-The large raw battle corpus should preferably live on server storage, read-only to ordinary product execution.
+Raw corpus is published only after a separate safety determination. Otherwise it remains an external/local immutable input and is never copied into Git, public Issues/PRs, Actions artifacts, or logs.
 
 ---
 
 # 6. GitHub organization recommendation
 
-A GitHub Organization is recommended for the final topology.
+A GitHub Organization remains optional and may become useful for centralized rulesets, GitHub App scoping, team ownership, merge policy, and repository administration.
 
-Reasons:
-- runner groups provide a useful trust boundary;
-- repository-specific runner access is easier to manage;
-- merge queue/rulesets are easier to centralize;
-- private service repositories can be isolated from the public product repo;
-- GitHub App permissions can be scoped at organization level.
+It is **not** required to isolate public service repositories from the product repository, and runner hardware ownership is not a trust primitive.
 
-Migration can happen in two stages:
+Migration can happen later if operational complexity justifies it. Do not make organization migration a blocker for the first control-plane implementation.
 
-### Stage A — no product move yet
-Keep:
-- `Dsamofalov/hwm_predictor`
+The current settled I01 topology is:
+- `Dsamofalov/hwm_predictor`;
+- public `Dsamofalov/hwm-control`;
+- public `Dsamofalov/hwm-context`;
+- public `Dsamofalov/hwm-lab`.
 
-Create organization private repos:
-- `ORG/hwm-control`
-- `ORG/hwm-context`
-- `ORG/hwm-lab`
-
-Use narrowly scoped GitHub App/token permissions for cross-repo reads.
-
-### Stage B — recommended final form
-Transfer product into the same organization after infrastructure is stable.
-
-Do not make organization migration a blocker for the first control-plane prototype.
+Use narrowly scoped GitHub App credentials when cross-repository write or privileged API operations are later required. Prefer them over broad personal access tokens.
 
 ---
 
@@ -397,42 +385,35 @@ Do not make organization migration a blocker for the first control-plane prototy
 
 The design has three trust classes.
 
-## 7.1 T0 — root supervisor
+Trust class is independent of repository visibility and executor hardware ownership. A public repository can contain T1 policy; an ephemeral GitHub-hosted job can perform trusted post-merge work; a privately owned persistent machine is not trusted merely because it is private. Trust is established by protected workflow code, protected `main`, exact source SHA, actor/event policy, immutable/reproducible inputs where applicable, and minimally scoped credentials.
+
+## 7.1 T0 — root supervisor / root credential boundary
 
 Highest trust.
 
-Lives outside ordinary Git-controlled development surfaces, for example:
+T0 is the smallest boundary holding credentials or administrative authority that ordinary Git-controlled development must not obtain. It does not require a dedicated server process in v1. Depending on capability, T0 may be represented by GitHub repository/ruleset administration, GitHub App credentials, external secret storage, or a later local supervisor.
 
-```text
-C:\HWM\root\
-  runner-supervisor\
-  job-policy\
-  credentials\
-  logs\
-```
+Responsibilities may include:
+- hold high-value or administrative credentials;
+- enforce allowed repositories/workflows/operations;
+- provision/deprovision a future local executor if one is actually required;
+- preserve audit logs for privileged operations;
+- validate caller/event/source policy before privileged execution.
 
-Responsibilities:
-- provision/deprovision execution workers;
-- hold runner registration credentials;
-- hold high-value secrets;
-- enforce allowed worker repositories/workflows;
-- optionally validate signed job schema before execution;
-- preserve audit logs.
-
-Ordinary GPT development tasks cannot modify T0.
+Ordinary GPT development tasks cannot modify or obtain T0 credentials.
 
 T0 should be small.
 
 ---
 
-## 7.2 T1 — trusted infrastructure code
+## 7.2 T1 — trusted infrastructure code and trusted workflow execution
 
-Repositories:
-- `hwm-control`
-- trusted portions of `hwm-lab`
-- context compiler
+Repositories/surfaces include:
+- protected trusted portions of `hwm-control`;
+- protected trusted portions of `hwm-lab`;
+- protected context compiler/workflows.
 
-Can:
+Can, subject to scoped permissions:
 - read project state;
 - read validation results;
 - generate context;
@@ -441,69 +422,99 @@ Can:
 - maintain knowledge;
 - perform deterministic policy decisions.
 
-T1 changes require dedicated infrastructure tasks.
-They are not modified by ordinary product-development tasks.
+T1 changes require dedicated infrastructure tasks and the protected infrastructure merge path. They are not modified by ordinary product-development tasks.
+
+A T1 job may execute on a GitHub-hosted runner when the job is launched from trusted protected workflow/main state, is pinned to the intended exact SHA/event policy, has only the minimum required permissions, and uses only inputs appropriate for public/ephemeral execution.
 
 ---
 
 ## 7.3 T2 — product candidate code
 
-Any unmerged `hwm_predictor` task branch.
+Any unmerged `hwm_predictor` task branch or other untrusted PR code.
 
 Treat as potentially unsafe even if authored by ChatGPT.
 
 It must not:
 - run with root/control-plane credentials;
-- run directly on a persistent trusted Windows machine containing secrets;
+- obtain local account/browser credentials;
+- run in a trusted persistent environment containing sensitive state;
 - modify gatekeeper policy;
 - alter trusted regression policy and then approve itself.
 
-Candidate PR tests should initially remain on GitHub-hosted ephemeral runners.
+Candidate PR tests default to GitHub-hosted ephemeral runners with read-only repository permissions and no secrets.
 
-If later executed on owned hardware, use disposable workers or strong isolation.
+Do not use `pull_request_target` to check out and execute untrusted PR code. External/fork PR code must not receive write credentials or privileged secrets.
 
 ---
 
-# 8. Windows server topology
+## 7.4 Public-data boundary
 
-Recommended v1 topology on one physical Windows server:
+The service repositories are public. Therefore every committed file and every value emitted to public Issues, PRs, Actions logs, Actions artifacts, context/wiki/graph outputs, job/result records, evidence manifests, or comments must be safe for full public disclosure.
 
-```text
-Windows Server
-│
-├── T0 root supervisor
-│
-├── Trusted runner: control-01
-│   └── only hwm-control workflows
-│
-├── Trusted runner: context-01
-│   └── only hwm-context build workflows
-│
-├── Trusted runner: lab-01
-│   └── only trusted hwm-lab workflows
-│
-├── Read-only corpus volume
-│   └── 866+ battle evidence
-│
-└── Optional Hyper-V pool
-    ├── product-ephemeral-001
-    ├── product-ephemeral-002
-    └── ...
-```
+Forbidden in those public surfaces:
+- tokens or API secrets;
+- cookies;
+- browser profiles;
+- account credentials;
+- private keys;
+- session data;
+- personal data;
+- sensitive raw evidence;
+- secret-bearing configuration or environment dumps.
 
-Initially:
+Raw corpus may be published only after an explicit safety determination. Otherwise it remains an external/local immutable input and public manifests reference it only through disclosure-safe metadata/provenance.
 
-- PR candidate Core/Full CI stays on GitHub-hosted `windows-2022`.
-- Owned server handles trusted post-merge and evidence jobs.
-- Later, if necessary, candidate testing can move into disposable Hyper-V VMs.
+Public visibility never authorizes a workflow to expose a credential, and private/local storage never makes untrusted candidate execution acceptable.
 
-Do **not** attach a persistent secret-bearing self-hosted runner directly to the public product PR workflow.
+---
+
+# 8. Execution topology and local capability boundary
+
+## 8.1 Default execution model
+
+The default v1 execution model is **GitHub-hosted first**.
+
+For PR CI:
+- use standard ephemeral GitHub-hosted runners;
+- grant `contents: read` unless a narrower permission set is possible;
+- pass no secrets to untrusted PR code;
+- do not use `pull_request_target` to check out and execute PR code;
+- external/fork PRs must not receive write credentials.
+
+For trusted post-merge jobs:
+- GitHub-hosted runners are also the default when the job is fully reproducible from GitHub data and/or external immutable inputs suitable for that job;
+- execute only protected workflow/main code at the exact intended trusted SHA/event;
+- grant the minimum permissions for that operation;
+- prefer a narrowly scoped GitHub App credential over a broad PAT when privileged cross-repository/API access is required;
+- never combine privileged post-merge execution and untrusted PR execution in the same job/security context.
+
+No self-hosted GitHub Actions runner is required or created by I01.
+There is no mandatory `control-01`, `context-01`, or `lab-01` v1 topology.
+
+## 8.2 Deferred local execution
+
+A local Windows executor is considered only later, under I11/I12, when a concrete capability actually requires one of:
+- local-only raw corpus;
+- persistent browser/account state;
+- closed-network access;
+- a continuous process that cannot be represented as an ephemeral hosted job.
+
+Do not assume such an executor is necessary before that capability is demonstrated.
+
+If a local executor is introduced:
+- prefer a typed service/poller with an allowlisted operation enum;
+- reject free-form shell/PowerShell and arbitrary filesystem paths;
+- authenticate and validate exact source SHA, caller/event, and operation parameters;
+- keep credentials outside Git and outside public logs/artifacts;
+- never execute unmerged PR code with local account/browser credentials or in the trusted persistent environment.
+
+Disposable isolation may still be used for future local candidate execution if a later requirement justifies it, but it is not part of I01.
 
 ---
 
 # 9. GitHub-as-RPC job protocol
 
-Browser ChatGPT should not receive arbitrary shell access to the Windows server.
+Browser ChatGPT should not receive arbitrary shell access to any privileged executor.
 
 It requests **typed operations**.
 
@@ -608,10 +619,11 @@ ChatGPT
    │
    ▼
 hwm-control
-   │ GitHub Actions
+   │ protected GitHub Actions workflow
    ▼
-trusted runner
+GitHub-hosted trusted post-merge job
    │
+   ├─ or later typed local executor if capability requires it
    ▼
 machine result
    │
@@ -624,8 +636,9 @@ Why this is useful during bootstrap:
 - existing GitHub connector already supports issues/files/PRs;
 - job history is auditable;
 - no custom network service must be exposed;
-- authentication is inherited from GitHub;
-- schemas can be validated before execution.
+- authentication can be inherited from GitHub and scoped credentials;
+- schemas can be validated before execution;
+- reproducible trusted work does not require owned runner hardware.
 
 Later MCP can wrap the same operations without changing their semantics.
 
@@ -971,11 +984,13 @@ Create:
 - `hwm-lab`.
 
 Define:
+- public visibility and public-data boundary;
 - permissions;
 - branch protection/rulesets;
 - ownership;
 - trusted vs ordinary changes;
-- runner access boundaries.
+- GitHub-hosted PR/post-merge execution boundaries;
+- criteria for any future local-only executor.
 
 Add this `INFRA_SPEC.md` as the authoritative infrastructure design.
 
@@ -1224,23 +1239,27 @@ The browser ChatGPT experience becomes:
 request task context -> wait for GitHub result -> read exact result
 ```
 
-No free-form server shell.
+No free-form privileged shell.
+
+The default executor for reproducible operations remains GitHub-hosted. This phase defines typed transport semantics; it does not itself require local worker hardware.
 
 ---
 
-## Phase 10 — Windows lab
+## Phase 10 — Capability-driven local lab decision
 
-Deploy:
-- trusted runner groups;
-- corpus volume;
-- post-merge regression;
-- evidence audit;
-- optional Hyper-V disposable workers;
-- log retention;
-- job health.
+Evaluate which lab/evidence capabilities are fully reproducible on GitHub-hosted runners and keep those hosted by default.
+
+Introduce a local Windows executor only if an exact capability demonstrably requires:
+- local-only corpus;
+- persistent browser/account state;
+- closed-network access;
+- or a continuous process.
+
+If required, deploy a typed service/poller with allowlisted operations, external/local immutable inputs, scoped credentials, audit logging, and no arbitrary unmerged-PR shell execution. Optional disposable isolation may be added for explicitly justified local candidate execution.
 
 Deliverable:
-- merged product SHA can be independently validated on owned infrastructure.
+- merged product SHA can be independently validated with the least-privileged executor appropriate to the required evidence input;
+- no assumption that owned/self-hosted GitHub Actions runner hardware is necessary.
 
 ---
 
@@ -1603,8 +1622,9 @@ Examples:
 - heartbeat is revision-neutral;
 - Graphify is derived state;
 - ordinary agents cannot modify trusted gatekeeper;
-- candidate code cannot run on persistent secret-bearing workers;
-- exact source SHA is mandatory in all job/context outputs.
+- unmerged candidate code cannot obtain privileged/local account-browser credentials;
+- exact source SHA is mandatory in all job/context outputs;
+- repository visibility and runner ownership do not define trust.
 
 Do not create ADR for every code change.
 
@@ -1641,7 +1661,7 @@ After migration no ordinary task updates them.
 
 # 23. LLM compiler policy
 
-OpenAI API can be used on the trusted server for semantic compilation.
+OpenAI API can be used from a trusted workflow/executor for semantic compilation.
 
 Allowed examples:
 - convert knowledge delta prose into claim candidates;
@@ -1656,7 +1676,8 @@ Required controls:
 - compiler test corpus;
 - provenance preservation;
 - deterministic verifier after LLM output;
-- failure must degrade convenience, not correctness.
+- failure must degrade convenience, not correctness;
+- public outputs must satisfy section 7.4.
 
 Forbidden:
 - deciding CI pass/fail;
@@ -1687,6 +1708,7 @@ Recommended initial queries exposed to agent:
 - related components.
 
 Do not expose raw arbitrary graph mutation to ordinary product agents.
+All public graph output must satisfy section 7.4.
 
 ---
 
@@ -1798,14 +1820,24 @@ If no valid task is ready, system reports `NO_READY_TASK` instead of inventing w
 
 Conceptual matrix:
 
-| Actor | Product read | Product write | Control write | Context write | Lab invoke | Secrets |
+| Actor | Product read | Product write | Control write | Context write | Lab invoke | Credentials |
 |---|---:|---:|---:|---:|---:|---:|
-| Product chat | yes | task branch only | no | no | typed jobs only | no |
-| Infra chat | yes | no/limited | infra task branch | limited | typed jobs | no |
-| Control runner | yes | limited bot | yes | yes | yes | scoped |
-| Context runner | yes | no | read | yes | graph only | OpenAI scoped |
-| Lab runner | exact SHA read | no ordinary write | read policy | result write | local | evidence scoped |
-| Root supervisor | infra only | no product dev | policy infra | no | runner mgmt | high trust |
+| Product chat / PR code | yes | task branch only | no | no | no privileged invoke | none |
+| Infra chat | yes | no/limited | infra task branch | limited | typed requests | none |
+| Control trusted workflow | yes | limited bot/API as required | protected-path operation | scoped | typed jobs | minimum scoped/App credential |
+| Context trusted workflow | yes | no | read | protected-path operation | graph/evidence request only | minimum scoped credential if required |
+| Lab hosted workflow | exact SHA read | no ordinary write | read policy | disclosure-safe result write | hosted | minimum scoped credential if required |
+| Future local executor | exact allowlisted inputs | no ordinary product write | typed policy only | disclosure-safe result write | local typed operations | capability-scoped local credentials |
+| T0 administrator/credential boundary | infra/admin only | no product dev | policy/admin | no ordinary content write | executor administration if needed | high trust, outside untrusted jobs |
+
+Rules:
+- repository visibility does not determine trust;
+- GitHub-hosted runner hardware does not make a job T2 or T1 by itself;
+- PR jobs default to `contents: read`, no secrets, and no privileged write token;
+- privileged post-merge jobs use protected main/exact trusted SHA, actor/event policy, and the minimum credential scope;
+- prefer GitHub App/scoped credentials over broad PATs;
+- never mix privileged post-merge execution with untrusted PR execution in one job/security context;
+- all public output must satisfy section 7.4.
 
 The concrete GitHub permission implementation may evolve, but the trust relationships must not.
 
@@ -1874,6 +1906,8 @@ I07  ← dogfood boundary
 After I07, substantial parallelism is appropriate.
 
 Before I07, over-parallelization is more dangerous than useful.
+
+I11/I12 now include the explicit decision point for any local-only executor. They do not imply that a self-hosted GitHub Actions runner must exist.
 
 ---
 
@@ -1998,7 +2032,9 @@ Infrastructure is complete enough to unfreeze product development when:
 - [ ] post-merge validation exists;
 - [ ] last-known-good is explicit;
 - [ ] confirmed deterministic regressions can be reverted automatically;
-- [ ] owned Windows runners are isolated by trust class;
+- [ ] PR execution and privileged post-merge execution are separated by protected workflow/main, exact SHA/event policy, and credential scope;
+- [ ] any local executor introduced by I11/I12 is justified by a concrete local-only capability and does not expose credentials to unmerged PR code;
+- [ ] all public operational/context/evidence outputs satisfy the public-data boundary;
 - [ ] three fresh-chat cold-start tests pass;
 - [ ] user does not manually update changelogs/status/handoffs during acceptance test.
 
@@ -2014,28 +2050,29 @@ Infrastructure is complete enough to unfreeze product development when:
 6. Rationale is persisted through required knowledge deltas and ADRs.
 7. Wiki and graph are derived read models.
 8. GitHub acts as the first RPC/audit transport.
-9. Browser ChatGPT never needs arbitrary Windows shell access.
-10. Persistent secret-bearing self-hosted runners do not execute untrusted product candidate code.
-11. Long-lived `ability` branch is retired after integration.
-12. Ordinary work becomes `main` + short-lived atomic task branches.
-13. System must be able to say `NO_READY_TASK` instead of inventing work.
-14. Infrastructure has its own acceptance tests and cold-start benchmark.
-15. Once the control plane is established, manual handoff documentation is considered a regression.
+9. Browser ChatGPT never needs arbitrary privileged/local shell access.
+10. Service repositories are public; visibility is not a trust boundary.
+11. GitHub-hosted ephemeral runners are the default for PR CI and for reproducible trusted post-merge work.
+12. No self-hosted runner or `control-01`/`context-01`/`lab-01` topology is mandatory in v1.
+13. Local execution is deferred to I11/I12 and introduced only for demonstrated local-only capabilities, preferably through a typed allowlisted service/poller.
+14. Unmerged PR code never receives local account/browser credentials or executes in a privileged persistent environment containing such state.
+15. Public Git/Issues/PRs/Actions/context/wiki/graph/job/result/evidence-manifest surfaces must never contain secrets, personal data, session state, or sensitive raw evidence.
+16. Long-lived `ability` branch is retired after integration.
+17. Ordinary work becomes `main` + short-lived atomic task branches.
+18. System must be able to say `NO_READY_TASK` instead of inventing work.
+19. Infrastructure has its own acceptance tests and cold-start benchmark.
+20. Once the control plane is established, manual handoff documentation is considered a regression.
 
 ---
 
 # 36. Immediate next step
 
-Do **not** create all repositories and start ten agents simultaneously.
+I00 baseline/freeze is already complete and remains immutable. The current task is to finish **I01 Repositories and governance** under the public/GitHub-hosted-first trust model in this document.
 
-The next implementation step should be one dedicated I00 bootstrap conversation whose only job is:
+I01 must complete actual repository governance, disclosure-safe public foundations, exact-head infrastructure CI, queue/taxonomy bootstrap, PR merge, and short-lived branch cleanup without product changes.
 
-> Implement I00 baseline and freeze: independently verify the completed Ability integration, capture the exact GitHub/CI/evidence/governance baseline, persist the machine-readable freeze record, and make no product functional changes.
+Only after I01 is factually complete should a separate I02 conversation implement **Contract schemas**.
 
-After I00 is complete, run a separate I01 foundation conversation to create the initial infrastructure repository structure, governance contracts, and first Issue queue.
-
-Then run one schema-contract conversation for I02.
-
-Then fan out the deterministic extractors of I03 only after schemas are merged.
+Then fan out the deterministic extractors of I03 only after the I02 schemas are merged.
 
 This sequence intentionally sacrifices a small amount of initial speed to create the mechanism that will make the rest of the work safely parallel and autonomous.
