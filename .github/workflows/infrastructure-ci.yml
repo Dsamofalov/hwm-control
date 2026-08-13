@@ -1,0 +1,23 @@
+name: Infrastructure CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    name: bootstrap
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show imported baseline SHA-256
+        run: sha256sum baseline/I00_BASELINE.json
+      - name: Validate I01 bootstrap invariants
+        run: python control/validate_bootstrap.py .
+      - name: Run bootstrap tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
