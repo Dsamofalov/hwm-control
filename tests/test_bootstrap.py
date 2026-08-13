@@ -42,6 +42,14 @@ class BootstrapValidationTests(unittest.TestCase):
         path.write_text(json.dumps(data), encoding="utf-8")
         self.assertTrue(any("top-level keys" in e for e in validate(temp)))
 
+    def test_i02_is_not_active_in_final_i01_status(self):
+        temp = self.make_copy()
+        path = temp / "BUILD_STATUS.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        data["active_task_ids"] = ["I02"]
+        path.write_text(json.dumps(data), encoding="utf-8")
+        self.assertTrue(any("must not be active" in e for e in validate(temp)))
+
     def test_missing_infra_spec_fails(self):
         temp = self.make_copy()
         (temp / "docs" / "INFRA_SPEC.md").unlink()
