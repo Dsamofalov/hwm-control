@@ -1,0 +1,12 @@
+{
+  "schema": "hwm-i00-import-provenance/bootstrap-v0",
+  "source_repository": "Dsamofalov/hwm_predictor",
+  "source_path": "docs/infra-bootstrap/I00_BASELINE.json",
+  "source_product_merge_commit": "8fd669336b36064e842252d69fb4016cc526a9d4",
+  "source_artifact_git_blob": "856020a759e2018741d83af13f1536732f6a1ed7",
+  "imported_path": "baseline/I00_BASELINE.json",
+  "sha256": "806be30c65dde6045b1d310c4afaf09c8bf61645f0962d7a0dbf887b2177521f",
+  "imported_at": "2026-08-13T18:12:45Z",
+  "original_product_artifact_immutable": true,
+  "imported_copy_is_mutable_current_state": false
+}

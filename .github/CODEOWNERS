@@ -1,0 +1,7 @@
+# Public repository; trusted T1 changes still require protected governance.
+* @Dsamofalov
+/docs/INFRA_SPEC.md @Dsamofalov
+/.github/ @Dsamofalov
+/control/ @Dsamofalov
+/schemas/ @Dsamofalov
+/execution/ @Dsamofalov

@@ -1,0 +1,205 @@
+{
+  "schema": "hwm-infra-baseline/bootstrap-v0",
+  "baseline_id": "I00",
+  "captured_at": "2026-08-13T17:46:14Z",
+  "capture_timezone": "Europe/Berlin",
+  "product_functional_development_frozen": true,
+  "freeze_started_at": "2026-08-13T14:17:00Z",
+  "freeze_note": "I00 does not unfreeze product functional development. This file is immutable bootstrap provenance after merge and is not mutable current-status.",
+  "product": {
+    "repo": "Dsamofalov/hwm_predictor",
+    "repo_id": 1329204458,
+    "default_branch": "main",
+    "main_head_at_capture": "8967ed5b29cc17d7d7dfdafdf8bb31f5e39fe6f8",
+    "main_head_message": "docs: move ability development governance into main [skip ci]",
+    "main_head_combined_status_contexts": [],
+    "main_head_actions_runs_count": 0,
+    "main_head_is_functional_green": false,
+    "last_core_green": {
+      "sha": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1",
+      "context": "HWM / Core",
+      "state": "success",
+      "run_id": 31702086682,
+      "check_suite_id": 86000491722,
+      "aggregate_check_run_id": 94458331137,
+      "workflow": ".github/workflows/ci.yml",
+      "event": "push",
+      "head_branch": "main"
+    },
+    "last_full_green": {
+      "sha": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1",
+      "context": "HWM / Full",
+      "state": "success",
+      "run_id": 31702086682,
+      "check_suite_id": 86000491722,
+      "aggregate_check_run_id": 94458185756,
+      "workflow": ".github/workflows/ci.yml",
+      "event": "push",
+      "head_branch": "main"
+    },
+    "last_ability_green_integrated": {
+      "sha": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1",
+      "context": "HWM / Ability",
+      "state": "success",
+      "run_id": 31702086715,
+      "check_suite_id": 86000491792,
+      "workflow": ".github/workflows/ability.yml",
+      "event": "push",
+      "head_branch": "main"
+    },
+    "supplemental_geometry_green": {
+      "sha": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1",
+      "run_id": 31702086688,
+      "check_suite_id": 86000491736,
+      "workflow": ".github/workflows/geometry-evidence.yml",
+      "conclusion": "success"
+    },
+    "last_live_evidenced": {
+      "sha": "UNKNOWN",
+      "status": "UNKNOWN",
+      "reason": "No durable evidence was found binding the required real authenticated shipped MV3->daemon->recommendation->manual move->next semantic revision smoke to an exact product SHA. docs/LIVE_VALIDATION.md explicitly says this smoke is ready to execute and deterministic CI does not replace it."
+    }
+  },
+  "ability_integration": {
+    "state": "COMPLETE",
+    "pre_unification_ability_source": {
+      "sha": "2ae1046c48e99c94da3481a8b3ed81285b9125ab",
+      "run_id": 31697180629,
+      "check_suite_id": 85986692434,
+      "conclusion": "success"
+    },
+    "pre_integration_main_sha": "2d6c985fbc4a6725e64871f12b127d68f86f1000",
+    "merge_commit": "e69592eaa9461825e231cc73656d1e58b9ac4ffd",
+    "merge_parents": [
+      "2d6c985fbc4a6725e64871f12b127d68f86f1000",
+      "2ae1046c48e99c94da3481a8b3ed81285b9125ab"
+    ],
+    "post_merge_shared_protocol_commit": {
+      "sha": "7a68af2bd92dd85f609f5e8735048f7261fbb36b",
+      "parent": "e69592eaa9461825e231cc73656d1e58b9ac4ffd"
+    },
+    "promoted_integrated_functional_sha": {
+      "sha": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1",
+      "parent": "7a68af2bd92dd85f609f5e8735048f7261fbb36b"
+    },
+    "legacy_ability_branch_present": false,
+    "legacy_integration_branches_present": false
+  },
+  "branch_and_pr_inventory": {
+    "branches": [
+      {
+        "name": "main",
+        "sha": "8967ed5b29cc17d7d7dfdafdf8bb31f5e39fe6f8",
+        "protected": false
+      }
+    ],
+    "branch_count": 1,
+    "open_pull_requests": [],
+    "open_pull_request_count": 0
+  },
+  "governance": {
+    "main_protected": false,
+    "active_rulesets": [],
+    "required_checks_enforced": [],
+    "auto_merge_enabled": false,
+    "delete_branch_on_merge_enabled": true,
+    "pull_requests_enabled": true,
+    "pull_request_creation_policy": "collaborators_only",
+    "direct_push_exposure": true,
+    "authenticated_permissions": {
+      "admin": true,
+      "maintain": true,
+      "push": true,
+      "triage": true,
+      "pull": true
+    },
+    "merge_methods_enabled": {
+      "merge_commit": true,
+      "squash": true,
+      "rebase": true
+    },
+    "posture": "EXPOSED",
+    "posture_reason": "No branch protection/ruleset/required checks prevent direct push. Successful HWM status contexts are evidence on exact SHAs but are not enforced merge requirements. Pull requests are enabled with collaborators_only creation policy; this does not itself enforce PR-only delivery."
+  },
+  "workflow_branch_filters": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "push": ["main"],
+      "pull_request": ["main"],
+      "legacy_drift": []
+    },
+    {
+      "path": ".github/workflows/ability.yml",
+      "push": ["main", "ability", "integration/**"],
+      "pull_request": ["main"],
+      "legacy_drift": ["ability", "integration/**"]
+    },
+    {
+      "path": ".github/workflows/geometry-evidence.yml",
+      "push": ["main"],
+      "pull_request": [],
+      "legacy_drift": []
+    }
+  ],
+  "legacy_workflow_filter_drift_detected": true,
+  "workflow_repair_performed": false,
+  "stale_or_conflicting_operational_sources": [
+    {
+      "path": "docs/MAIN_FRONT_STATUS.md",
+      "claim": "Current functional main SHA is 49bbe98e00cbee27d437c26cd93b2127a18dc8b8 / CI 31693648818.",
+      "verified": "Exact latest integrated Core/Full/Ability green SHA is 3df0d5ee4434d3cc401dba1b765a4dca068c15c1 / main-push CI 31702086682 / Ability 31702086715."
+    },
+    {
+      "path": "README.md",
+      "claim": "Standard CI is self-hosted with labels self-hosted/windows/x64/hwm-windows and two Core/Full jobs using scripts/ci_windows.ps1.",
+      "verified": "Current ci.yml uses windows-2022, atomic fan-out/aggregate jobs, and scripts/ci_main_windows.ps1."
+    },
+    {
+      "path": "docs/MAIN_AGENT_TZ.md",
+      "claim": "Last Geometry Evidence remains 31693648857 on 49bbe98e... with no newer geometry metric claimed.",
+      "verified": "Geometry Evidence 31702086688 succeeded on integrated main SHA 3df0d5ee4434d3cc401dba1b765a4dca068c15c1."
+    },
+    {
+      "path": "changelog.md",
+      "claim": "Historical ability ref is retained as archive/provenance.",
+      "verified": "Live branch inventory contains only main; no ability branch ref exists."
+    },
+    {
+      "path": ".github/workflows/ability.yml",
+      "claim": "Push trigger still includes ability and integration/**.",
+      "verified": "Live branch inventory has only main; dedicated ability/integration development lanes are retired."
+    }
+  ],
+  "i00_change_scope": {
+    "only_allowed_path": "docs/infra-bootstrap/I00_BASELINE.json",
+    "product_functional_changes": false,
+    "workflow_changes": false,
+    "old_docs_modified_or_deleted": false
+  },
+  "unknowns": [
+    {
+      "field": "product.last_live_evidenced.sha",
+      "value": "UNKNOWN",
+      "reason": "No exact-SHA live-smoke provenance found."
+    },
+    {
+      "field": "artifact.final_content_commit_sha_inside_self",
+      "value": "UNKNOWN",
+      "reason": "A Git commit SHA cannot be embedded as its own final content-addressed SHA without changing the content. Resolve exact artifact/merge commit externally after merge."
+    },
+    {
+      "field": "github_connector_pull_request_write_scope_after_repository_prs_are_enabled",
+      "value": "UNKNOWN",
+      "reason": "PR creation previously returned HTTP 403 before repository pull requests were enabled; connector PR write access has not yet been re-tested at this capture point."
+    }
+  ],
+  "provenance_policy": "Current SHA, CI conclusions, branch inventory, governance and merge ancestry were resolved from GitHub API/workflow/status data. Historical/current-status prose was used only to locate drift or candidate identifiers, never as a substitute for GitHub evidence.",
+  "artifact": {
+    "path": "docs/infra-bootstrap/I00_BASELINE.json",
+    "task_branch": "agent/infra-i00-baseline",
+    "source_base_sha": "8967ed5b29cc17d7d7dfdafdf8bb31f5e39fe6f8",
+    "final_content_commit_sha_inside_self": "UNKNOWN",
+    "immutability": "After merge this file is immutable bootstrap provenance and must not become a manually maintained current-status file.",
+    "i01_import_rule": "Import this exact object into hwm-control baseline storage and record original repo/path/commit plus SHA-256 without mutating this product-repository original."
+  }
+}
