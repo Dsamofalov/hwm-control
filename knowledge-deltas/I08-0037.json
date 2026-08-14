@@ -5,25 +5,51 @@
   "verified_facts": [
     {
       "statement": "Protected hwm-control main at claim time was exact 1b60570d70bfc84c216a5ab8c59ecd805078695b; Issue #35 was completed and Issue #37 was ready while Issue #38 was blocked on #37.",
-      "provenance": [{"kind": "commit", "reference": "protected hwm-control main at I08-0037 claim", "repo": "Dsamofalov/hwm-control", "sha": "1b60570d70bfc84c216a5ab8c59ecd805078695b"}, {"kind": "issue", "reference": "Dsamofalov/hwm-control#37"}]
+      "provenance": [
+        {"kind": "commit", "reference": "protected hwm-control main at I08-0037 claim", "repo": "Dsamofalov/hwm-control", "sha": "1b60570d70bfc84c216a5ab8c59ecd805078695b"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#37"}
+      ]
     },
     {
       "statement": "Protected hwm-context main at architecture decision time was exact 806f555efa805d3b17310763dc41ccf65696f961, claims/ contained only .gitkeep, and active ruleset 20817497 required PR, strict bootstrap, and review-thread resolution with no bypass actor.",
-      "provenance": [{"kind": "commit", "reference": "protected hwm-context main / claims skeleton", "repo": "Dsamofalov/hwm-context", "sha": "806f555efa805d3b17310763dc41ccf65696f961"}, {"kind": "public_ref", "reference": "Dsamofalov/hwm-context ruleset 20817497"}]
+      "provenance": [
+        {"kind": "commit", "reference": "protected hwm-context main / claims skeleton", "repo": "Dsamofalov/hwm-context", "sha": "806f555efa805d3b17310763dc41ccf65696f961"},
+        {"kind": "public_ref", "reference": "Dsamofalov/hwm-context ruleset 20817497"}
+      ]
+    },
+    {
+      "statement": "The repository-local publisher and its follow-up transactional/module-entrypoint remediations were merged only through protected hwm-context PRs #3, #5, and #6; the current protected hwm-context main is c46e3bd2d684a4271d2345e95987429a6947cc00 and its post-merge bootstrap CI 31835334188 passed.",
+      "provenance": [
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-context#3"},
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-context#5"},
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-context#6"},
+        {"kind": "commit", "reference": "current protected hwm-context main after publisher bootstrap/remediation", "repo": "Dsamofalov/hwm-context", "sha": "c46e3bd2d684a4271d2345e95987429a6947cc00"},
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-context Actions run 31835334188"}
+      ]
+    },
+    {
+      "statement": "Disposable live request I08-0037-sandbox-acceptance-v3 reached the privileged repository-local publish job with actions/contents/issues/pull-requests write, but GitHub rejected scoped PR creation with PR_CREATION_FORBIDDEN; the publisher compensated its scoped ref and hwm-context/main remained unchanged.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-context#2 request comment 5297544847 and result comment 5297547566"},
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-context Historical Ledger Publisher run 31835360957"},
+        {"kind": "commit", "reference": "protected hwm-context main remained unchanged after rejected sandbox publication", "repo": "Dsamofalov/hwm-context", "sha": "c46e3bd2d684a4271d2345e95987429a6947cc00"}
+      ]
     }
   ],
   "decisions": [
     {"decision": "Use distinct hwm-historical-ledger-publish-request/v1 and hwm-historical-ledger-publish-result/v1 contracts.", "rationale": "The historical-ledger trust domain targets a different repository and protected PR/CI lifecycle; bootstrap-v1 remains forward-stable and hwm-control-only."},
-    {"decision": "Run the privileged publisher repository-locally in hwm-context with only its short-lived job-scoped built-in GITHUB_TOKEN.", "rationale": "This token is sufficient for scoped contents/PR/issues/actions operations in its own repository and avoids PATs, deploy keys, long-lived secrets, and invalid cross-repository use of the hwm-control token."},
+    {"decision": "Run the privileged publisher repository-locally in hwm-context with only its short-lived job-scoped built-in GITHUB_TOKEN.", "rationale": "This token is the intended narrowly scoped repository-local credential and avoids PATs, deploy keys, long-lived secrets, and invalid cross-repository use of the hwm-control token."},
     {"decision": "Bind transport to hwm-context Issue #2 and exact owner account id/login; permit exactly the two canonical claims outputs as regular add/replace blobs with expected protected-base CAS.", "rationale": "A narrow durable Issue-comment ingress, path allowlist, immutable blob identity, and exact base make the privileged mutation surface deterministic and fail closed."},
     {"decision": "Explicitly dispatch repository-bootstrap-ci.yml and bind the returned run to the exact candidate head.", "rationale": "PRs created by GITHUB_TOKEN cannot safely rely on recursive PR-event workflow triggering."},
-    {"decision": "Retain claims/.gitkeep in v1 and add no file-delete primitive.", "rationale": "The placeholder does not conflict with canonical outputs, so deletion capability is unnecessary."}
+    {"decision": "Retain claims/.gitkeep in v1 and add no file-delete primitive.", "rationale": "The placeholder does not conflict with canonical outputs, so deletion capability is unnecessary."},
+    {"decision": "Stop completion on the repository Actions PR-creation permission blocker instead of substituting another credential or broadening an existing publisher.", "rationale": "The live job has the requested job-level write scopes, so the remaining rejection is a repository-level Actions workflow-permissions gate; bypassing it with a PAT, deploy key, cross-repository token, or bootstrap-v1 expansion would violate the fixed trust boundary."}
   ],
   "rejected_alternatives": [
     {"alternative": "Expand hwm-publish-request/bootstrap-v1 or its hwm-control repository allowlist.", "reason": "That would retroactively broaden a merged credential/repository trust boundary."},
-    {"alternative": "Use PAT, deploy key, or other long-lived cross-repository secret.", "reason": "Repository-local built-in GITHUB_TOKEN is sufficient and more narrowly scoped."},
+    {"alternative": "Use PAT, deploy key, or other long-lived cross-repository secret.", "reason": "The architecture intentionally relies on the repository-local built-in GITHUB_TOKEN; the observed blocker is repository Actions PR-creation policy, not absence of a job-scoped token."},
     {"alternative": "Direct push generated claims to hwm-context/main.", "reason": "The active ruleset requires protected PR + strict bootstrap and the publisher contract forbids protected-main ref updates."},
-    {"alternative": "Checkout or execute candidate/generated bytes in the privileged job.", "reason": "Generated ledger bytes are inert untrusted data; only bounded validation and Git object linking are permitted."}
+    {"alternative": "Checkout or execute candidate/generated bytes in the privileged job.", "reason": "Generated ledger bytes are inert untrusted data; only bounded validation and Git object linking are permitted."},
+    {"alternative": "Treat the failed sandbox branch as durable state or leave it behind.", "reason": "The transactional runtime compensates its own scoped ref after PR/CI publication failure; the v3 scoped branch was verified absent after the rejection."}
   ],
   "changed_components": [
     "schemas/historical-ledger-publish-request.v1.schema.json",
@@ -32,18 +58,38 @@
     "docs/ADR/0002-hwm-context-historical-ledger-publisher.md",
     "tests/test_context_ledger_publisher_contract.py",
     "knowledge-deltas/I08-0037.json",
-    "BUILD_STATUS.json"
+    "BUILD_STATUS.json",
+    "Dsamofalov/hwm-context:.github/workflows/repository-bootstrap-ci.yml",
+    "Dsamofalov/hwm-context:.github/workflows/historical-ledger-publisher.yml",
+    "Dsamofalov/hwm-context:publisher/__init__.py",
+    "Dsamofalov/hwm-context:publisher/historical_ledger_publisher.py",
+    "Dsamofalov/hwm-context:publisher/historical_ledger_publisher_v2.py",
+    "Dsamofalov/hwm-context:publisher/test_historical_ledger_publisher.py",
+    "Dsamofalov/hwm-context:publisher/test_historical_ledger_publisher_v2.py"
   ],
   "tests": [
-    {"name": "python -m unittest tests.test_context_ledger_publisher_contract -v", "status": "pass", "reference": "local contract preflight before controlled source publication"}
+    {"name": "python -m unittest tests.test_context_ledger_publisher_contract -v", "status": "pass", "reference": "local contract preflight before controlled source publication"},
+    {"name": "initial hwm-context protected publisher bootstrap", "status": "pass", "reference": "PR #3 bootstrap CI 31834654881 and post-merge CI 31834711939"},
+    {"name": "transactional publisher remediation", "status": "pass", "reference": "PR #5 exact-head bootstrap CI 31835169559 and post-merge CI 31835202225"},
+    {"name": "module entrypoint remediation", "status": "pass", "reference": "PR #6 exact-head bootstrap CI 31835307003 and post-merge CI 31835334188"},
+    {"name": "disposable live publication through scoped PR and explicit exact-head bootstrap CI", "status": "not_run", "reference": "blocked at repository Actions PR-creation permission in publisher run 31835360957 before PR/CI dispatch"}
   ],
   "evidence": [
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#37"},
-    {"kind": "issue", "reference": "Dsamofalov/hwm-context#2"}
+    {"kind": "issue", "reference": "Dsamofalov/hwm-context#2"},
+    {"kind": "pull_request", "reference": "Dsamofalov/hwm-context#3"},
+    {"kind": "pull_request", "reference": "Dsamofalov/hwm-context#5"},
+    {"kind": "pull_request", "reference": "Dsamofalov/hwm-context#6"},
+    {"kind": "ci_run", "reference": "Dsamofalov/hwm-control task publisher run 31834352277"},
+    {"kind": "ci_run", "reference": "Dsamofalov/hwm-control exact-head Infrastructure CI 31834387282"},
+    {"kind": "ci_run", "reference": "Dsamofalov/hwm-context live publisher run 31835360957"}
   ],
   "followups": [
-    "Install the repository-local publisher through a separate protected hwm-context PR and prove the live sandbox acceptance matrix without merging generated ledger bytes.",
-    "Only after I08-0037 completes may Issue #38 transition blocked to ready; do not claim or start its importer in this task."
+    "Owner/admin must enable the hwm-context repository Actions option that allows GitHub Actions to create pull requests, then resume this same claimed I08-0037 task and repeat disposable live acceptance using the repository-local built-in GITHUB_TOKEN.",
+    "After that setting is enabled, prove valid publication, exact replay idempotency, request-id reuse rejection, stale-head rejection, forbidden repository/path/main rejection, explicit exact-head bootstrap CI association, sandbox PR closure/branch deletion, and unchanged hwm-context/main during sandbox acceptance.",
+    "Issue #38 must remain blocked and unclaimed until I08-0037 is fully completed through the hwm-control completion/PR/merge lifecycle."
   ],
-  "unresolved": []
+  "unresolved": [
+    "Dsamofalov/hwm-context repository Actions workflow-permissions currently rejects publication PR creation by the repository-local built-in GITHUB_TOKEN. Live request I08-0037-sandbox-acceptance-v3 returned PR_CREATION_FORBIDDEN in run 31835360957; no generated PR or explicit candidate-head bootstrap run can exist until the owner/admin Actions PR-creation setting is enabled."
+  ]
 }
