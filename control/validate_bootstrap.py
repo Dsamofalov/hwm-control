@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Minimal deterministic bootstrap validator through completed I02."""
+"""Deterministic bootstrap validator for temporary BUILD_STATUS lifecycle after I02."""
 from __future__ import annotations
 
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -30,6 +31,9 @@ EXPECTED_SCHEMA_VERSIONS = {
     "knowledge_delta": "hwm-knowledge-delta/v1",
     "project_state": "hwm-project-state/v1",
 }
+COMPLETED_PREFIX = ["I00", "I01", "I02"]
+MILESTONE_RE = re.compile(r"^I(\d{2})$")
+TASK_ID_RE = re.compile(r"^I(\d{2})-(\d{4})$")
 
 
 def load_json(path: Path, errors: list[str]):
@@ -38,6 +42,71 @@ def load_json(path: Path, errors: list[str]):
     except Exception as exc:
         errors.append(f"invalid JSON {path}: {exc}")
         return None
+
+
+def _validate_task_list(name: str, value: object, errors: list[str]) -> list[str] | None:
+    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+        errors.append(f"BUILD_STATUS {name} must be a list of strings")
+        return None
+    if len(value) != len(set(value)):
+        errors.append(f"BUILD_STATUS {name} must contain unique task ids")
+    return value
+
+
+def _validate_build_status(status: dict, errors: list[str]) -> None:
+    keys = set(status)
+    if keys != ALLOWED_BUILD_STATUS_KEYS:
+        errors.append(
+            "BUILD_STATUS top-level keys must be exactly temporary bootstrap keys: "
+            + ",".join(sorted(ALLOWED_BUILD_STATUS_KEYS))
+        )
+
+    milestone = status.get("current_infrastructure_milestone")
+    milestone_match = MILESTONE_RE.fullmatch(milestone) if isinstance(milestone, str) else None
+    if milestone_match is None:
+        errors.append("BUILD_STATUS current infrastructure milestone must match IXX")
+    else:
+        milestone_number = int(milestone_match.group(1))
+        if milestone_number < 3:
+            errors.append("BUILD_STATUS current infrastructure milestone must not be earlier than I03")
+
+    completed = _validate_task_list("completed_task_ids", status.get("completed_task_ids"), errors)
+    active = _validate_task_list("active_task_ids", status.get("active_task_ids"), errors)
+
+    if completed is not None:
+        if completed[: len(COMPLETED_PREFIX)] != COMPLETED_PREFIX:
+            errors.append("BUILD_STATUS completed task ids must start with exact I00,I01,I02 prefix")
+        for task_id in completed[len(COMPLETED_PREFIX) :]:
+            if TASK_ID_RE.fullmatch(task_id) is None:
+                errors.append(f"BUILD_STATUS completed task id has invalid format: {task_id}")
+
+    if active is not None:
+        for task_id in active:
+            match = TASK_ID_RE.fullmatch(task_id)
+            if match is None:
+                errors.append(f"BUILD_STATUS active task id has invalid format: {task_id}")
+            elif milestone_match is not None and int(match.group(1)) != int(milestone_match.group(1)):
+                errors.append(f"BUILD_STATUS active task {task_id} does not belong to current milestone {milestone}")
+
+    if completed is not None and active is not None:
+        overlap = sorted(set(completed).intersection(active))
+        if overlap:
+            errors.append("BUILD_STATUS completed and active task ids must not overlap: " + ",".join(overlap))
+
+    if status.get("current_schema_versions") != EXPECTED_SCHEMA_VERSIONS:
+        errors.append("BUILD_STATUS schema versions do not match I02 contracts")
+
+    heads = status.get("exact_relevant_heads")
+    if not isinstance(heads, dict):
+        errors.append("BUILD_STATUS exact relevant heads must be an object")
+    else:
+        if heads.get("product_main_reference") != SOURCE_MERGE:
+            errors.append("BUILD_STATUS product main reference mismatch")
+        if heads.get("authoritative_functional_checkpoint") != FUNCTIONAL_SHA:
+            errors.append("BUILD_STATUS functional checkpoint mismatch")
+
+    if not isinstance(status.get("blockers"), list):
+        errors.append("BUILD_STATUS blockers must be a list")
 
 
 def validate(root: Path) -> list[str]:
@@ -90,28 +159,10 @@ def validate(root: Path) -> list[str]:
                 f"baseline SHA-256 mismatch: recorded={provenance.get('sha256')} actual={actual}"
             )
 
-    if status is not None:
-        keys = set(status)
-        if keys != ALLOWED_BUILD_STATUS_KEYS:
-            errors.append(
-                "BUILD_STATUS top-level keys must be exactly temporary bootstrap keys: "
-                + ",".join(sorted(ALLOWED_BUILD_STATUS_KEYS))
-            )
-        if status.get("current_infrastructure_milestone") != "I03":
-            errors.append("completed I02 BUILD_STATUS must point to next milestone I03")
-        if status.get("completed_task_ids") != ["I00", "I01", "I02"]:
-            errors.append("completed I02 BUILD_STATUS must mark I00, I01, and I02 completed")
-        if status.get("active_task_ids") != []:
-            errors.append("active tasks must be empty after I02 completion")
-        if status.get("current_schema_versions") != EXPECTED_SCHEMA_VERSIONS:
-            errors.append("BUILD_STATUS schema versions do not match I02 contracts")
-        heads = status.get("exact_relevant_heads", {})
-        if heads.get("product_main_reference") != SOURCE_MERGE:
-            errors.append("BUILD_STATUS product main reference mismatch")
-        if heads.get("authoritative_functional_checkpoint") != FUNCTIONAL_SHA:
-            errors.append("BUILD_STATUS functional checkpoint mismatch")
-        if status.get("blockers") != []:
-            errors.append("completed I02 BUILD_STATUS must not retain blockers")
+    if isinstance(status, dict):
+        _validate_build_status(status, errors)
+    elif status is not None:
+        errors.append("BUILD_STATUS must be a JSON object")
 
     if spec_path.is_file():
         spec = spec_path.read_text(encoding="utf-8")
@@ -136,7 +187,7 @@ def main(argv: list[str]) -> int:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
         return 1
-    print("I02 bootstrap validation: PASS")
+    print("bootstrap lifecycle validation: PASS")
     return 0
 
 
