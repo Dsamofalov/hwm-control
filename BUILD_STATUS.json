@@ -26,9 +26,7 @@
     "task": "hwm-task/v1",
     "claim": "hwm-claim/v1",
     "knowledge_delta": "hwm-knowledge-delta/v1",
-    "project_state": "hwm-project-state/v2",
-    "historical_claim": "hwm-historical-claim/v1",
-    "historical_conflicts": "hwm-historical-conflicts/v1"
+    "project_state": "hwm-project-state/v2"
   },
   "exact_relevant_heads": {
     "product_main_reference": "8fd669336b36064e842252d69fb4016cc526a9d4",
