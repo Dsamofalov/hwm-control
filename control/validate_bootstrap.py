@@ -29,7 +29,7 @@ EXPECTED_SCHEMA_VERSIONS = {
     "task": "hwm-task/v1",
     "claim": "hwm-claim/v1",
     "knowledge_delta": "hwm-knowledge-delta/v1",
-    "project_state": "hwm-project-state/v1",
+    "project_state": "hwm-project-state/v2",
 }
 COMPLETED_PREFIX = ["I00", "I01", "I02"]
 MILESTONE_RE = re.compile(r"^I(\d{2})$")
