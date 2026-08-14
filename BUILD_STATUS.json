@@ -15,9 +15,10 @@
     "I05-0008",
     "I06-0009",
     "I07-0010",
-    "I08-0035"
+    "I08-0035",
+    "I08-0037"
   ],
-  "active_task_ids": ["I08-0037"],
+  "active_task_ids": [],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
     "job": "hwm-job/v1",
@@ -31,7 +32,5 @@
     "product_main_reference": "8fd669336b36064e842252d69fb4016cc526a9d4",
     "authoritative_functional_checkpoint": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
   },
-  "blockers": [
-    "I08-0037: hwm-context repository Actions workflow-permissions rejects publication PR creation by the repository-local built-in GITHUB_TOKEN even though the privileged job receives actions/contents/issues/pull-requests write; owner/admin must enable GitHub Actions pull-request creation before live acceptance can complete."
-  ]
+  "blockers": []
 }
