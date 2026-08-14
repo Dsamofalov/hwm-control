@@ -35,5 +35,7 @@
     "product_main_reference": "8fd669336b36064e842252d69fb4016cc526a9d4",
     "authoritative_functional_checkpoint": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
   },
-  "blockers": []
+  "blockers": [
+    "I08-0042"
+  ]
 }
