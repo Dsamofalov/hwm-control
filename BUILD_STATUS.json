@@ -1,5 +1,5 @@
 {
-  "current_infrastructure_milestone": "I07",
+  "current_infrastructure_milestone": "I08",
   "completed_task_ids": [
     "I00",
     "I01",
@@ -14,7 +14,8 @@
     "I04-0007",
     "I05-0008",
     "I06-0009",
-    "I07-0010"
+    "I07-0010",
+    "I08-0035"
   ],
   "active_task_ids": [],
   "current_schema_versions": {

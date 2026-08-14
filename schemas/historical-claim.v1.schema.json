@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hwm:schema:historical-claim:v1",
+  "title": "HWM historical knowledge claim v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "claim_id", "authority", "subject", "predicate", "value", "provenance", "validity", "status", "relations"],
+  "properties": {
+    "schema": {"const": "hwm-historical-claim/v1"},
+    "claim_id": {"type": "string", "pattern": "^hc1-[0-9a-f]{64}$"},
+    "authority": {"const": "historical"},
+    "subject": {"type": "string", "minLength": 1, "maxLength": 2000, "pattern": "^(?!current:).+"},
+    "predicate": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^(?!current\\.).+"},
+    "value": {"type": "string", "minLength": 1, "maxLength": 20000},
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_class", "repository", "commit", "path", "locator", "blob_sha", "content_sha256"],
+      "properties": {
+        "source_class": {"type": "string", "enum": ["git_history", "changelog", "ability_changelog", "status_doc", "handoff_doc", "specification_history", "evidence_doc"]},
+        "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "path": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//).+[^/]$"},
+        "locator": {
+          "oneOf": [
+            {
+              "type": "object", "additionalProperties": false,
+              "required": ["kind", "start_line", "end_line"],
+              "properties": {
+                "kind": {"const": "line_range"},
+                "start_line": {"type": "integer", "minimum": 1},
+                "end_line": {"type": "integer", "minimum": 1}
+              }
+            },
+            {
+              "type": "object", "additionalProperties": false,
+              "required": ["kind", "symbol"],
+              "properties": {
+                "kind": {"const": "symbol"},
+                "symbol": {"type": "string", "minLength": 1, "maxLength": 1000}
+              }
+            }
+          ]
+        },
+        "blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valid_from", "valid_until"],
+      "properties": {
+        "valid_from": {"type": ["string", "null"], "format": "date-time"},
+        "valid_until": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
+    "status": {"type": "string", "enum": ["supported", "superseded", "contradicted", "unverified"]},
+    "relations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supersedes", "superseded_by", "conflicts_with"],
+      "properties": {
+        "supersedes": {"type": "array", "items": {"type": "string", "pattern": "^hc1-[0-9a-f]{64}$"}, "uniqueItems": true},
+        "superseded_by": {"type": "array", "items": {"type": "string", "pattern": "^hc1-[0-9a-f]{64}$"}, "uniqueItems": true},
+        "conflicts_with": {"type": "array", "items": {"type": "string", "pattern": "^hc1-[0-9a-f]{64}$"}, "uniqueItems": true}
+      }
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "supported"}}}, "then": {"properties": {"relations": {"properties": {"superseded_by": {"maxItems": 0}, "conflicts_with": {"maxItems": 0}}}}}},
+    {"if": {"properties": {"status": {"const": "superseded"}}}, "then": {"properties": {"relations": {"properties": {"superseded_by": {"minItems": 1}, "conflicts_with": {"maxItems": 0}}}}}},
+    {"if": {"properties": {"status": {"const": "contradicted"}}}, "then": {"properties": {"relations": {"properties": {"supersedes": {"maxItems": 0}, "superseded_by": {"maxItems": 0}, "conflicts_with": {"minItems": 1}}}}}},
+    {"if": {"properties": {"status": {"const": "unverified"}}}, "then": {"properties": {"relations": {"properties": {"supersedes": {"maxItems": 0}, "superseded_by": {"maxItems": 0}, "conflicts_with": {"maxItems": 0}}}}}}
+  ]
+}

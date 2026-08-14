@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hwm:schema:historical-conflicts:v1",
+  "title": "HWM historical knowledge conflicts index v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "conflicts"],
+  "properties": {
+    "schema": {"const": "hwm-historical-conflicts/v1"},
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["conflict_id", "claim_ids"],
+        "properties": {
+          "conflict_id": {"type": "string", "pattern": "^hcf1-[0-9a-f]{64}$"},
+          "claim_ids": {
+            "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^hc1-[0-9a-f]{64}$"}
+          }
+        }
+      }
+    }
+  }
+}
