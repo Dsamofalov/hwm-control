@@ -1,0 +1,65 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 38,
+  "goal": "Implement the first deterministic I08 historical knowledge importer slice for exact-provenance changelog and specification_history sources and materialize only through the trusted hwm-context historical-ledger publisher.",
+  "verified_facts": [
+    {
+      "statement": "Issues #35 and #37 are completed prerequisites on protected hwm-control main 292439643646b8487b2062add8ef51ee2d0409df; PR #39 merged there and post-merge Infrastructure CI 31837388351 succeeded.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#35"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#37"},
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#39"},
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-control Actions run 31837388351"},
+        {"kind": "commit", "reference": "I08 prerequisite main", "repo": "Dsamofalov/hwm-control", "sha": "292439643646b8487b2062add8ef51ee2d0409df"}
+      ]
+    },
+    {
+      "statement": "The initial immutable product corpus is Dsamofalov/hwm_predictor@8fd669336b36064e842252d69fb4016cc526a9d4: changelog.md:16 at blob 40e1eac296094a7528d58bc4ec8734673619d866 and ABILITY_MERGE_CANON.md:5 at blob 61ad23b52b3115bea8bf67c5b1fb6b07932b6748.",
+      "provenance": [
+        {"kind": "commit", "reference": "exact product source checkpoint", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"},
+        {"kind": "public_ref", "reference": "Dsamofalov/hwm_predictor changelog.md:16 @ 8fd669336b36064e842252d69fb4016cc526a9d4"},
+        {"kind": "public_ref", "reference": "Dsamofalov/hwm_predictor ABILITY_MERGE_CANON.md:5 @ 8fd669336b36064e842252d69fb4016cc526a9d4"}
+      ]
+    },
+    {
+      "statement": "Issue #38 is claimed as I08-0038 on sole ownership branch agent/infra-0038-historical-knowledge-importer created strictly from protected hwm-control main 292439643646b8487b2062add8ef51ee2d0409df.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#38"},
+        {"kind": "commit", "reference": "claim base", "repo": "Dsamofalov/hwm-control", "sha": "292439643646b8487b2062add8ef51ee2d0409df"}
+      ]
+    }
+  ],
+  "decisions": [
+    {"decision": "Use a deterministic freeze-then-import boundary.", "rationale": "Freeze requires exact repository, 40-hex commit, path, line range and Git blob and records whole-blob SHA-256; import independently re-resolves and verifies before claim identity/materialization."},
+    {"decision": "Keep the first corpus to two literal records, one changelog and one specification_history.", "rationale": "This is the minimum Phase-6 vertical slice and avoids an all-document importer or LLM interpretation as deterministic truth."},
+    {"decision": "Delegate claim identity, relation invariants, duplicate checks and canonical bytes to the merged historical claim contract.", "rationale": "This preserves hwm-historical-claim/v1 and hwm-historical-conflicts/v1 exactly and never serializes historical knowledge as hwm-claim/v1."},
+    {"decision": "Expose only the trusted historical-ledger publication request shape; no direct Git mutation exists in the importer.", "rationale": "hwm-context publication remains exclusively behind the completed Issue #37 repository-local publisher and protected PR/bootstrap path."}
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Resolve mutable HEAD/branch sources or silently repair stale provenance.", "reason": "That cannot bind historical knowledge to immutable evidence."},
+    {"alternative": "Use model interpretation to create supported claims.", "reason": "LLM interpretation is not deterministic evidence."},
+    {"alternative": "Publish hwm-context outputs by generic file/commit mutation, direct push, or bootstrap-v1.", "reason": "Those paths bypass or change the accepted I08-P1 trust boundary."}
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "control/historical_knowledge_importer.py",
+    "knowledge-deltas/I08-0038.json",
+    "tests/test_historical_knowledge_importer.py"
+  ],
+  "tests": [
+    {"name": "I08 importer local deterministic/unit/negative suite", "status": "pass", "reference": "24 tests: 23 pass; exact public Git integration intentionally CI-only"},
+    {"name": "exact immutable product corpus integration and schema validation", "status": "not_run", "reference": "first exact-head Infrastructure CI"},
+    {"name": "trusted hwm-context materialization and exact bootstrap association", "status": "not_run", "reference": "after source-head Infrastructure CI"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#38 claimed as I08-0038"},
+    {"kind": "commit", "reference": "protected hwm-control claim base", "repo": "Dsamofalov/hwm-control", "sha": "292439643646b8487b2062add8ef51ee2d0409df"},
+    {"kind": "commit", "reference": "exact product source checkpoint", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"}
+  ],
+  "followups": [
+    "Run exact-head Infrastructure CI on the atomic first source transaction and capture deterministic generated ledger evidence.",
+    "Materialize only the two canonical hwm-context output paths through a fresh Issue #37 historical-ledger request, then guarded-merge after exact-head bootstrap.",
+    "Publish completion BUILD_STATUS and this Knowledge Delta on the same hwm-control task branch, then complete protected hwm-control PR lifecycle."
+  ],
+  "unresolved": []
+}
