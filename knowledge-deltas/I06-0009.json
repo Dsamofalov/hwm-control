@@ -1,0 +1,121 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 9,
+  "goal": "Define and enforce the required Knowledge Delta gate for infrastructure tasks without changing the compatible merged v1 serialization contract.",
+  "verified_facts": [
+    {
+      "statement": "The merged hwm-knowledge-delta/v1 schema already carries task_id, goal, verified facts with provenance, rationale-bearing decisions, changed components, tests, evidence, followups, and unresolved fields.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "I06 authoritative protected-main base containing schemas/knowledge-delta.v1.schema.json",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "f871c38b571da51daf3439a6d8aa93348fd645a4"
+        }
+      ]
+    },
+    {
+      "statement": "The existing Infrastructure CI executes full unittest discovery for workflow_dispatch, pull_request, and push-to-main paths, so a repository-level unittest can enforce the gate without a workflow change.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "I06 authoritative protected-main base containing .github/workflows/infrastructure-ci.yml",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "f871c38b571da51daf3439a6d8aa93348fd645a4"
+        }
+      ]
+    },
+    {
+      "statement": "I04 defines milestone state as non-authoritative and completion as fail-closed on deterministic dependency, protected merge, candidate CI, and post-merge CI evidence.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "I06 authoritative protected-main base containing docs/I04_TASK_ISSUE_STATE_POLICY.md",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "f871c38b571da51daf3439a6d8aa93348fd645a4"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Keep hwm-knowledge-delta/v1 unchanged and add an I06 validation policy/gate around it.",
+      "rationale": "No incompatible serialization gap was found; creating v2 only to add repository enforcement would be an unnecessary retroactive contract fork."
+    },
+    {
+      "decision": "Use knowledge-deltas/<IXX-NNNN>.json as the only canonical durable representation and require delta.task_id to equal the GitHub Issue number encoded by the task-id suffix.",
+      "rationale": "This binds the machine-readable delta to the same durable Issue identity used by I04/I05 while retaining the milestone-qualified execution task id in the path."
+    },
+    {
+      "decision": "Require canonical deltas for every active or completed BUILD_STATUS task at I06 or later, while not synthesizing deltas retroactively for pre-I06 tasks.",
+      "rationale": "The gate must remain required after completion/merge and apply prospectively from the milestone that introduces it without inventing historical records."
+    },
+    {
+      "decision": "Require at least one verified fact with provenance, one rationale-bearing decision, one changed component, and one test entry in addition to schema validity.",
+      "rationale": "The v1 schema intentionally permits empty arrays; I06 policy must make durable rationale/evidence/result metadata mandatory without changing the serialization version."
+    },
+    {
+      "decision": "Enforce the repository-level gate through the already executed full unittest discovery path instead of modifying infrastructure-ci.yml.",
+      "rationale": "The protected workflow already runs every test_*.py on dispatched source heads, PR heads, and main pushes, so repository-level validation becomes a real CI gate with no workflow or publisher mutation."
+    },
+    {
+      "decision": "Keep lifecycle/dependency/claim semantics outside the Knowledge Delta validator.",
+      "rationale": "I04 and I05 remain the authoritative lifecycle and ownership layers; I06 is an additional fail-closed merge record gate, not a scheduler, claim service, or bootstrap generator."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Create hwm-knowledge-delta/v2 only to make existing arrays non-empty.",
+      "reason": "The existing contract can be strengthened by deterministic validation policy without an incompatible representation change."
+    },
+    {
+      "alternative": "Modify infrastructure-ci.yml to add a new shell step for the gate.",
+      "reason": "Existing full unittest discovery can execute a repository-level gate, so changing protected workflow code is unnecessary scope expansion."
+    },
+    {
+      "alternative": "Use milestone open/closed state to decide whether a delta is required.",
+      "reason": "I04 explicitly makes milestone state non-authoritative for execution and dependency gating."
+    },
+    {
+      "alternative": "Accept PR prose, Issue comments, or alias JSON files as substitutes for the canonical task delta.",
+      "reason": "That would make representation and task binding ambiguous and would not provide one deterministic durable machine record."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "control/knowledge_delta_gate.py",
+    "docs/I06_KNOWLEDGE_DELTA_GATE_POLICY.md",
+    "knowledge-deltas/I06-0009.json",
+    "tests/test_knowledge_delta_gate.py"
+  ],
+  "tests": [
+    {
+      "name": "I06 deterministic Knowledge Delta gate suite",
+      "status": "not_run",
+      "reference": "tests/test_knowledge_delta_gate.py; exact-head Infrastructure CI is required before completion"
+    },
+    {
+      "name": "full Infrastructure unittest discovery",
+      "status": "not_run",
+      "reference": "python -m unittest discover -s tests -p 'test_*.py' -v; exact-head Infrastructure CI is required before completion"
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#9"
+    },
+    {
+      "kind": "commit",
+      "reference": "authoritative protected-main base for I06",
+      "repo": "Dsamofalov/hwm-control",
+      "sha": "f871c38b571da51daf3439a6d8aa93348fd645a4"
+    },
+    {
+      "kind": "public_ref",
+      "reference": ".github/workflows/infrastructure-ci.yml@f871c38b571da51daf3439a6d8aa93348fd645a4"
+    }
+  ],
+  "followups": [],
+  "unresolved": []
+}
