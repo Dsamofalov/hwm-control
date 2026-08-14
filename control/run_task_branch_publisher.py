@@ -8,10 +8,10 @@ from pathlib import Path
 
 from task_branch_publisher import (
     ALLOWED_REPOSITORY,
-    GitHubAPIBackend,
     Publisher,
     preflight_concurrency,
 )
+from publisher_runtime_backend import PublisherRuntimeBackend
 
 
 def _event(path: str) -> dict:
@@ -51,7 +51,7 @@ def main(argv: list[str]) -> int:
         print("event repository is not bootstrap-v1 allowlisted", file=sys.stderr)
         return 2
 
-    backend = GitHubAPIBackend(token=token, repository=repository)
+    backend = PublisherRuntimeBackend(token=token, repository=repository)
     result = Publisher(backend).handle_event(event)
     if result is None:
         return 0

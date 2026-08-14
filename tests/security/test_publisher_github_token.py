@@ -7,6 +7,7 @@ from unittest import mock
 
 from security.publisher_test_support import *  # noqa: F401,F403
 from publisher_backend import GIT_REMOTE, GitHubAPIBackend
+from publisher_runtime_backend import PublisherRuntimeBackend
 
 
 class PublisherGitHubTokenSecurity(unittest.TestCase):
@@ -55,9 +56,41 @@ class PublisherGitHubTokenSecurity(unittest.TestCase):
         self.assertFalse(Path(observed["token_path"]).exists())
         self.assertFalse(Path(observed["askpass_path"]).exists())
 
+    def test_runtime_uses_accepted_git_cas_for_immediate_post_push_head_read(self):
+        branch = "agent/infra-0013-token-test"
+        backend = PublisherRuntimeBackend(
+            token="test-token", repository="Dsamofalov/hwm-control", repo_root=ROOT
+        )
+        with mock.patch.object(
+            GitHubAPIBackend, "compare_and_set_branch", return_value=True
+        ) as cas, mock.patch.object(
+            GitHubAPIBackend, "get_branch_head", return_value=BASE
+        ) as stale_rest:
+            self.assertTrue(backend.compare_and_set_branch(branch, BASE, NEW))
+            cas.assert_called_once_with(branch, BASE, NEW)
+            self.assertEqual(backend.get_branch_head(branch), NEW)
+            stale_rest.assert_not_called()
+            self.assertEqual(backend.get_branch_head(branch), BASE)
+            stale_rest.assert_called_once_with(branch)
+
+    def test_failed_git_cas_never_masks_actual_remote_head(self):
+        branch = "agent/infra-0013-token-test"
+        backend = PublisherRuntimeBackend(
+            token="test-token", repository="Dsamofalov/hwm-control", repo_root=ROOT
+        )
+        with mock.patch.object(
+            GitHubAPIBackend, "compare_and_set_branch", return_value=False
+        ), mock.patch.object(
+            GitHubAPIBackend, "get_branch_head", return_value=RACE
+        ) as remote:
+            self.assertFalse(backend.compare_and_set_branch(branch, BASE, NEW))
+            self.assertEqual(backend.get_branch_head(branch), RACE)
+            remote.assert_called_once_with(branch)
+
     def test_runner_entrypoint_removes_job_token_before_git_subprocesses(self):
         source = (ROOT / "control" / "run_task_branch_publisher.py").read_text()
         self.assertIn('os.environ.pop("HWM_PUBLISHER_TOKEN", None)', source)
+        self.assertIn("PublisherRuntimeBackend", source)
         self.assertNotIn("HWM_PUBLISHER_DEPLOY_KEY", source)
         self.assertNotIn("known_hosts", source)
         self.assertNotIn("ssh -i", source)
