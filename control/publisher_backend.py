@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""GitHub/bootstrap backend: inert Git objects, SSH lease update, exact CI dispatch."""
+"""GitHub/bootstrap backend: inert Git objects, HTTPS lease update, exact CI dispatch."""
 from __future__ import annotations
 
 import base64
+from contextlib import contextmanager
 import json
 import os
+import stat
 import subprocess
 import tempfile
 import time
@@ -12,7 +14,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from publisher_contract import (
     ALLOWED_AUTHOR,
@@ -26,8 +28,8 @@ from publisher_contract import (
     request_fingerprint,
 )
 
-GIT_REMOTE = "git@github.com:Dsamofalov/hwm-control.git"
-PUBLIC_GIT_REMOTE = "https://github.com/Dsamofalov/hwm-control.git"
+GIT_REMOTE = "https://github.com/Dsamofalov/hwm-control.git"
+PUBLIC_GIT_REMOTE = GIT_REMOTE
 
 
 class ExpectedHeadChanged(Exception):
@@ -41,17 +43,15 @@ class GitHubAPIBackend:
         self,
         token: str,
         repository: str,
-        deploy_key_path: Path,
-        known_hosts_path: Path,
         repo_root: Path | None = None,
     ):
         if repository != ALLOWED_REPOSITORY:
             raise ValueError("backend repository is not bootstrap-v1 allowlisted")
+        if not token:
+            raise ValueError("publisher token is required")
         self.token = token
         self.repository = repository
         self.owner, self.repo = repository.split("/", 1)
-        self.deploy_key_path = deploy_key_path
-        self.known_hosts_path = known_hosts_path
         self.repo_root = repo_root or Path.cwd()
         self.api = "https://api.github.com"
         self.api_version = "2026-03-10"
@@ -180,7 +180,7 @@ class GitHubAPIBackend:
         return proc.stdout
 
     def _fetch_exact_branch(self, branch: str, expected_head: str) -> None:
-        # Fetch Git objects only. No checkout/reset/switch touches candidate content.
+        # Public fetch transfers Git objects only. No checkout/reset/switch touches candidate content.
         self._run_git(["fetch", "--no-tags", "--quiet", PUBLIC_GIT_REMOTE, f"refs/heads/{branch}"])
         fetched = self._run_git(["rev-parse", "FETCH_HEAD"]).decode("ascii").strip()
         if fetched != expected_head:
@@ -257,28 +257,60 @@ class GitHubAPIBackend:
             return None
         return parents[0]
 
-    def _ssh_env(self) -> dict[str, str]:
-        env = os.environ.copy()
-        env["GIT_TERMINAL_PROMPT"] = "0"
-        env["GIT_SSH_COMMAND"] = (
-            f"ssh -i {self.deploy_key_path} -o IdentitiesOnly=yes "
-            f"-o StrictHostKeyChecking=yes -o UserKnownHostsFile={self.known_hosts_path}"
-        )
-        return env
+    @contextmanager
+    def _https_git_auth(self) -> Iterator[dict[str, str]]:
+        """Yield a Git environment that exposes only paths, never the token itself, to git/ps/config."""
+        with tempfile.TemporaryDirectory(prefix="hwm-publisher-askpass-") as tmp:
+            root = Path(tmp)
+            token_path = root / "token"
+            askpass_path = root / "askpass.py"
+            token_path.write_text(self.token, encoding="utf-8")
+            token_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
+            askpass_path.write_text(
+                "#!/usr/bin/env python3\n"
+                "import os, sys\n"
+                "prompt = sys.argv[1] if len(sys.argv) > 1 else ''\n"
+                "if 'Username' in prompt:\n"
+                "    sys.stdout.write('x-access-token')\n"
+                "elif 'Password' in prompt:\n"
+                "    path = os.environ.get('HWM_PUBLISHER_ASKPASS_TOKEN_FILE')\n"
+                "    if not path:\n"
+                "        raise SystemExit(2)\n"
+                "    with open(path, 'r', encoding='utf-8') as handle:\n"
+                "        sys.stdout.write(handle.read())\n"
+                "else:\n"
+                "    raise SystemExit(2)\n",
+                encoding="utf-8",
+            )
+            askpass_path.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            env = os.environ.copy()
+            for name in ("HWM_PUBLISHER_TOKEN", "GITHUB_TOKEN", "GH_TOKEN"):
+                env.pop(name, None)
+            env.update({
+                "GIT_TERMINAL_PROMPT": "0",
+                "GIT_ASKPASS": str(askpass_path),
+                "HWM_PUBLISHER_ASKPASS_TOKEN_FILE": str(token_path),
+                "GIT_CONFIG_NOSYSTEM": "1",
+                "GIT_CONFIG_GLOBAL": os.devnull,
+            })
+            yield env
 
     def compare_and_set_branch(self, branch: str, expected_head: str, new_head: str) -> bool:
-        push = subprocess.run(
-            [
-                "git", "push", "--porcelain",
-                f"--force-with-lease=refs/heads/{branch}:{expected_head}",
-                GIT_REMOTE, f"{new_head}:refs/heads/{branch}",
-            ],
-            cwd=self.repo_root,
-            env=self._ssh_env(),
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=False,
-        )
+        with self._https_git_auth() as env:
+            push = subprocess.run(
+                [
+                    "git",
+                    "-c", "credential.helper=",
+                    "push", "--porcelain",
+                    f"--force-with-lease=refs/heads/{branch}:{expected_head}",
+                    GIT_REMOTE, f"{new_head}:refs/heads/{branch}",
+                ],
+                cwd=self.repo_root,
+                env=env,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
         return push.returncode == 0
 
     def dispatch_ci(self, workflow: str, branch: str, request_id: str, new_head: str) -> dict[str, Any]:

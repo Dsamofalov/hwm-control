@@ -1,4 +1,9 @@
+import re
+
 from security.publisher_test_support import *  # noqa: F401,F403
+
+CHECKOUT_SHA = "3d3c42e5aac5ba805825da76410c181273ba90b1"
+
 
 class PublisherSecurity(PublisherSecurityBase):
     def test_preflight_concurrency_key_is_branch_local_and_unauthorized_never_mints_privileged_job(self):
@@ -25,20 +30,22 @@ class PublisherSecurity(PublisherSecurityBase):
         self.assertNotIn("exec(", source)
         self.assertNotIn("importlib", source)
 
-    def test_workflow_least_privilege_and_trusted_checkout(self):
+    def test_publisher_workflow_uses_job_scoped_builtin_token_and_no_long_lived_write_secret(self):
         workflow = (ROOT / ".github" / "workflows" / "task-branch-publisher.yml").read_text()
-        self.assertNotIn("contents: write", workflow)
-        self.assertIn("contents: read", workflow)
+        self.assertIn("permissions:\n  contents: read", workflow)
+        self.assertIn("contents: write", workflow)
         self.assertIn("issues: write", workflow)
         self.assertIn("actions: write", workflow)
         self.assertNotIn("pull-requests: write", workflow)
         self.assertNotIn("administration: write", workflow)
         self.assertNotIn("workflows: write", workflow)
         self.assertNotIn("create-github-app-token", workflow)
-        self.assertIn("HWM_PUBLISHER_DEPLOY_KEY", workflow)
+        self.assertNotIn("HWM_PUBLISHER_DEPLOY_KEY", workflow)
+        self.assertNotIn("secrets.HWM_PUBLISHER", workflow)
+        self.assertIn("HWM_PUBLISHER_TOKEN: ${{ github.token }}", workflow)
         self.assertGreaterEqual(workflow.count("ref: ${{ github.sha }}"), 2)
         self.assertNotIn("ref: ${{ needs.preflight.outputs", workflow)
-        self.assertIn("persist-credentials: false", workflow)
+        self.assertGreaterEqual(workflow.count("persist-credentials: false"), 2)
         self.assertIn("cancel-in-progress: false", workflow)
 
     def test_ordinary_ci_is_read_only_exact_head_dispatch_and_has_no_publisher_credentials(self):
@@ -51,4 +58,16 @@ class PublisherSecurity(PublisherSecurityBase):
         self.assertNotIn("HWM_PUBLISHER_DEPLOY_KEY", ci)
         self.assertNotIn("HWM_PUBLISHER_TOKEN", ci)
         self.assertNotIn("contents: write", ci)
+        self.assertIn("persist-credentials: false", ci)
 
+    def test_all_external_actions_in_affected_workflows_are_pinned_full_sha(self):
+        for name in ("task-branch-publisher.yml", "infrastructure-ci.yml"):
+            workflow = (ROOT / ".github" / "workflows" / name).read_text()
+            uses = re.findall(r"uses:\s*([^@\s]+)@([^\s#]+)", workflow)
+            self.assertTrue(uses, name)
+            for action, ref in uses:
+                with self.subTest(workflow=name, action=action):
+                    self.assertRegex(ref, r"^[0-9a-f]{40}$")
+                    if action == "actions/checkout":
+                        self.assertEqual(ref, CHECKOUT_SHA)
+            self.assertNotRegex(workflow, r"uses:\s*[^\s]+@v\d")
