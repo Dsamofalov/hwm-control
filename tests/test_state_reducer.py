@@ -12,10 +12,16 @@ V2 = json.loads((ROOT / "schemas" / "project-state.v2.schema.json").read_text(en
 V1 = json.loads((ROOT / "schemas" / "project-state.v1.schema.json").read_text(encoding="utf-8"))
 SHA = "0123456789abcdef0123456789abcdef01234567"
 SHA2 = "89abcdef0123456789abcdef0123456789abcdef"
+SHA3 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 CONTROL_SHA = "d2d8c478f845ccbc1c099b450e29b457fc0d3a13"
+PRODUCT_REPO = "Dsamofalov/hwm_predictor"
+PRODUCT_REF = "refs/heads/main"
+WORKFLOW = ".github/workflows/ci.yml"
+CORE_GATE = "HWM / Core"
+FULL_GATE = "HWM / Full"
 
 
-def provenance(kind="git_ref", repo="Dsamofalov/hwm_predictor", sha=SHA, reference="refs/heads/main"):
+def provenance(kind="git_ref", repo=PRODUCT_REPO, sha=SHA, reference=PRODUCT_REF):
     item = {"kind": kind, "repo": repo, "sha": sha}
     if reference is not None:
         item["reference"] = reference
@@ -23,7 +29,7 @@ def provenance(kind="git_ref", repo="Dsamofalov/hwm_predictor", sha=SHA, referen
 
 
 def product(status="known"):
-    base = {"status": status, "repository": "Dsamofalov/hwm_predictor", "ref": "refs/heads/main"}
+    base = {"status": status, "repository": PRODUCT_REPO, "ref": PRODUCT_REF}
     if status == "known":
         return {**base, "sha": SHA, "provenance": provenance()}
     if status == "unknown":
@@ -31,7 +37,14 @@ def product(status="known"):
     return {**base, "error": {"code": "PROVIDER_UNAVAILABLE", "message": "provider unavailable", "retryable": True}}
 
 
-def checkpoint(status="known", sha=SHA):
+def checkpoint_reference(gate, *, workflow=WORKFLOW, run=101, suite=201, check_run=301, status_id=401):
+    return (
+        f"workflow={workflow};run={run};suite={suite};gate={gate};"
+        f"check_run={check_run};status_id={status_id}"
+    )
+
+
+def checkpoint(status="known", sha=SHA, gate=CORE_GATE):
     if status == "known":
         return {
             "status": "known",
@@ -39,7 +52,7 @@ def checkpoint(status="known", sha=SHA):
             "provenance": provenance(
                 kind="github_actions_run",
                 sha=sha,
-                reference="workflow=.github/workflows/ci.yml;run=101;suite=201;gate=HWM / Core;check_run=301;status_id=401",
+                reference=checkpoint_reference(gate),
             ),
         }
     if status == "unknown":
@@ -49,10 +62,19 @@ def checkpoint(status="known", sha=SHA):
 
 def checkpoint_envelope(core="known", full="known"):
     return {
-        "repository": "Dsamofalov/hwm_predictor",
-        "workflow": ".github/workflows/ci.yml",
-        "last_core_green": checkpoint(core, SHA),
-        "last_full_green": checkpoint(full, SHA2),
+        "repository": PRODUCT_REPO,
+        "workflow": WORKFLOW,
+        "last_core_green": checkpoint(core, SHA, CORE_GATE),
+        "last_full_green": checkpoint(full, SHA2, FULL_GATE),
+    }
+
+
+def auxiliary(sha=SHA3):
+    return {
+        "kind": "evidence_manifest",
+        "repo": "Dsamofalov/hwm-control",
+        "sha": sha,
+        "reference": "evidence/remediation.json",
     }
 
 
@@ -85,6 +107,36 @@ class MinimalStateReducerTests(unittest.TestCase):
         state = self.reduce(product_head=source)
         self.assertEqual(state["product"]["head"], {"status": "known", "sha": SHA, "provenance": source["provenance"]})
 
+    def test_product_head_sha_provenance_mismatch_is_rejected(self):
+        value = product("known")
+        value["provenance"][0]["sha"] = SHA2
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(product_head=value)
+
+    def test_product_head_wrong_provenance_repo_is_rejected(self):
+        value = product("known")
+        value["provenance"][0]["repo"] = "Dsamofalov/hwm-control"
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(product_head=value)
+
+    def test_product_head_wrong_provenance_ref_is_rejected(self):
+        value = product("known")
+        value["provenance"][0]["reference"] = "refs/heads/ability"
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(product_head=value)
+
+    def test_product_head_auxiliary_plus_exact_binding_passes(self):
+        value = product("known")
+        value["provenance"] = [auxiliary(), *value["provenance"]]
+        state = self.reduce(product_head=value)
+        self.assertEqual(state["product"]["head"]["provenance"], value["provenance"])
+
+    def test_product_head_only_auxiliary_provenance_is_rejected(self):
+        value = product("known")
+        value["provenance"] = [auxiliary()]
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(product_head=value)
+
     def test_product_head_unknown_preserves_sanitized_reason_without_guessed_sha(self):
         state = self.reduce(product_head=product("unknown"))
         self.assertEqual(state["product"]["head"], {"status": "unknown", "reason": "exact refs/heads/main is unavailable"})
@@ -116,6 +168,72 @@ class MinimalStateReducerTests(unittest.TestCase):
         with self.assertRaises(ProjectStateReductionError):
             self.reduce(product_head=value)
 
+    def test_valid_exact_core_binding_passes(self):
+        state = self.reduce(checkpoints=checkpoint_envelope("known", "unknown"))
+        self.assertEqual(state["product"]["last_core_green"]["sha"], SHA)
+
+    def test_valid_exact_full_binding_passes(self):
+        state = self.reduce(checkpoints=checkpoint_envelope("unknown", "known"))
+        self.assertEqual(state["product"]["last_full_green"]["sha"], SHA2)
+
+    def test_core_stale_provenance_sha_is_rejected(self):
+        value = checkpoint_envelope()
+        value["last_core_green"]["provenance"][0]["sha"] = SHA3
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(checkpoints=value)
+
+    def test_full_stale_provenance_sha_is_rejected(self):
+        value = checkpoint_envelope()
+        value["last_full_green"]["provenance"][0]["sha"] = SHA3
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(checkpoints=value)
+
+    def test_checkpoint_wrong_workflow_in_provenance_is_rejected(self):
+        value = checkpoint_envelope()
+        value["last_core_green"]["provenance"][0]["reference"] = checkpoint_reference(
+            CORE_GATE, workflow=".github/workflows/other.yml"
+        )
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(checkpoints=value)
+
+    def test_core_provenance_with_full_gate_is_rejected(self):
+        value = checkpoint_envelope()
+        value["last_core_green"]["provenance"][0]["reference"] = checkpoint_reference(FULL_GATE)
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(checkpoints=value)
+
+    def test_full_provenance_with_core_gate_is_rejected(self):
+        value = checkpoint_envelope()
+        value["last_full_green"]["provenance"][0]["reference"] = checkpoint_reference(CORE_GATE)
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(checkpoints=value)
+
+    def test_checkpoint_auxiliary_plus_exact_binding_passes(self):
+        value = checkpoint_envelope()
+        value["last_core_green"]["provenance"] = [auxiliary(), *value["last_core_green"]["provenance"]]
+        state = self.reduce(checkpoints=value)
+        self.assertEqual(state["product"]["last_core_green"]["provenance"], value["last_core_green"]["provenance"])
+
+    def test_checkpoint_only_auxiliary_provenance_is_rejected(self):
+        value = checkpoint_envelope()
+        value["last_core_green"]["provenance"] = [auxiliary()]
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(checkpoints=value)
+
+    def test_checkpoint_wrong_repo_in_provenance_is_rejected(self):
+        value = checkpoint_envelope()
+        value["last_full_green"]["provenance"][0]["repo"] = "Dsamofalov/hwm-control"
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(checkpoints=value)
+
+    def test_checkpoint_reference_requires_exact_extractor_identity_format(self):
+        value = checkpoint_envelope()
+        value["last_core_green"]["provenance"][0]["reference"] = (
+            f"gate={CORE_GATE};workflow={WORKFLOW};run=101;suite=201;check_run=301;status_id=401"
+        )
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(checkpoints=value)
+
     def test_core_known_and_full_known_are_preserved_independently(self):
         state = self.reduce(checkpoints=checkpoint_envelope("known", "known"))
         self.assertEqual(state["product"]["last_core_green"]["sha"], SHA)
@@ -142,6 +260,21 @@ class MinimalStateReducerTests(unittest.TestCase):
         state = self.reduce(product_head=product("unknown"), checkpoints=checkpoint_envelope("known", "known"))
         self.assertEqual(state["product"]["head"]["status"], "unknown")
         self.assertNotIn("sha", state["product"]["head"])
+
+    def test_product_known_does_not_fall_back_to_checkpoint_provenance(self):
+        value = product("known")
+        value["provenance"] = [auxiliary()]
+        checkpoints = checkpoint_envelope()
+        checkpoints["last_core_green"]["sha"] = SHA
+        checkpoints["last_core_green"]["provenance"][0]["sha"] = SHA
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(product_head=value, checkpoints=checkpoints)
+
+    def test_checkpoint_known_does_not_fall_back_to_product_provenance(self):
+        checkpoints = checkpoint_envelope()
+        checkpoints["last_core_green"]["provenance"] = [auxiliary()]
+        with self.assertRaises(ProjectStateReductionError):
+            self.reduce(product_head=product("known"), checkpoints=checkpoints)
 
     def test_malformed_lifecycle_shape_is_rejected(self):
         value = product("known")
@@ -209,9 +342,9 @@ class MinimalStateReducerTests(unittest.TestCase):
         with self.assertRaises(ProjectStateReductionError):
             reduce_project_state(**values)
 
-    def test_post_merge_and_live_inputs_are_not_synthesized(self):
+    def test_post_merge_and_live_inputs_are_not_synthesized_or_gate_constrained(self):
         post = checkpoint("error")
-        live = checkpoint("known", SHA2)
+        live = checkpoint("known", SHA2, CORE_GATE)
         state = self.reduce(last_post_merge_green=post, last_live_evidenced=live)
         self.assertEqual(state["product"]["last_post_merge_green"], post)
         self.assertEqual(state["product"]["last_live_evidenced"], live)
