@@ -1,0 +1,46 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 35,
+  "goal": "Define the forward-only deterministic historical knowledge claim ledger serialization and storage contract before any I08 importer implementation.",
+  "verified_facts": [
+    {
+      "statement": "Protected hwm-control main at claim time was exact 11d73e90b4a8734fac4954e274dabc609052ea89 and schemas/claim.v1.schema.json is the task ownership hwm-claim/v1 contract, not a historical claim contract.",
+      "provenance": [{"kind": "commit", "reference": "protected main / schemas/claim.v1.schema.json", "repo": "Dsamofalov/hwm-control", "sha": "11d73e90b4a8734fac4954e274dabc609052ea89"}]
+    },
+    {
+      "statement": "Audited hwm-context main 806f555efa805d3b17310763dc41ccf65696f961 contains only claims/.gitkeep under claims/ and requires trusted protected writes for materialized content.",
+      "provenance": [{"kind": "commit", "reference": "hwm-context main / README.md / claims/", "repo": "Dsamofalov/hwm-context", "sha": "806f555efa805d3b17310763dc41ccf65696f961"}]
+    }
+  ],
+  "decisions": [
+    {"decision": "Introduce hwm-historical-claim/v1 and hwm-historical-conflicts/v1 without changing hwm-claim/v1.", "rationale": "Task ownership and historical evidence are distinct truth domains with incompatible fields and lifecycle semantics."},
+    {"decision": "Derive hc1 claim identity from canonical subject/predicate/value, exact Git source binding, and validity interval while excluding status and relations.", "rationale": "The same source statement remains stably addressable as deterministic classification evolves, while ordering, clock, environment, and importer enumeration cannot change identity."},
+    {"decision": "Make hwm-context claims/claims.jsonl and claims/conflicts.json the canonical deterministic materialization boundary.", "rationale": "This preserves the Phase-6 architecture layout as a rebuildable read model and avoids an unnecessary mutable database authority."},
+    {"decision": "Require a separate trusted hwm-context publication prerequisite before importer materialization can be complete.", "rationale": "The merged bootstrap publisher is hwm-control-only and hwm-context requires protected trusted writes; silently widening its allowlist would violate the existing publisher architecture."}
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Reuse or retrofit hwm-claim/v1 for historical statements.", "reason": "It is a closed task-ownership/lease schema and would collapse separate truth domains."},
+    {"alternative": "Treat SQLite or another mutable index as historical authority.", "reason": "Phase-6 materialization must be deterministically rebuildable from exact authoritative sources."},
+    {"alternative": "Expand the bootstrap publisher to hwm-context inside Issue #35.", "reason": "Cross-repository capability requires a separate trusted architecture/contract and scoped credential boundary."}
+  ],
+  "changed_components": [
+    "schemas/historical-claim.v1.schema.json",
+    "schemas/historical-conflicts.v1.schema.json",
+    "control/historical_claim_contract.py",
+    "docs/I08_HISTORICAL_CLAIM_LEDGER_CONTRACT.md",
+    "tests/test_historical_claim_contract.py",
+    "knowledge-deltas/I08-0035.json",
+    "BUILD_STATUS.json"
+  ],
+  "tests": [
+    {"name": "python -m unittest tests.test_historical_claim_contract -v", "status": "pass", "reference": "local deterministic contract preflight before controlled publication"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#35"}
+  ],
+  "followups": [
+    "Before the I08 importer can satisfy Phase-6 Done, complete a separate trusted hwm-context publication prerequisite for deterministic generated claims/ writes; do not widen bootstrap-v1 implicitly.",
+    "Implement the historical importer in a separate task/dialogue after this contract and its required publication prerequisite are satisfied."
+  ],
+  "unresolved": []
+}

@@ -1,5 +1,5 @@
 {
-  "current_infrastructure_milestone": "I07",
+  "current_infrastructure_milestone": "I08",
   "completed_task_ids": [
     "I00",
     "I01",
@@ -16,7 +16,9 @@
     "I06-0009",
     "I07-0010"
   ],
-  "active_task_ids": [],
+  "active_task_ids": [
+    "I08-0035"
+  ],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
     "job": "hwm-job/v1",
@@ -24,7 +26,9 @@
     "task": "hwm-task/v1",
     "claim": "hwm-claim/v1",
     "knowledge_delta": "hwm-knowledge-delta/v1",
-    "project_state": "hwm-project-state/v2"
+    "project_state": "hwm-project-state/v2",
+    "historical_claim": "hwm-historical-claim/v1",
+    "historical_conflicts": "hwm-historical-conflicts/v1"
   },
   "exact_relevant_heads": {
     "product_main_reference": "8fd669336b36064e842252d69fb4016cc526a9d4",
