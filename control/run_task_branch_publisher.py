@@ -3,9 +3,7 @@ from __future__ import annotations
 
 import json
 import os
-import stat
 import sys
-import tempfile
 from pathlib import Path
 
 from task_branch_publisher import (
@@ -13,13 +11,6 @@ from task_branch_publisher import (
     GitHubAPIBackend,
     Publisher,
     preflight_concurrency,
-)
-
-# GitHub's published ED25519 host key for github.com.
-# Source is trusted protected publisher code, never request/candidate content.
-GITHUB_KNOWN_HOSTS = (
-    "github.com ssh-ed25519 "
-    "AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl\n"
 )
 
 
@@ -38,11 +29,6 @@ def _write_output(values: dict[str, str]) -> None:
             handle.write(f"{key}={value}\n")
 
 
-def _write_secret_file(path: Path, content: str) -> None:
-    path.write_text(content.rstrip("\n") + "\n", encoding="utf-8")
-    path.chmod(stat.S_IRUSR | stat.S_IWUSR)
-
-
 def main(argv: list[str]) -> int:
     if len(argv) != 3 or argv[1] not in {"preflight", "publish"}:
         print("usage: run_task_branch_publisher.py {preflight|publish} EVENT_JSON", file=sys.stderr)
@@ -52,10 +38,12 @@ def main(argv: list[str]) -> int:
         _write_output(preflight_concurrency(event))
         return 0
 
-    token = os.environ.get("HWM_PUBLISHER_TOKEN")
-    deploy_key = os.environ.get("HWM_PUBLISHER_DEPLOY_KEY")
-    if not token or not deploy_key:
-        print("publisher credential is not configured", file=sys.stderr)
+    # Read the job-scoped GITHUB_TOKEN once, then remove it from the inherited
+    # environment before any Git subprocess is created. The backend keeps the
+    # token only in process memory and a temporary mode-0600 askpass file.
+    token = os.environ.pop("HWM_PUBLISHER_TOKEN", None)
+    if not token:
+        print("publisher job token is unavailable", file=sys.stderr)
         return 2
 
     repository = ((event.get("repository") or {}).get("full_name"))
@@ -63,30 +51,17 @@ def main(argv: list[str]) -> int:
         print("event repository is not bootstrap-v1 allowlisted", file=sys.stderr)
         return 2
 
-    with tempfile.TemporaryDirectory(prefix="hwm-publisher-credentials-") as tmp:
-        tmp_path = Path(tmp)
-        key_path = tmp_path / "deploy_key"
-        known_hosts_path = tmp_path / "known_hosts"
-        _write_secret_file(key_path, deploy_key)
-        known_hosts_path.write_text(GITHUB_KNOWN_HOSTS, encoding="utf-8")
-        known_hosts_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
-
-        backend = GitHubAPIBackend(
-            token=token,
-            repository=repository,
-            deploy_key_path=key_path,
-            known_hosts_path=known_hosts_path,
-        )
-        result = Publisher(backend).handle_event(event)
-        if result is None:
-            return 0
-        issue_number = (event.get("issue") or {}).get("number")
-        if not isinstance(issue_number, int):
-            print("event does not identify an Issue", file=sys.stderr)
-            return 2
-        backend.post_result(issue_number, result)
-        print(f"publish_status={result['status']} request_id={result['request_id']}")
+    backend = GitHubAPIBackend(token=token, repository=repository)
+    result = Publisher(backend).handle_event(event)
+    if result is None:
         return 0
+    issue_number = (event.get("issue") or {}).get("number")
+    if not isinstance(issue_number, int):
+        print("event does not identify an Issue", file=sys.stderr)
+        return 2
+    backend.post_result(issue_number, result)
+    print(f"publish_status={result['status']} request_id={result['request_id']}")
+    return 0
 
 
 if __name__ == "__main__":
