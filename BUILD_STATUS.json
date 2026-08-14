@@ -1,5 +1,5 @@
 {
-  "current_infrastructure_milestone": "I05",
+  "current_infrastructure_milestone": "I06",
   "completed_task_ids": [
     "I00",
     "I01",
@@ -14,7 +14,9 @@
     "I04-0007",
     "I05-0008"
   ],
-  "active_task_ids": [],
+  "active_task_ids": [
+    "I06-0009"
+  ],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
     "job": "hwm-job/v1",
