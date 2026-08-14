@@ -9,11 +9,10 @@
     "I03-0004",
     "I03-0025",
     "I03-0005",
-    "I03-0028"
-  ],
-  "active_task_ids": [
+    "I03-0028",
     "I03-0006"
   ],
+  "active_task_ids": [],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
     "job": "hwm-job/v1",
