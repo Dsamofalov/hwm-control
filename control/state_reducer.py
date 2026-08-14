@@ -13,6 +13,8 @@ PROJECT_STATE_SCHEMA = "hwm-project-state/v2"
 PRODUCT_REPOSITORY = "Dsamofalov/hwm_predictor"
 PRODUCT_REF = "refs/heads/main"
 CHECKPOINT_WORKFLOW = ".github/workflows/ci.yml"
+CORE_GATE = "HWM / Core"
+FULL_GATE = "HWM / Full"
 
 _SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 _ERROR_CODE_RE = re.compile(r"^[A-Z][A-Z0-9_]{1,63}$")
@@ -24,6 +26,13 @@ _ALLOWED_LIFECYCLE_KEYS = {
     "known": {"status", "sha", "provenance"},
     "unknown": {"status", "reason"},
     "error": {"status", "error"},
+}
+_CHECKPOINT_REFERENCE_RE = {
+    gate: re.compile(
+        rf"^workflow={re.escape(CHECKPOINT_WORKFLOW)};run=[1-9][0-9]*;suite=[1-9][0-9]*;"
+        rf"gate={re.escape(gate)};check_run=[1-9][0-9]*;status_id=[1-9][0-9]*$"
+    )
+    for gate in (CORE_GATE, FULL_GATE)
 }
 
 _SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "project-state.v2.schema.json"
@@ -72,6 +81,32 @@ def _provenance(items: Any, *, field: str) -> list[dict[str, Any]]:
                 raise ProjectStateReductionError(f"{field}[{index}].reference must already be sanitized")
         result.append(copy.deepcopy(item))
     return result
+
+
+def _require_product_head_binding(provenance: list[dict[str, Any]], *, sha: str) -> None:
+    if any(
+        item.get("kind") == "git_ref"
+        and item.get("repo") == PRODUCT_REPOSITORY
+        and item.get("sha") == sha
+        and item.get("reference") == PRODUCT_REF
+        for item in provenance
+    ):
+        return
+    raise ProjectStateReductionError("product.head known lifecycle lacks exact product git_ref provenance binding")
+
+
+def _require_checkpoint_binding(provenance: list[dict[str, Any]], *, sha: str, gate: str, field: str) -> None:
+    reference_re = _CHECKPOINT_REFERENCE_RE[gate]
+    if any(
+        item.get("kind") == "github_actions_run"
+        and item.get("repo") == PRODUCT_REPOSITORY
+        and item.get("sha") == sha
+        and isinstance(item.get("reference"), str)
+        and reference_re.fullmatch(item["reference"]) is not None
+        for item in provenance
+    ):
+        return
+    raise ProjectStateReductionError(f"{field} known lifecycle lacks exact {gate} GitHub Actions provenance binding")
 
 
 def _error(value: Any, *, field: str) -> dict[str, Any]:
@@ -124,7 +159,10 @@ def _product_head(extractor: Any) -> dict[str, Any]:
     if extractor["repository"] != PRODUCT_REPOSITORY or extractor["ref"] != PRODUCT_REF:
         raise ProjectStateReductionError("product_head extractor identity does not match the exact product ref")
     payload = {key: copy.deepcopy(extractor[key]) for key in _ALLOWED_LIFECYCLE_KEYS[status]}
-    return _lifecycle(payload, field="product.head")
+    result = _lifecycle(payload, field="product.head")
+    if result["status"] == "known":
+        _require_product_head_binding(result["provenance"], sha=result["sha"])
+    return result
 
 
 def _checkpoints(extractor: Any) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -133,10 +171,13 @@ def _checkpoints(extractor: Any) -> tuple[dict[str, Any], dict[str, Any]]:
         raise ProjectStateReductionError("checkpoint extractor result must be the exact Core/Full envelope")
     if extractor["repository"] != PRODUCT_REPOSITORY or extractor["workflow"] != CHECKPOINT_WORKFLOW:
         raise ProjectStateReductionError("checkpoint extractor identity is inconsistent")
-    return (
-        _lifecycle(extractor["last_core_green"], field="product.last_core_green"),
-        _lifecycle(extractor["last_full_green"], field="product.last_full_green"),
-    )
+    core = _lifecycle(extractor["last_core_green"], field="product.last_core_green")
+    full = _lifecycle(extractor["last_full_green"], field="product.last_full_green")
+    if core["status"] == "known":
+        _require_checkpoint_binding(core["provenance"], sha=core["sha"], gate=CORE_GATE, field="product.last_core_green")
+    if full["status"] == "known":
+        _require_checkpoint_binding(full["provenance"], sha=full["sha"], gate=FULL_GATE, field="product.last_full_green")
+    return core, full
 
 
 def _requirements(value: Any) -> dict[str, Any]:
