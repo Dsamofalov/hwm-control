@@ -1,0 +1,113 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 10,
+  "goal": "Generate the minimal fresh-agent bootstrap reproducibly from deterministic project state and task Issue sources, with exact provenance and fail-closed stale-source handling.",
+  "verified_facts": [
+    {
+      "statement": "The merged I07 architecture contract defines generated outputs bootstrap/current.json and bootstrap/current.md containing infrastructure/product heads, validated checkpoints, infrastructure milestone status, ready tasks, hard invariants, and exact task-context pointers.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "docs/INFRA_SPEC.md Phase 5 — Generated infra bootstrap",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "dacec7509c9665b8d400cccd14bc3f14ee0a4096"
+        }
+      ]
+    },
+    {
+      "statement": "I04 requires exactly one active lifecycle label for each open task Issue, treats completed as closed state_reason=completed without an active lifecycle label, and excludes milestone open/closed state from execution/dependency gating.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "docs/I04_TASK_ISSUE_STATE_POLICY.md",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "dacec7509c9665b8d400cccd14bc3f14ee0a4096"
+        }
+      ]
+    },
+    {
+      "statement": "I06 requires a canonical Knowledge Delta for every I06+ active or completed durable task, including I07-0010 while claimed and after completion.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "docs/I06_KNOWLEDGE_DELTA_GATE_POLICY.md",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "dacec7509c9665b8d400cccd14bc3f14ee0a4096"
+        },
+        {
+          "kind": "issue",
+          "reference": "https://github.com/Dsamofalov/hwm-control/issues/10"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Implement I07 as a pure deterministic compiler returning exact bytes for bootstrap/current.json and bootstrap/current.md rather than committing mutable current bootstrap outputs to hwm-control.",
+      "rationale": "The architecture defines these as generated/materialized bootstrap views; keeping generation pure makes them rebuildable and prevents a second manually maintained volatile source of truth."
+    },
+    {
+      "decision": "Use hwm-project-state/v2 from Dsamofalov/hwm-context/state/current.json plus exact active hwm-control Issue snapshots as the only volatile bootstrap facts.",
+      "rationale": "I03 owns deterministic current state and I04 owns task execution projection; accepting arbitrary repositories, BUILD_STATUS, historical prose, or caller overrides would weaken the exact-source boundary."
+    },
+    {
+      "decision": "Bind freshness to exact infrastructure HEAD, state source commit and Git blob SHA, and per-Issue updated_at revisions, and reject any mismatch.",
+      "rationale": "A source-tagged bootstrap is only trustworthy if the candidate payload is bound to independently observed exact source revisions instead of merely carrying advisory provenance strings."
+    },
+    {
+      "decision": "Preserve known/unknown/error lifecycle values without inference and derive infrastructure milestone status only from active Issue milestone titles/lifecycle states, ignoring milestone open/closed UI state.",
+      "rationale": "This composes with I03 fail-closed state and I04 milestone semantics without guessing or creating a new execution gate."
+    },
+    {
+      "decision": "Do not introduce a new bootstrap schema/version in I07.",
+      "rationale": "The merged architecture already defines the I07 output boundary and no I02 bootstrap serialization contract exists to migrate; adding a versioned cross-repository contract without a proven consumer requirement would create an unnecessary schema barrier."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Use BUILD_STATUS.json or a hand-maintained status Markdown file as the generated bootstrap source.",
+      "reason": "Those surfaces are bootstrap/lifecycle bookkeeping, not the authoritative deterministic state+task projection, and would recreate manually maintained volatile truth."
+    },
+    {
+      "alternative": "Generate missing product/checkpoint/task facts from cache, conversation context, wall-clock queries, or caller override values.",
+      "reason": "This violates the exact-source and explicit unknown/error contracts."
+    },
+    {
+      "alternative": "Expand I07 into historical import, wiki/context synthesis, Graphify, scheduler, or job-bus behavior.",
+      "reason": "Those are explicitly downstream non-goals and would cross established milestone boundaries."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "control/generated_bootstrap.py",
+    "docs/I07_GENERATED_BOOTSTRAP_POLICY.md",
+    "knowledge-deltas/I07-0010.json",
+    "tests/test_generated_bootstrap.py"
+  ],
+  "tests": [
+    {
+      "name": "I07 generated bootstrap deterministic unit suite (25 cases)",
+      "status": "pass",
+      "reference": "tests/test_generated_bootstrap.py local candidate execution before controlled publication"
+    },
+    {
+      "name": "Full Infrastructure CI unittest discovery on exact source head",
+      "status": "not_run",
+      "reference": "will be executed by controlled publisher workflow_dispatch on the exact source commit"
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "issue",
+      "reference": "https://github.com/Dsamofalov/hwm-control/issues/10"
+    },
+    {
+      "kind": "commit",
+      "reference": "verified protected-main base for I07 claim",
+      "repo": "Dsamofalov/hwm-control",
+      "sha": "dacec7509c9665b8d400cccd14bc3f14ee0a4096"
+    }
+  ],
+  "followups": [],
+  "unresolved": []
+}
