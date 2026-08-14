@@ -17,7 +17,7 @@
     "I07-0010",
     "I08-0035"
   ],
-  "active_task_ids": [],
+  "active_task_ids": ["I08-0037"],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
     "job": "hwm-job/v1",
