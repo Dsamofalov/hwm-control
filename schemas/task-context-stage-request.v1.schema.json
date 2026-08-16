@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hwm.local/schemas/task-context-stage-request.v1.schema.json",
+  "title": "hwm-task-context-stage-request/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_id",
+    "repository",
+    "transport_issue",
+    "expected_control_main",
+    "expected_context_main",
+    "expected_product_main",
+    "source_request",
+    "expectations",
+    "compiler"
+  ],
+  "properties": {
+    "schema": {"const": "hwm-task-context-stage-request/v1"},
+    "request_id": {"type": "string", "pattern": "^tcs1-[0-9a-f]{64}$"},
+    "repository": {"const": "Dsamofalov/hwm-context"},
+    "transport_issue": {"const": 27},
+    "expected_control_main": {"$ref": "#/$defs/sha1"},
+    "expected_context_main": {"$ref": "#/$defs/sha1"},
+    "expected_product_main": {"$ref": "#/$defs/sha1"},
+    "source_request": {"$ref": "urn:hwm:schema:task-context-request:v1"},
+    "expectations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_request_id", "source_request_sha256", "context_sha256", "git_blob_sha"],
+      "properties": {
+        "source_request_id": {"type": "string", "pattern": "^tcr1-[0-9a-f]{64}$"},
+        "source_request_sha256": {"$ref": "#/$defs/sha256"},
+        "context_sha256": {"$ref": "#/$defs/sha256"},
+        "git_blob_sha": {"$ref": "#/$defs/sha1"}
+      }
+    },
+    "compiler": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "commit",
+        "module",
+        "callable",
+        "compiler_path",
+        "compiler_blob_sha",
+        "core_path",
+        "core_blob_sha",
+        "request_schema_path",
+        "request_schema_blob_sha",
+        "pack_schema_path",
+        "pack_schema_blob_sha",
+        "serialization_profile",
+        "pack_schema",
+        "max_blob_bytes"
+      ],
+      "properties": {
+        "repository": {"const": "Dsamofalov/hwm-control"},
+        "commit": {"$ref": "#/$defs/sha1"},
+        "module": {"const": "control.task_context_compiler"},
+        "callable": {"const": "compile_task_context"},
+        "compiler_path": {"const": "control/task_context_compiler.py"},
+        "compiler_blob_sha": {"$ref": "#/$defs/sha1"},
+        "core_path": {"const": "control/task_context_core.py"},
+        "core_blob_sha": {"$ref": "#/$defs/sha1"},
+        "request_schema_path": {"const": "schemas/task-context-request.v1.schema.json"},
+        "request_schema_blob_sha": {"$ref": "#/$defs/sha1"},
+        "pack_schema_path": {"const": "schemas/task-context-pack.v1.schema.json"},
+        "pack_schema_blob_sha": {"$ref": "#/$defs/sha1"},
+        "serialization_profile": {"const": "hwm-canonical-json/v1"},
+        "pack_schema": {"const": "hwm-task-context-pack/v1"},
+        "max_blob_bytes": {"const": 4194304}
+      }
+    }
+  },
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
