@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hwm.local/schemas/task-context-publish-result.v1.schema.json",
+  "title": "hwm-task-context-publish-result/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_id",
+    "status",
+    "repository",
+    "transport_issue",
+    "expected_base",
+    "publication_branch",
+    "task",
+    "artifact",
+    "request_fingerprint",
+    "idempotent_replay",
+    "candidate",
+    "pr",
+    "ci_dispatch",
+    "required_status",
+    "error"
+  ],
+  "properties": {
+    "schema": {"const": "hwm-task-context-publish-result/v1"},
+    "request_id": {"type": "string"},
+    "status": {"enum": ["success", "error"]},
+    "repository": {"const": "Dsamofalov/hwm-context"},
+    "transport_issue": {"const": 27},
+    "expected_base": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "publication_branch": {"type": ["string", "null"]},
+    "task": {"type": ["object", "null"]},
+    "artifact": {"type": ["object", "null"]},
+    "request_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "idempotent_replay": {"type": "boolean"},
+    "candidate": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["commit_sha", "tree_sha", "parent_sha", "parent_count"],
+          "properties": {
+            "commit_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "tree_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "parent_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "parent_count": {"const": 1}
+          }
+        }
+      ]
+    },
+    "pr": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["number", "base_ref", "head_ref", "head_sha"],
+          "properties": {
+            "number": {"type": "integer", "minimum": 1},
+            "base_ref": {"const": "main"},
+            "head_ref": {"type": "string"},
+            "head_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          }
+        }
+      ]
+    },
+    "ci_dispatch": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["workflow", "run_id", "head_sha", "required_check"],
+          "properties": {
+            "workflow": {"const": "repository-bootstrap-ci.yml"},
+            "run_id": {"type": "integer", "minimum": 1},
+            "head_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "required_check": {"const": "bootstrap"}
+          }
+        }
+      ]
+    },
+    "required_status": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["context", "integration_id", "creator_login", "creator_id"],
+          "properties": {
+            "context": {"const": "bootstrap"},
+            "integration_id": {"const": 15368},
+            "creator_login": {"const": "github-actions[bot]"},
+            "creator_id": {"const": 41898282}
+          }
+        }
+      ]
+    },
+    "error": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message"],
+          "properties": {
+            "code": {
+              "enum": [
+                "INVALID_SCHEMA",
+                "INVALID_TRANSPORT",
+                "UNAUTHORIZED_AUTHOR",
+                "REPOSITORY_NOT_ALLOWED",
+                "FORBIDDEN_TARGET",
+                "FORBIDDEN_PATH",
+                "PATH_STATE_MISMATCH",
+                "BLOB_NOT_FOUND",
+                "BLOB_NOT_REGULAR",
+                "PACK_INVALID",
+                "UNSAFE_PAYLOAD",
+                "EXPECTED_HEAD_MISMATCH",
+                "BRANCH_EXISTS",
+                "REQUEST_ID_REUSE",
+                "PR_CREATION_FAILED",
+                "PR_CREATION_FORBIDDEN",
+                "CI_DISPATCH_FAILED",
+                "STRICT_GATE_REJECTED",
+                "INTERNAL_ERROR"
+              ]
+            },
+            "message": {"type": "string", "minLength": 1, "maxLength": 240}
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "success"}}},
+      "then": {
+        "properties": {
+          "expected_base": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "publication_branch": {"type": "string", "pattern": "^publisher/task-context/i[0-9]{2}-[0-9]{4}/[a-z0-9][a-z0-9._-]{7,95}$"},
+          "task": {"type": "object"},
+          "artifact": {"type": "object"},
+          "candidate": {"type": "object"},
+          "pr": {"type": "object"},
+          "ci_dispatch": {"type": "object"},
+          "required_status": {"type": "object"},
+          "error": {"type": "null"}
+        }
+      },
+      "else": {
+        "properties": {
+          "candidate": {"type": "null"},
+          "pr": {"type": "null"},
+          "ci_dispatch": {"type": "null"},
+          "required_status": {"type": "null"},
+          "error": {"type": "object"}
+        }
+      }
+    }
+  ]
+}
