@@ -108,7 +108,7 @@ class I090056LargePackAcceptanceProbe(unittest.TestCase):
         context_head = provider.observe_head(CONTEXT)
         product_head = provider.observe_head(PRODUCT)
         self.assertEqual(control_head, "71ddad3c8882d154bc013bf06a41f4d94309ec78")
-        self.assertEqual(context_head, "ec300bb76429668b469fc8247a5ab07be79b40cf")
+        self.assertEqual(context_head, "202bbf5875dcd429d856c8d13d3946e4fee1329f")
         self.assertEqual(product_head, "8fd669336b36064e842252d69fb4016cc526a9d4")
 
         raw_issue = provider.fetch_issue(CONTROL, ISSUE)
@@ -224,7 +224,7 @@ class I090056LargePackAcceptanceProbe(unittest.TestCase):
         blob_sha = git_blob_sha(first)
         request_sha = tc.request_digest(request)
         stage_identity = sha256(canonical({
-            "purpose": "i09-0056-large-public-acceptance-v1",
+            "purpose": "i09-0056-large-public-acceptance-v2",
             "source_request_id": request["request_id"],
             "source_request_sha256": request_sha,
             "context_sha256": context_sha,
