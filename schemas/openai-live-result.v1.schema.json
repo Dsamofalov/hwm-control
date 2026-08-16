@@ -1,0 +1,347 @@
+{
+  "$id": "urn:hwm:schema:openai-live-result:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "auth": {
+      "additionalProperties": false,
+      "properties": {
+        "audience": {
+          "const": "https://api.openai.com/v1"
+        },
+        "expires_in_seconds": {
+          "maximum": 3600,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "identity_provider_id_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "issuer": {
+          "const": "https://token.actions.githubusercontent.com"
+        },
+        "mechanism": {
+          "const": "github-actions-oidc-openai-wif/v1"
+        },
+        "oidc_token_recorded": {
+          "const": false
+        },
+        "openai_access_token_recorded": {
+          "const": false
+        },
+        "ref": {
+          "const": "refs/heads/main"
+        },
+        "repository": {
+          "const": "Dsamofalov/hwm-control"
+        },
+        "scope": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "service_account_id_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subject": {
+          "const": "repo:Dsamofalov@25666939/hwm-control@1333400971:ref:refs/heads/main"
+        },
+        "workflow_ref": {
+          "const": "Dsamofalov/hwm-control/.github/workflows/trusted-openai-live.yml@refs/heads/main"
+        }
+      },
+      "required": [
+        "mechanism",
+        "issuer",
+        "audience",
+        "subject",
+        "repository",
+        "ref",
+        "workflow_ref",
+        "identity_provider_id_sha256",
+        "service_account_id_sha256",
+        "scope",
+        "expires_in_seconds",
+        "oidc_token_recorded",
+        "openai_access_token_recorded"
+      ],
+      "type": "object"
+    },
+    "classification": {
+      "const": "derived_non_authoritative"
+    },
+    "failure_code": {
+      "enum": [
+        null,
+        "WIF_CONFIGURATION_ABSENT",
+        "OIDC_TOKEN_UNAVAILABLE",
+        "OIDC_CLAIM_MISMATCH",
+        "TOKEN_EXCHANGE_REJECTED",
+        "WIF_SCOPE_MISMATCH",
+        "WIF_TOKEN_LIFETIME_INVALID",
+        "TIMEOUT",
+        "TRANSIENT_PROVIDER_ERROR",
+        "RATE_LIMITED",
+        "RETRY_EXHAUSTED",
+        "PROVIDER_AUTH_REJECTED",
+        "PROVIDER_REQUEST_REJECTED",
+        "MALFORMED_RESPONSE",
+        "UNSUPPORTED_SCHEMA_VERSION",
+        "VERIFIER_REJECTED",
+        "PROVIDER_FAILURE"
+      ],
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fallback": {
+      "additionalProperties": false,
+      "properties": {
+        "deterministic_task_context_usable": {
+          "const": true
+        },
+        "mode": {
+          "const": "deterministic_task_context_only"
+        },
+        "semantic_materialization": {
+          "enum": [
+            "none",
+            "accepted"
+          ]
+        }
+      },
+      "required": [
+        "mode",
+        "deterministic_task_context_usable",
+        "semantic_materialization"
+      ],
+      "type": "object"
+    },
+    "protected_main_sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "model_configuration_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "model_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "prompt_rendered_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "prompt_template_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "prompt_template_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "prompt_version": {
+          "pattern": "^v[1-9][0-9]*$",
+          "type": "string"
+        },
+        "protected_main_sha": {
+          "pattern": "^[0-9a-f]{40}$",
+          "type": "string"
+        },
+        "request_body_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "semantic_contract_id": {
+          "const": "hwm-semantic-transformation-contract/v1"
+        },
+        "semantic_input_schema": {
+          "const": "hwm-semantic-transform-input/v1"
+        },
+        "semantic_output_schema": {
+          "const": "hwm-semantic-transform-output/v1"
+        },
+        "structured_output_schema_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "task_context_content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "verifier_id": {
+          "const": "hwm-semantic-verifier/v1"
+        }
+      },
+      "required": [
+        "protected_main_sha",
+        "model_id",
+        "prompt_template_id",
+        "prompt_version",
+        "prompt_template_sha256",
+        "prompt_rendered_sha256",
+        "semantic_input_schema",
+        "semantic_output_schema",
+        "semantic_contract_id",
+        "verifier_id",
+        "task_context_content_sha256",
+        "model_configuration_sha256",
+        "structured_output_schema_sha256",
+        "request_body_sha256"
+      ],
+      "type": "object"
+    },
+    "provider": {
+      "additionalProperties": false,
+      "properties": {
+        "attempts": {
+          "maximum": 2,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "input_tokens": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "openai_request_id": {
+          "maxLength": 256,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "output_tokens": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rate_limit_classification": {
+          "enum": [
+            "none",
+            "http_429",
+            "not_attempted"
+          ]
+        }
+      },
+      "required": [
+        "openai_request_id",
+        "input_tokens",
+        "output_tokens",
+        "latency_ms",
+        "attempts",
+        "rate_limit_classification"
+      ],
+      "type": "object"
+    },
+    "request_id": {
+      "pattern": "^olr1-[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "sanitized_log_fields": {
+      "const": [
+        "status",
+        "protected_main_sha",
+        "model_id",
+        "prompt_template_id",
+        "prompt_version",
+        "prompt_template_sha256",
+        "prompt_rendered_sha256",
+        "semantic_input_schema",
+        "semantic_output_schema",
+        "semantic_contract_id",
+        "verifier_id",
+        "task_context_content_sha256",
+        "model_configuration_sha256",
+        "structured_output_schema_sha256",
+        "request_body_sha256",
+        "input_tokens",
+        "output_tokens",
+        "latency_ms",
+        "attempts",
+        "rate_limit_classification",
+        "openai_request_id",
+        "failure_code",
+        "verification_decision",
+        "wif_scope",
+        "wif_expires_in_seconds"
+      ]
+    },
+    "schema": {
+      "const": "hwm-openai-live-result/v1"
+    },
+    "status": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "degraded"
+      ]
+    },
+    "trust_policy": {
+      "const": "hwm-openai-protected-main/v1"
+    },
+    "verification": {
+      "additionalProperties": false,
+      "properties": {
+        "codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "decision": {
+          "enum": [
+            "accept",
+            "reject",
+            "degraded_fallback",
+            "not_run"
+          ]
+        },
+        "materialization_allowed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "decision",
+        "materialization_allowed",
+        "codes"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema",
+    "request_id",
+    "trust_policy",
+    "protected_main_sha",
+    "auth",
+    "status",
+    "classification",
+    "provenance",
+    "provider",
+    "verification",
+    "failure_code",
+    "fallback",
+    "sanitized_log_fields"
+  ],
+  "title": "HWM trusted OpenAI live result v1",
+  "type": "object"
+}
