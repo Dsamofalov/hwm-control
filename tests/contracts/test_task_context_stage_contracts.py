@@ -61,7 +61,7 @@ class TaskContextStageContractTests(unittest.TestCase):
         result = self.load("task-context-stage-result.v1.schema.json")
         required = set(result["required"])
         self.assertTrue({"observations", "source_request", "compiler", "artifact", "idempotent_replay", "error", "transport"}.issubset(required))
-        artifact_schema = result["properties"]["artifact"]["oneOf"][1]
+        artifact_schema = result["$defs"]["artifact"]
         self.assertTrue({
             "byte_length",
             "context_sha256",
@@ -71,9 +71,19 @@ class TaskContextStageContractTests(unittest.TestCase):
             "readback_sha256",
             "readback_git_blob_sha",
         }.issubset(set(artifact_schema["required"])))
-        compiler = result["properties"]["compiler"]
+        compiler = result["$defs"]["compiler"]
         self.assertIn("compile_pass_count", compiler["required"])
         self.assertIn("byte_equal", compiler["required"])
+
+    def test_error_result_may_fail_before_full_observation_but_success_cannot(self):
+        result = self.load("task-context-stage-result.v1.schema.json")
+        for field in ("observations", "source_request", "compiler", "artifact"):
+            choices = result["properties"][field]["oneOf"]
+            self.assertTrue(any(choice.get("type") == "null" for choice in choices))
+        success = result["allOf"][0]["then"]["properties"]
+        for field in ("observations", "source_request", "compiler", "artifact"):
+            self.assertNotEqual(success[field].get("type"), "null")
+        self.assertEqual(success["error"], {"type": "null"})
 
     def test_predecessor_i09_contract_blobs_are_unchanged(self):
         expected = {
