@@ -1,0 +1,192 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 62,
+  "goal": "Define and implement the trusted protected-main OpenAI execution and credential boundary required before downstream semantic transformations may use live OpenAI API access, while preserving deterministic task-context correctness and keeping Issue #50 blocked and unstarted.",
+  "verified_facts": [
+    {
+      "statement": "I09-0062 was claimed from exact protected hwm-control/main 6091873e7eaa1b32c7e561ceaaacf21a230684b4 on the sole ownership branch agent/infra-0062-trusted-openai-boundary; claim bookkeeping commit is 847db7396c27f7729037e57a74f6b3b9d69aba72.",
+      "provenance": [
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#62 claim record"
+        },
+        {
+          "kind": "commit",
+          "reference": "I09-0062 claim bookkeeping",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "847db7396c27f7729037e57a74f6b3b9d69aba72"
+        }
+      ]
+    },
+    {
+      "statement": "Current official OpenAI documentation explicitly supports GitHub Actions workload identity federation: a GitHub OIDC token can be exchanged for a short-lived OpenAI bearer token, with service-account mapping conditions and permission narrowing; this makes long-lived OpenAI API-key storage unnecessary for this boundary.",
+      "provenance": [
+        {
+          "kind": "public_ref",
+          "reference": "OpenAI GitHub Actions WIF guide and workload identity token exchange API reference, verified 2026-08-16"
+        }
+      ]
+    },
+    {
+      "statement": "The implemented trust policy binds issuer, OpenAI API audience, immutable GitHub owner/repository identity in the subject, repository, refs/heads/main, and the exact trusted-openai-live workflow_ref; only the live job receives id-token: write and the OpenAI WIF scope is required to be exactly api.model.request.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "trusted OpenAI WIF boundary implementation",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "87dbf3e6ed6d05c25ed593aaaf61d0b75b6bfdfb"
+        },
+        {
+          "kind": "public_ref",
+          "reference": "docs/ADR/0005-trusted-openai-execution-boundary.md"
+        }
+      ]
+    },
+    {
+      "statement": "The live workflow is workflow_dispatch-only and accepts only an inert olr1 request identity; PR, pull_request_target, push, workflow_call, candidate ref/path/command selection, artifact/cache handoff, OpenAI API keys, and OpenAI model tools are absent from the credentialed path.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "trusted workflow candidate",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "87dbf3e6ed6d05c25ed593aaaf61d0b75b6bfdfb"
+        }
+      ]
+    },
+    {
+      "statement": "Public-data validation, deterministic semantic-input validation, exact immutable task-context pack verification, and protected-main runtime verification precede any GitHub OIDC token request; raw prompt, raw model output, OIDC token, OpenAI access token, Authorization header, and full request body are excluded from the durable result/log schema.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "control/openai_live_boundary.py and trusted-openai-live workflow",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "87dbf3e6ed6d05c25ed593aaaf61d0b75b6bfdfb"
+        }
+      ]
+    },
+    {
+      "statement": "The Responses request is strict structured JSON-schema output with store=false and tools=[], records exact model/prompt/schema/configuration provenance digests, and requires the merged I09-P4 deterministic verifier after the provider response and before materialization; accepted output remains derived_non_authoritative.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "OpenAI live request/result schemas and runtime",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "87dbf3e6ed6d05c25ed593aaaf61d0b75b6bfdfb"
+        },
+        {
+          "kind": "public_ref",
+          "reference": "docs/ADR/0004-verified-semantic-transformation-contract.md and docs/ADR/0005-trusted-openai-execution-boundary.md"
+        }
+      ]
+    },
+    {
+      "statement": "Initial PR-head Infrastructure CI 31972874528 ran 387 tests: all new OpenAI live-boundary and trusted-workflow security tests passed; the sole repository failure was the existing Knowledge Delta gate reporting the missing canonical knowledge-deltas/I09-0062.json for the active task.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Infrastructure CI 31972874528 on PR #63"
+        },
+        {
+          "kind": "pull_request",
+          "reference": "Dsamofalov/hwm-control#63"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Use GitHub Actions OIDC to OpenAI workload identity federation rather than a long-lived project API key.",
+      "rationale": "Current official OpenAI documentation now directly supports GitHub Actions WIF for API authentication, so a stored API key would add avoidable secret persistence and rotation risk."
+    },
+    {
+      "decision": "Make credential eligibility protected-main-only with exact repository/ref/workflow/SHA verification and expose id-token: write only in the live job after an offline preflight job.",
+      "rationale": "Unmerged PR, candidate, task-branch, fork, artifact/cache, or user-selected executable code must never be able to obtain an OpenAI credential."
+    },
+    {
+      "decision": "Add forward-only hwm-openai-live-request/v1 and hwm-openai-live-result/v1 interfaces without changing merged I09-P4 semantic schema meanings.",
+      "rationale": "The live credential/runtime boundary is a new concern and must not retroactively widen deterministic task-context or semantic transformation contracts."
+    },
+    {
+      "decision": "Fail closed to deterministic_task_context_only when WIF metadata/credential acquisition, provider execution, structured output, or deterministic verification fails.",
+      "rationale": "Live semantic availability is non-authoritative convenience and cannot degrade deterministic infrastructure or task-context correctness."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Store a project-scoped OpenAI API key in a GitHub Environment.",
+      "reason": "That was the allowed fallback, but it is unnecessary because current official OpenAI documentation now explicitly supports GitHub Actions WIF for API request authentication."
+    },
+    {
+      "alternative": "Use an organization Admin API key or a shared personal user key.",
+      "reason": "Both exceed least privilege and are explicitly forbidden by the task security boundary."
+    },
+    {
+      "alternative": "Run a live acceptance call from PR/candidate code.",
+      "reason": "Candidate code is untrusted and PR CI must stay offline and credential-free; any live proof can occur only after the exact boundary is merged to protected main and owner-side WIF mapping is activated."
+    },
+    {
+      "alternative": "Allow model tools, web/file search, code execution, MCP, or external functions.",
+      "reason": "Issue #62 authorizes no model tool surface; tools remain disabled/absent unless separately architecture-authorized."
+    }
+  ],
+  "changed_components": [
+    ".github/workflows/trusted-openai-live.yml",
+    "BUILD_STATUS.json",
+    "control/openai_live_boundary.py",
+    "docs/ADR/0005-trusted-openai-execution-boundary.md",
+    "knowledge-deltas/I09-0062.json",
+    "schemas/openai-live-request.v1.schema.json",
+    "schemas/openai-live-result.v1.schema.json",
+    "tests/security/test_trusted_openai_workflow.py",
+    "tests/test_openai_live_boundary.py"
+  ],
+  "tests": [
+    {
+      "name": "Offline OpenAI live-boundary tests",
+      "status": "pass",
+      "reference": "tests/test_openai_live_boundary.py in Infrastructure CI 31972874528"
+    },
+    {
+      "name": "Offline trusted-workflow security tests",
+      "status": "pass",
+      "reference": "tests/security/test_trusted_openai_workflow.py in Infrastructure CI 31972874528"
+    },
+    {
+      "name": "Initial full Infrastructure CI before canonical I09-0062 Knowledge Delta",
+      "status": "fail",
+      "reference": "Infrastructure CI 31972874528; sole failure was missing knowledge-deltas/I09-0062.json"
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "commit",
+      "reference": "claim bookkeeping",
+      "repo": "Dsamofalov/hwm-control",
+      "sha": "847db7396c27f7729037e57a74f6b3b9d69aba72"
+    },
+    {
+      "kind": "commit",
+      "reference": "initial trusted boundary candidate",
+      "repo": "Dsamofalov/hwm-control",
+      "sha": "87dbf3e6ed6d05c25ed593aaaf61d0b75b6bfdfb"
+    },
+    {
+      "kind": "pull_request",
+      "reference": "Dsamofalov/hwm-control#63"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Infrastructure CI 31972874528"
+    },
+    {
+      "kind": "public_ref",
+      "reference": "OpenAI official GitHub Actions WIF and workload identity token exchange documentation verified 2026-08-16"
+    }
+  ],
+  "followups": [
+    "After the implementation is merged to protected main, an OpenAI organization owner must configure/read back the dedicated project/service-account WIF provider and exact service-account mapping, exact api.model.request permission, finite project spend limit/alert, model permissions, and rate limits before any live acceptance request is eligible."
+  ],
+  "unresolved": [
+    "Owner-side OpenAI WIF/project activation and authoritative metadata readback are not available through the current GitHub/OpenAI tool identity; no WIF provider mapping, project spend/model/rate controls, or successful protected-main token exchange has therefore been proven yet. Issue #62 must remain open and claimed until that activation evidence exists."
+  ]
+}

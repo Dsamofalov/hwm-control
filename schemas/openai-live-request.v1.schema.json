@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hwm:schema:openai-live-request:v1",
+  "title": "HWM trusted OpenAI live request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "hwm-openai-live-request/v1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^olr1-[0-9a-f]{64}$"
+    },
+    "semantic_input": {
+      "type": "object"
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trust_policy": {
+          "const": "hwm-openai-protected-main/v1"
+        },
+        "auth_mechanism": {
+          "const": "github-actions-oidc-openai-wif/v1"
+        },
+        "oidc_issuer": {
+          "const": "https://token.actions.githubusercontent.com"
+        },
+        "oidc_audience": {
+          "const": "https://api.openai.com/v1"
+        },
+        "oidc_subject": {
+          "const": "repo:Dsamofalov@25666939/hwm-control@1333400971:ref:refs/heads/main"
+        },
+        "repository": {
+          "const": "Dsamofalov/hwm-control"
+        },
+        "ref": {
+          "const": "refs/heads/main"
+        },
+        "workflow_ref": {
+          "const": "Dsamofalov/hwm-control/.github/workflows/trusted-openai-live.yml@refs/heads/main"
+        },
+        "token_endpoint": {
+          "const": "https://auth.openai.com/oauth/token"
+        },
+        "api_endpoint": {
+          "const": "https://api.openai.com/v1/responses"
+        },
+        "required_wif_scope": {
+          "const": [
+            "api.model.request"
+          ]
+        },
+        "store": {
+          "const": false
+        },
+        "tools": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "public_data_preflight": {
+          "const": "fail_closed_before_token_exchange"
+        },
+        "verifier_order": {
+          "const": "after_provider_response_before_acceptance"
+        },
+        "raw_prompt_logging": {
+          "const": false
+        },
+        "raw_output_logging": {
+          "const": false
+        },
+        "raw_io_artifacts_or_cache": {
+          "const": false
+        },
+        "token_persistence": {
+          "const": false
+        },
+        "deterministic_fallback": {
+          "const": "deterministic_task_context_only"
+        }
+      },
+      "required": [
+        "trust_policy",
+        "auth_mechanism",
+        "oidc_issuer",
+        "oidc_audience",
+        "oidc_subject",
+        "repository",
+        "ref",
+        "workflow_ref",
+        "token_endpoint",
+        "api_endpoint",
+        "required_wif_scope",
+        "store",
+        "tools",
+        "public_data_preflight",
+        "verifier_order",
+        "raw_prompt_logging",
+        "raw_output_logging",
+        "raw_io_artifacts_or_cache",
+        "token_persistence",
+        "deterministic_fallback"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "request_id",
+    "semantic_input",
+    "execution"
+  ]
+}

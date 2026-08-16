@@ -1,0 +1,113 @@
+name: Trusted OpenAI Live
+
+on:
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: Exact protected live-request identity
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trusted-openai-live
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    if: >-
+      github.repository == 'Dsamofalov/hwm-control' &&
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.ref_protected
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact protected workflow SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Validate inert request identity
+        shell: bash
+        env:
+          REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          case "$REQUEST_ID" in
+            olr1-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]* ) ;;
+            * ) echo "invalid request identity" >&2; exit 1 ;;
+          esac
+          test "${#REQUEST_ID}" -eq 69
+      - name: Install contract validator
+        run: python -m pip install --disable-pip-version-check 'jsonschema==4.23.0'
+      - name: Fail-closed public-data and deterministic-context preflight
+        env:
+          HWM_RUNTIME_REPOSITORY: ${{ github.repository }}
+          HWM_RUNTIME_REF: ${{ github.ref }}
+          HWM_RUNTIME_WORKFLOW_REF: ${{ github.workflow_ref }}
+          HWM_RUNTIME_EVENT_NAME: ${{ github.event_name }}
+          HWM_RUNTIME_SHA: ${{ github.sha }}
+          REQUEST_ID: ${{ inputs.request_id }}
+        run: >-
+          python control/openai_live_boundary.py preflight
+          --request-id "$REQUEST_ID"
+          --protected-main-sha "$GITHUB_SHA"
+
+  live:
+    needs: preflight
+    if: >-
+      github.repository == 'Dsamofalov/hwm-control' &&
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.ref_protected
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact protected workflow SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Install contract validator
+        run: python -m pip install --disable-pip-version-check 'jsonschema==4.23.0'
+      - name: Reverify exact protected main before OIDC exposure
+        shell: python
+        env:
+          GH_READ_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN_SHA: ${{ github.sha }}
+        run: |
+          import json
+          import os
+          import urllib.request
+
+          request = urllib.request.Request(
+              "https://api.github.com/repos/Dsamofalov/hwm-control/git/ref/heads/main",
+              headers={
+                  "Accept": "application/vnd.github+json",
+                  "Authorization": "Bearer " + os.environ["GH_READ_TOKEN"],
+                  "X-GitHub-Api-Version": "2022-11-28",
+              },
+          )
+          with urllib.request.urlopen(request, timeout=15) as response:
+              payload = json.load(response)
+          observed = payload["object"]["sha"]
+          expected = os.environ["EXPECTED_MAIN_SHA"]
+          if observed != expected:
+              raise SystemExit("protected main moved before credential boundary")
+      - name: Execute protected WIF boundary
+        env:
+          REQUEST_ID: ${{ inputs.request_id }}
+          OPENAI_IDENTITY_PROVIDER_ID: ${{ vars.OPENAI_IDENTITY_PROVIDER_ID }}
+          OPENAI_SERVICE_ACCOUNT_ID: ${{ vars.OPENAI_SERVICE_ACCOUNT_ID }}
+          HWM_RUNTIME_REPOSITORY: ${{ github.repository }}
+          HWM_RUNTIME_REF: ${{ github.ref }}
+          HWM_RUNTIME_WORKFLOW_REF: ${{ github.workflow_ref }}
+          HWM_RUNTIME_EVENT_NAME: ${{ github.event_name }}
+          HWM_RUNTIME_SHA: ${{ github.sha }}
+        run: >-
+          python control/openai_live_boundary.py execute
+          --request-id "$REQUEST_ID"
+          --protected-main-sha "$GITHUB_SHA"
