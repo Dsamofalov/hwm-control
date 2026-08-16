@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hwm.local/schemas/task-context-stage-result.v1.schema.json",
+  "title": "hwm-task-context-stage-result/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_id",
+    "status",
+    "request_fingerprint",
+    "repository",
+    "transport_issue",
+    "observations",
+    "source_request",
+    "compiler",
+    "artifact",
+    "idempotent_replay",
+    "error",
+    "transport"
+  ],
+  "properties": {
+    "schema": {"const": "hwm-task-context-stage-result/v1"},
+    "request_id": {"type": "string", "pattern": "^tcs1-[0-9a-f]{64}$"},
+    "status": {"enum": ["success", "error"]},
+    "request_fingerprint": {"$ref": "#/$defs/sha256"},
+    "repository": {"const": "Dsamofalov/hwm-context"},
+    "transport_issue": {"const": 27},
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["control_main", "context_main", "product_main", "issue_snapshot_sha256", "project_state", "historical_ledger", "knowledge_deltas"],
+      "properties": {
+        "control_main": {"$ref": "#/$defs/sha1"},
+        "context_main": {"$ref": "#/$defs/sha1"},
+        "product_main": {"$ref": "#/$defs/sha1"},
+        "issue_snapshot_sha256": {"$ref": "#/$defs/sha256"},
+        "project_state": {"$ref": "#/$defs/exact_blob"},
+        "historical_ledger": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["commit", "claims", "conflicts"],
+          "properties": {
+            "commit": {"$ref": "#/$defs/sha1"},
+            "claims": {"$ref": "#/$defs/exact_blob"},
+            "conflicts": {"$ref": "#/$defs/exact_blob"}
+          }
+        },
+        "knowledge_deltas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["task_key", "commit", "path", "blob_sha", "content_sha256"],
+            "properties": {
+              "task_key": {"type": "string", "pattern": "^I[0-9]{2}-[0-9]{4}$"},
+              "commit": {"$ref": "#/$defs/sha1"},
+              "path": {"type": "string", "pattern": "^knowledge-deltas/I[0-9]{2}-[0-9]{4}\\.json$"},
+              "blob_sha": {"$ref": "#/$defs/sha1"},
+              "content_sha256": {"$ref": "#/$defs/sha256"}
+            }
+          }
+        }
+      }
+    },
+    "source_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id", "request_sha256"],
+      "properties": {
+        "request_id": {"type": "string", "pattern": "^tcr1-[0-9a-f]{64}$"},
+        "request_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "compiler": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "compiler_blob_sha", "core_blob_sha", "request_schema_blob_sha", "pack_schema_blob_sha", "serialization_profile", "compile_pass_count", "byte_equal"],
+      "properties": {
+        "repository": {"const": "Dsamofalov/hwm-control"},
+        "commit": {"$ref": "#/$defs/sha1"},
+        "compiler_blob_sha": {"$ref": "#/$defs/sha1"},
+        "core_blob_sha": {"$ref": "#/$defs/sha1"},
+        "request_schema_blob_sha": {"$ref": "#/$defs/sha1"},
+        "pack_schema_blob_sha": {"$ref": "#/$defs/sha1"},
+        "serialization_profile": {"const": "hwm-canonical-json/v1"},
+        "compile_pass_count": {"type": "integer", "minimum": 0, "maximum": 2},
+        "byte_equal": {"type": "boolean"}
+      }
+    },
+    "artifact": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["byte_length", "context_sha256", "git_blob_sha", "unattached", "readback_byte_equal", "readback_sha256", "readback_git_blob_sha"],
+          "properties": {
+            "byte_length": {"type": "integer", "minimum": 1, "maximum": 4194304},
+            "context_sha256": {"$ref": "#/$defs/sha256"},
+            "git_blob_sha": {"$ref": "#/$defs/sha1"},
+            "unattached": {"const": true},
+            "readback_byte_equal": {"const": true},
+            "readback_sha256": {"$ref": "#/$defs/sha256"},
+            "readback_git_blob_sha": {"$ref": "#/$defs/sha1"}
+          }
+        }
+      ]
+    },
+    "idempotent_replay": {"type": "boolean"},
+    "error": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message", "retryable"],
+          "properties": {
+            "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$"},
+            "message": {"type": "string", "minLength": 1, "maxLength": 240},
+            "retryable": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "transport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_comment_id", "result_author_login", "result_author_id", "workflow_repository", "workflow_run_id", "event_name"],
+      "properties": {
+        "request_comment_id": {"type": "integer", "minimum": 1},
+        "result_author_login": {"const": "github-actions[bot]"},
+        "result_author_id": {"const": 41898282},
+        "workflow_repository": {"const": "Dsamofalov/hwm-context"},
+        "workflow_run_id": {"type": "integer", "minimum": 1},
+        "event_name": {"const": "issue_comment"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "success"}}},
+      "then": {
+        "properties": {
+          "artifact": {"type": "object"},
+          "error": {"type": "null"},
+          "compiler": {"properties": {"compile_pass_count": {"const": 2}, "byte_equal": {"const": true}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "error"}}},
+      "then": {"properties": {"error": {"type": "object"}}}
+    }
+  ],
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "exact_blob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "path", "blob_sha", "content_sha256"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "commit": {"$ref": "#/$defs/sha1"},
+        "path": {"type": "string", "minLength": 1},
+        "blob_sha": {"$ref": "#/$defs/sha1"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}
