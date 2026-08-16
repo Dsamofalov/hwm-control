@@ -24,7 +24,7 @@ class TaskContextStageContractTests(unittest.TestCase):
         self.assertEqual(result["title"], "hwm-task-context-stage-result/v1")
         self.assertFalse(request["additionalProperties"])
         self.assertFalse(result["additionalProperties"])
-        self.assertEqual(request["properties"]["source_request"]["$ref"], "task-context-request.v1.schema.json")
+        self.assertEqual(request["properties"]["source_request"]["$ref"], "urn:hwm:schema:task-context-request:v1")
         self.assertEqual(request["properties"]["repository"]["const"], "Dsamofalov/hwm-context")
         self.assertEqual(request["properties"]["transport_issue"]["const"], 27)
         self.assertEqual(request["properties"]["compiler"]["properties"]["max_blob_bytes"]["const"], 4194304)
