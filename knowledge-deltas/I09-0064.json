@@ -34,6 +34,13 @@
         {"kind": "public_ref", "reference": "docs/ADR/0005-trusted-openai-execution-boundary.md"},
         {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#63"}
       ]
+    },
+    {
+      "statement": "The first controlled-publisher architecture candidate was c685cdf8acfb6e3ecb741724063c1aaf71a37bda and exact-head Infrastructure CI run 31976572475 completed successfully.",
+      "provenance": [
+        {"kind": "commit", "reference": "controlled-publisher architecture candidate", "repo": "Dsamofalov/hwm-control", "sha": "c685cdf8acfb6e3ecb741724063c1aaf71a37bda"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 31976572475"}
+      ]
     }
   ],
   "decisions": [
@@ -85,8 +92,8 @@
   "tests": [
     {
       "name": "Controlled-publisher dispatched Infrastructure CI on architecture candidate",
-      "status": "not_run",
-      "reference": "Exact run id is recorded after controlled publication and then this delta is finalized before merge."
+      "status": "pass",
+      "reference": "run 31976572475; exact head c685cdf8acfb6e3ecb741724063c1aaf71a37bda"
     }
   ],
   "evidence": [
@@ -94,6 +101,8 @@
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#62"},
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#50"},
     {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#63"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 31976572475"},
+    {"kind": "commit", "reference": "controlled-publisher architecture candidate", "repo": "Dsamofalov/hwm-control", "sha": "c685cdf8acfb6e3ecb741724063c1aaf71a37bda"},
     {"kind": "public_ref", "reference": "Owner-approved HWM_AUTONOMOUS_INFRA_SPEC.md v0.4 semantic/no-spend amendment dated 2026-08-17"}
   ],
   "followups": [
