@@ -24,7 +24,7 @@
     "expected_control_main": {"$ref": "#/$defs/sha1"},
     "expected_context_main": {"$ref": "#/$defs/sha1"},
     "expected_product_main": {"$ref": "#/$defs/sha1"},
-    "source_request": {"$ref": "task-context-request.v1.schema.json"},
+    "source_request": {"$ref": "urn:hwm:schema:task-context-request:v1"},
     "expectations": {
       "type": "object",
       "additionalProperties": false,
