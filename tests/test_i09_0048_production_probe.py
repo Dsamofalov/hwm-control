@@ -3,6 +3,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 from control import task_context_compiler as tc
+from control import task_context_core as core
 
 CONTROL="Dsamofalov/hwm-control"; CONTEXT="Dsamofalov/hwm-context"; PRODUCT="Dsamofalov/hwm_predictor"
 CH="3acce6d4353f1922bcdbc7c9f43d7d0176ddd6e3"; XH="202bbf5875dcd429d856c8d13d3946e4fee1329f"; PH="8fd669336b36064e842252d69fb4016cc526a9d4"
@@ -52,7 +53,7 @@ class Probe(unittest.TestCase):
   with self.assertRaisesRegex(tc.ExactSourceMismatch,"project.state"): tc.compile_task_context(bad,p)
   bad=copy.deepcopy(req); bad["historical_ledger"]["claims"]["blob_sha"]="0"*40; bad["request_id"]=tc.expected_request_id(bad)
   with self.assertRaisesRegex(tc.ExactSourceMismatch,"historical.claims"): tc.compile_task_context(bad,p)
-  bad=copy.deepcopy(req); bad["issue_snapshot"]["body_sha256"]="0"*64; bad["issue_snapshot"]["snapshot_sha256"]=tc.issue_snapshot_digest(bad["issue_snapshot"]); bad["freshness"]["issue_snapshot_sha256"]=bad["issue_snapshot"]["snapshot_sha256"]; bad["request_id"]=tc.expected_request_id(bad)
+  bad=copy.deepcopy(req); bad["issue_snapshot"]["body_sha256"]="0"*64; bad["issue_snapshot"]["snapshot_sha256"]=core.issue_snapshot_digest(bad["issue_snapshot"]); bad["freshness"]["issue_snapshot_sha256"]=bad["issue_snapshot"]["snapshot_sha256"]; bad["request_id"]=tc.expected_request_id(bad)
   with self.assertRaisesRegex(tc.CompilationError,"Issue snapshot stale or mismatched"): tc.compile_task_context(bad,p)
   bad=copy.deepcopy(req); bad["knowledge_deltas"]["inputs"][-1]["content_sha256"]="0"*64; bad["request_id"]=tc.expected_request_id(bad)
   with self.assertRaisesRegex(tc.ExactSourceMismatch,"knowledge.i09-0056"): tc.compile_task_context(bad,p)
