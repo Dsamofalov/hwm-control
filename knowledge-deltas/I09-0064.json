@@ -1,0 +1,113 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 64,
+  "goal": "Reconcile I09 from a mandatory live-provider activation DAG to a dialog-driven, provider-neutral semantic maintenance architecture with external-spend default deny while preserving deterministic task-context correctness and historical provider-boundary evidence.",
+  "verified_facts": [
+    {
+      "statement": "Architecture Issue #64 was claimed from exact protected hwm-control/main 7b0aba37a81099da44bb3b702c558f8f2aa71ff0 on branch agent/infra-0064-i09-semantic-architecture-reconciliation only after Issue #62 was relinquished from claimed to blocked, so there is no competing active owner.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#64 claim record"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#62 ownership-normalization record"}
+      ]
+    },
+    {
+      "statement": "PR #63 historically merged the protected-main OpenAI WIF boundary at main SHA 7b0aba37a81099da44bb3b702c558f8f2aa71ff0 from exact final candidate 6c708c342cf0ae8e506c3466a0d68109cc198283, with PR-head Infrastructure CI 31973020315 and post-merge Infrastructure CI 31973057291 successful; the merge message and Issue #62 record explicitly left owner-side activation outstanding.",
+      "provenance": [
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#63"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 31973020315"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 31973057291"},
+        {"kind": "commit", "reference": "PR #63 merge/protected main", "repo": "Dsamofalov/hwm-control", "sha": "7b0aba37a81099da44bb3b702c558f8f2aa71ff0"}
+      ]
+    },
+    {
+      "statement": "At reconciliation start the Trusted OpenAI Live workflow had zero recorded runs and repository Environments inventory was empty. Repository Actions variable-name metadata was not accessible to the integration (403), so no variable-name presence or absence was inferred and no secret or credential value was read.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "GitHub Actions workflow-runs readback for workflow 335776599 on 2026-08-17: total_count=0"},
+        {"kind": "public_ref", "reference": "GitHub repository Environments readback on 2026-08-17: total_count=0"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#62 reconciliation evidence comment"}
+      ]
+    },
+    {
+      "statement": "ADR 0004 already makes semantic output derived_non_authoritative behind a deterministic verifier and keeps deterministic task context independently usable; ADR 0005 and PR #63 implement only a separately activated provider-specific boundary and do not prove provider authorization or activation.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "docs/ADR/0004-verified-semantic-transformation-contract.md"},
+        {"kind": "public_ref", "reference": "docs/ADR/0005-trusted-openai-execution-boundary.md"},
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#63"}
+      ]
+    },
+    {
+      "statement": "The first controlled-publisher architecture candidate was c685cdf8acfb6e3ecb741724063c1aaf71a37bda and exact-head Infrastructure CI run 31976572475 completed successfully.",
+      "provenance": [
+        {"kind": "commit", "reference": "controlled-publisher architecture candidate", "repo": "Dsamofalov/hwm-control", "sha": "c685cdf8acfb6e3ecb741724063c1aaf71a37bda"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 31976572475"}
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Make external spend and credentialed provider activation default-deny and require a separate durable owner authorization containing provider/capability, finite monetary cap plus enforcement, allowed operations/models, data boundary, execution/credential boundary, duration/review date, and revocation/cleanup.",
+      "rationale": "Architecture or implementation references to a provider are not authorization to create billing, credentials, spend, or a new external data boundary. Missing authorization fields must fail closed without blocking deterministic infrastructure progress."
+    },
+    {
+      "decision": "Keep deterministic retrieval, exact task-context materialization, provenance, coverage, and deterministic validation as the mandatory I09 correctness path; provider absence is not an I09/I10+ blocker.",
+      "rationale": "The deterministic path is already authoritative for source identity and correctness and ADR 0004 explicitly makes semantic availability convenience-only."
+    },
+    {
+      "decision": "Adopt a fresh browser-agent dialogue over one immutable semantic batch manifest as the initial semantic/wiki transport, with one READY Issue, one manifest, one conversation, one branch, one PR, and one Knowledge Delta; the user only launches the canonical prompt and is not an acceptance gate.",
+      "rationale": "This preserves an auditable semantic maintenance path without creating provider credentials/spend and preserves the autonomous no-manual-check project model."
+    },
+    {
+      "decision": "Define hwm-semantic-batch-manifest/v1, hwm-semantic-batch-result/v1, and hwm-semantic-coverage/v1 as forward-only implementation targets with exact source/digest binding, total typed coverage, partition union proofs, prompt-injection/source-as-data controls, deterministic authority deny-list, and idempotent identity.",
+      "rationale": "The batch envelopes must make semantic transport provider-neutral and verifiable without retroactively widening ADR 0004 contracts."
+    },
+    {
+      "decision": "Retain PR #63, ADR 0005, the trusted WIF workflow, and hwm-openai-live implementation as dormant historical evidence while superseding their activation objective as an I09 readiness dependency.",
+      "rationale": "Historical implementation is valid audit evidence and may be reusable after a separate future provider opt-in, but it is neither completed activation nor current authorization."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Activate OpenAI/WIF, billing, credentials, or spend to complete the old #62/#50 DAG.",
+      "reason": "The owner explicitly did not authorize that path and deterministic I09 correctness does not depend on it."
+    },
+    {
+      "alternative": "Delete or rewrite ADR 0005, PR #63, or the historical I09-0062 Knowledge Delta.",
+      "reason": "That would destroy historical evidence instead of recording a forward architecture supersession."
+    },
+    {
+      "alternative": "Rewrite Issue #50 in place as the dialog-driven implementation task.",
+      "reason": "Its live-provider objective and dependency history should remain auditable; bounded replacement Issues preserve the migration."
+    },
+    {
+      "alternative": "Make the user manually inspect semantic sources, output, diff, CI, or merge.",
+      "reason": "The user is the trigger only; manual acceptance would regress the autonomous no-manual-check lifecycle."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "docs/INFRA_SPEC.md",
+    "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md",
+    "knowledge-deltas/I09-0064.json"
+  ],
+  "tests": [
+    {
+      "name": "Controlled-publisher dispatched Infrastructure CI on architecture candidate",
+      "status": "pass",
+      "reference": "run 31976572475; exact head c685cdf8acfb6e3ecb741724063c1aaf71a37bda"
+    }
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#64"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#62"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#50"},
+    {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#63"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 31976572475"},
+    {"kind": "commit", "reference": "controlled-publisher architecture candidate", "repo": "Dsamofalov/hwm-control", "sha": "c685cdf8acfb6e3ecb741724063c1aaf71a37bda"},
+    {"kind": "public_ref", "reference": "Owner-approved HWM_AUTONOMOUS_INFRA_SPEC.md v0.4 semantic/no-spend amendment dated 2026-08-17"}
+  ],
+  "followups": [
+    "After protected merge and exact post-merge CI, close #62 and #50 not_planned/superseded, delete the old #62 ownership branch, and create unclaimed replacement P5R1/P5R2 Issues with P5R1 READY and P5R2 blocked only on P5R1.",
+    "P5R1 implements the provider-neutral semantic batch contracts and deterministic verifier; P5R2 later runs the first verified semantic maintenance batch in a separate fresh dialogue."
+  ],
+  "unresolved": []
+}
