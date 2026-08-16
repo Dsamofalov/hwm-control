@@ -6,7 +6,7 @@ from control.state_reducer import reduce_project_state
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCT_SHA = "8fd669336b36064e842252d69fb4016cc526a9d4"
-CONTROL_SHA = "dd1edde8de42f620faa4e3a2d88f870bedaa0678"
+CONTROL_SHA = "3acce6d4353f1922bcdbc7c9f43d7d0176ddd6e3"
 RUN = 31727700552
 SUITE = 86074732000
 
@@ -33,7 +33,7 @@ class MaterializedProjectStateTests(unittest.TestCase):
         core = checkpoint("HWM / Core", 94546993956, 52198023145)
         full = checkpoint("HWM / Full", 94546273227, 52197856764)
         expected = reduce_project_state(
-            generated_at="2026-08-16T18:37:12Z",
+            generated_at="2026-08-16T19:27:45Z",
             provenance=[
                 {"kind": "git_ref", "repo": "Dsamofalov/hwm-control", "sha": CONTROL_SHA, "reference": "refs/heads/main"},
                 *product_provenance(),
