@@ -26,6 +26,78 @@
     "request_fingerprint": {"$ref": "#/$defs/sha256"},
     "repository": {"const": "Dsamofalov/hwm-context"},
     "transport_issue": {"const": 27},
+    "observations": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/observations"}]},
+    "source_request": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/source_request"}]},
+    "compiler": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/compiler"}]},
+    "artifact": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/artifact"}]},
+    "idempotent_replay": {"type": "boolean"},
+    "error": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message", "retryable"],
+          "properties": {
+            "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$"},
+            "message": {"type": "string", "minLength": 1, "maxLength": 240},
+            "retryable": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "transport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_comment_id", "result_author_login", "result_author_id", "workflow_repository", "workflow_run_id", "event_name"],
+      "properties": {
+        "request_comment_id": {"type": "integer", "minimum": 1},
+        "result_author_login": {"const": "github-actions[bot]"},
+        "result_author_id": {"const": 41898282},
+        "workflow_repository": {"const": "Dsamofalov/hwm-context"},
+        "workflow_run_id": {"type": "integer", "minimum": 1},
+        "event_name": {"const": "issue_comment"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "success"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "observations": {"$ref": "#/$defs/observations"},
+          "source_request": {"$ref": "#/$defs/source_request"},
+          "compiler": {
+            "allOf": [
+              {"$ref": "#/$defs/compiler"},
+              {"properties": {"compile_pass_count": {"const": 2}, "byte_equal": {"const": true}}}
+            ]
+          },
+          "artifact": {"$ref": "#/$defs/artifact"},
+          "error": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "error"}}, "required": ["status"]},
+      "then": {"properties": {"error": {"type": "object"}}}
+    }
+  ],
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "exact_blob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "path", "blob_sha", "content_sha256"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "commit": {"$ref": "#/$defs/sha1"},
+        "path": {"type": "string", "minLength": 1},
+        "blob_sha": {"$ref": "#/$defs/sha1"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
     "observations": {
       "type": "object",
       "additionalProperties": false,
@@ -89,83 +161,17 @@
       }
     },
     "artifact": {
-      "oneOf": [
-        {"type": "null"},
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["byte_length", "context_sha256", "git_blob_sha", "unattached", "readback_byte_equal", "readback_sha256", "readback_git_blob_sha"],
-          "properties": {
-            "byte_length": {"type": "integer", "minimum": 1, "maximum": 4194304},
-            "context_sha256": {"$ref": "#/$defs/sha256"},
-            "git_blob_sha": {"$ref": "#/$defs/sha1"},
-            "unattached": {"const": true},
-            "readback_byte_equal": {"const": true},
-            "readback_sha256": {"$ref": "#/$defs/sha256"},
-            "readback_git_blob_sha": {"$ref": "#/$defs/sha1"}
-          }
-        }
-      ]
-    },
-    "idempotent_replay": {"type": "boolean"},
-    "error": {
-      "oneOf": [
-        {"type": "null"},
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["code", "message", "retryable"],
-          "properties": {
-            "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$"},
-            "message": {"type": "string", "minLength": 1, "maxLength": 240},
-            "retryable": {"type": "boolean"}
-          }
-        }
-      ]
-    },
-    "transport": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["request_comment_id", "result_author_login", "result_author_id", "workflow_repository", "workflow_run_id", "event_name"],
+      "required": ["byte_length", "context_sha256", "git_blob_sha", "unattached", "readback_byte_equal", "readback_sha256", "readback_git_blob_sha"],
       "properties": {
-        "request_comment_id": {"type": "integer", "minimum": 1},
-        "result_author_login": {"const": "github-actions[bot]"},
-        "result_author_id": {"const": 41898282},
-        "workflow_repository": {"const": "Dsamofalov/hwm-context"},
-        "workflow_run_id": {"type": "integer", "minimum": 1},
-        "event_name": {"const": "issue_comment"}
-      }
-    }
-  },
-  "allOf": [
-    {
-      "if": {"properties": {"status": {"const": "success"}}},
-      "then": {
-        "properties": {
-          "artifact": {"type": "object"},
-          "error": {"type": "null"},
-          "compiler": {"properties": {"compile_pass_count": {"const": 2}, "byte_equal": {"const": true}}}
-        }
-      }
-    },
-    {
-      "if": {"properties": {"status": {"const": "error"}}},
-      "then": {"properties": {"error": {"type": "object"}}}
-    }
-  ],
-  "$defs": {
-    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "exact_blob": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["repository", "commit", "path", "blob_sha", "content_sha256"],
-      "properties": {
-        "repository": {"type": "string", "minLength": 1},
-        "commit": {"$ref": "#/$defs/sha1"},
-        "path": {"type": "string", "minLength": 1},
-        "blob_sha": {"$ref": "#/$defs/sha1"},
-        "content_sha256": {"$ref": "#/$defs/sha256"}
+        "byte_length": {"type": "integer", "minimum": 1, "maximum": 4194304},
+        "context_sha256": {"$ref": "#/$defs/sha256"},
+        "git_blob_sha": {"$ref": "#/$defs/sha1"},
+        "unattached": {"const": true},
+        "readback_byte_equal": {"const": true},
+        "readback_sha256": {"$ref": "#/$defs/sha256"},
+        "readback_git_blob_sha": {"$ref": "#/$defs/sha1"}
       }
     }
   }
