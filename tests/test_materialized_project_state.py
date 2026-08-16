@@ -6,7 +6,7 @@ from control.state_reducer import reduce_project_state
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCT_SHA = "8fd669336b36064e842252d69fb4016cc526a9d4"
-CONTROL_SHA = "3acce6d4353f1922bcdbc7c9f43d7d0176ddd6e3"
+CONTROL_SHA = "49fc7d9549a6f88ed3a2cd2dd9f6d94aa0c2306e"
 RUN = 31727700552
 SUITE = 86074732000
 
@@ -33,7 +33,7 @@ class MaterializedProjectStateTests(unittest.TestCase):
         core = checkpoint("HWM / Core", 94546993956, 52198023145)
         full = checkpoint("HWM / Full", 94546273227, 52197856764)
         expected = reduce_project_state(
-            generated_at="2026-08-16T19:27:45Z",
+            generated_at="2026-08-16T20:15:48Z",
             provenance=[
                 {"kind": "git_ref", "repo": "Dsamofalov/hwm-control", "sha": CONTROL_SHA, "reference": "refs/heads/main"},
                 *product_provenance(),
@@ -56,7 +56,7 @@ class MaterializedProjectStateTests(unittest.TestCase):
             last_post_merge_green={"status": "unknown", "reason": "No authoritative I03 post-merge checkpoint input is available."},
             last_live_evidenced={"status": "unknown", "reason": "No authoritative I03 live-evidence checkpoint input is available."},
             requirements={},
-            tasks={"ready": [], "claimed": [48], "blocked": [49, 50]},
+            tasks={"ready": [], "claimed": [49], "blocked": [50]},
             knowledge={"status": "unknown", "reason": "No authoritative I03 knowledge-health input is available."},
             graph={"status": "unknown", "reason": "No authoritative I03 graph-health input is available."},
         )
