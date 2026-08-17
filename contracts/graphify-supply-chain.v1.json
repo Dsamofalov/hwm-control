@@ -1,0 +1,19 @@
+{
+  "schema": "hwm-graphify-supply-chain/v1",
+  "upstream_repository": "Graphify-Labs/graphify",
+  "upstream_tag": "v0.9.38",
+  "upstream_commit": "10ad921b423b767dd8a947bbf0fbcc2e95038ad3",
+  "package": {
+    "name": "graphifyy",
+    "version": "0.9.38",
+    "accepted_artifact": {"kind":"wheel","filename":"graphifyy-0.9.38-py3-none-any.whl","sha256":"1335aa0805565279208a47059f8cb0994970ec3dd2155d753d12da425b9d7ee5"},
+    "rejected_artifacts": [{"kind":"sdist","filename":"graphifyy-0.9.38.tar.gz","sha256":"ec2f5ee490156c249f2fd5af7ea11d5ac95f7ee8155ac5889fa78709abd83c3c","reason":"sdist substitution is forbidden; HWM accepts only the reviewed wheel"}]
+  },
+  "license": {"expression":"Apache-2.0","retain":["LICENSE","LICENSE-MIT","NOTICE"]},
+  "runtime": {"implementation":"CPython","version":"3.12.10","platform":"linux-x86_64","runner_class":"GitHub-hosted disposable"},
+  "dependency_lock": {"source":"upstream uv.lock at exact upstream_commit","path":"uv.lock","lock_format_version":1,"lock_revision":3,"policy":"Select only the default dependency closure for CPython 3.12.10/linux-x86_64. Every selected direct/transitive distribution must be exact-versioned and verified against a sha256 recorded in the immutable lock. Optional extras and dev groups are forbidden. Build/extraction jobs must not perform floating resolution.","build_time_resolution":"forbidden","hashes_required":true,"optional_extras":[]},
+  "install": {"phase_a_network":"allow only pypi.org and files.pythonhosted.org for artifacts whose exact filename/version/hash is selected from this manifest plus the immutable default closure in upstream uv.lock","phase_b_network":"deny all egress before product checkout is parsed","procedure":["Create a fresh virtual environment with CPython 3.12.10.","Materialize the CPython-3.12.10/linux-x86_64 default closure from the immutable upstream uv.lock; fail if any artifact lacks an expected sha256.","Acquire only those exact hashed distributions and the accepted graphifyy wheel; reject sdists and unexpected filenames.","Install offline from the verified local wheelhouse with dependency resolution disabled.","Delete/disable network access, validate provider/remote-database environment deny policy, then run extraction."]},
+  "execution": {"mode":"structural-code-only","command":["python","-m","graphify","extract",".","--code-only","--no-cluster","--no-viz"],"cwd":"read-only product checkout root","product_code_execution":"forbidden","semantic_docs_models":"forbidden","mcp_server":"forbidden","remote_database_push":"forbidden"},
+  "provider_environment_deny": ["ANTHROPIC_API_KEY","AZURE_OPENAI_API_KEY","AZURE_OPENAI_ENDPOINT","AWS_ACCESS_KEY_ID","AWS_PROFILE","AWS_SECRET_ACCESS_KEY","AWS_SESSION_TOKEN","DATABASE_URL","DEEPSEEK_API_KEY","FALKORDB_HOST","FALKORDB_PASSWORD","FALKORDB_PORT","GEMINI_API_KEY","GOOGLE_API_KEY","GOOGLE_APPLICATION_CREDENTIALS","MOONSHOT_API_KEY","NEO4J_PASSWORD","NEO4J_URI","NEO4J_USERNAME","OLLAMA_HOST","OPENAI_API_KEY","OPENAI_BASE_URL","PGDATABASE","PGHOST","PGPASSWORD","PGPORT","PGUSER"],
+  "max_snapshot_bytes": 67108864
+}

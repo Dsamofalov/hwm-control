@@ -1,0 +1,7 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"HWM graph metadata v1",
+  "type":"object","additionalProperties":false,
+  "required":["schema","snapshot_sha256","product_sha","generated_at","node_count","edge_count"],
+  "properties":{"schema":{"const":"hwm-graph-metadata/v1"},"snapshot_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"product_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},"generated_at":{"type":"string","format":"date-time","description":"Observational only; excluded from canonical graph identity."},"workflow_run_id":{"type":["integer","null"],"minimum":1},"build_duration_seconds":{"type":["number","null"],"minimum":0},"node_count":{"type":"integer","minimum":0},"edge_count":{"type":"integer","minimum":0}}
+}
