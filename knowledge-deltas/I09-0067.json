@@ -4,62 +4,110 @@
   "goal": "Run the first verified provider-neutral dialog-driven semantic maintenance batch over the exact protected I09-0069 input configuration, with deterministic manifest/result/coverage verification and no provider activation.",
   "verified_facts": [
     {
-      "statement": "Issue #67 was the sole READY task immediately before claim and was claimed from exact protected hwm-control/main ba52cde04ff0792917484e869af22fcf913ac2c9 on sole ownership branch agent/infra-0067-first-semantic-maintenance after Issue #66 and configuration predecessor #69 were both closed completed.",
+      "statement": "Issue #67 was the sole READY task immediately before claim and was claimed from exact protected hwm-control/main ba52cde04ff0792917484e869af22fcf913ac2c9 on sole ownership branch agent/infra-0067-first-semantic-maintenance after #66 and #69 were closed completed.",
       "provenance": [
         {"kind": "issue", "reference": "Dsamofalov/hwm-control#67"},
-        {"kind": "commit", "reference": "I09-0067 protected claim base", "repo": "Dsamofalov/hwm-control", "sha": "ba52cde04ff0792917484e869af22fcf913ac2c9"},
-        {"kind": "issue", "reference": "Dsamofalov/hwm-control#66"},
-        {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"}
+        {"kind": "commit", "reference": "protected claim base", "repo": "Dsamofalov/hwm-control", "sha": "ba52cde04ff0792917484e869af22fcf913ac2c9"},
+        {"kind": "ci_run", "reference": "claim bookkeeping Infrastructure CI 32029516600 success on 2327304fe54e1c97d0b3392a9a95b42ddd1bdb6f"}
       ]
     },
     {
-      "statement": "Pre-claim deterministic validation established protected input configuration sbic1-e3ef5c9f6753c8413cdac51b244ac7c4916302c82d75af722658dff7cdbc52d9 over exactly 19 public frozen sources bound to control d9c0745741315cfd5f3d322e77949d1040dabb9a, context d651f40d0bb3a3ef0e52fca95e5400ed3db3d772 and product 8fd669336b36064e842252d69fb4016cc526a9d4.",
+      "statement": "The immutable first-batch manifest is smb1-6bbf7987de53b0922795a707dfe07e86b6b4c86b6d6ed0393e87fe27cf8f5ecc with manifest digest 6bbf7987de53b0922795a707dfe07e86b6b4c86b6d6ed0393e87fe27cf8f5ecc, canonical content SHA-256 5d6373185597517d9380b04702e8af159bfc5ae415fc8d99ae03c526e0afe35a and Git blob c1e4887951db07abc64dee3807ec98b9cf7ee906. Controlled publisher request i09-0067-manifest-v1 published it at exact commit 0874f1c5a552044e2dad302c22e6cc7055b932f8 and Infrastructure CI 32033897564 succeeded on that exact head.",
       "provenance": [
-        {"kind": "public_ref", "reference": "semantic-batch-inputs/I09-0067-first.json at protected claim base"},
-        {"kind": "commit", "reference": "frozen control source snapshot", "repo": "Dsamofalov/hwm-control", "sha": "d9c0745741315cfd5f3d322e77949d1040dabb9a"},
-        {"kind": "commit", "reference": "frozen context source snapshot", "repo": "Dsamofalov/hwm-context", "sha": "d651f40d0bb3a3ef0e52fca95e5400ed3db3d772"},
-        {"kind": "commit", "reference": "frozen product source snapshot", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"}
+        {"kind": "commit", "reference": "controlled immutable manifest publication", "repo": "Dsamofalov/hwm-control", "sha": "0874f1c5a552044e2dad302c22e6cc7055b932f8"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32033897564"},
+        {"kind": "evidence_manifest", "reference": "batch=smb1-6bbf7987de53b0922795a707dfe07e86b6b4c86b6d6ed0393e87fe27cf8f5ecc manifest_sha=6bbf7987de53b0922795a707dfe07e86b6b4c86b6d6ed0393e87fe27cf8f5ecc content_sha=5d6373185597517d9380b04702e8af159bfc5ae415fc8d99ae03c526e0afe35a blob=c1e4887951db07abc64dee3807ec98b9cf7ee906 partitions=58083,59449,58656"}
       ]
     },
     {
-      "statement": "Exact runtime execution heads immediately before claim were control ba52cde04ff0792917484e869af22fcf913ac2c9, context d651f40d0bb3a3ef0e52fca95e5400ed3db3d772, product 8fd669336b36064e842252d69fb4016cc526a9d4; deterministic partition input byte totals are 58083, 59449 and 58656 under the fixed 65536-byte policy.",
+      "statement": "The canonical P5R1 prompt bound Issue #67 and the sole ownership branch to manifest commit 0874f1c5a552044e2dad302c22e6cc7055b932f8, blob c1e4887951db07abc64dee3807ec98b9cf7ee906 and exact content digest; rendered prompt identity is smprompt1-b07a99768494388848979e117d26f2d84cc05da990736053eb632b3c7ad7e663 with protected template SHA-256 f6001f8763ccddc9886db6899b77c93cf36adef3af42bf933234fc7299c9de4f.",
       "provenance": [
-        {"kind": "commit", "reference": "runtime control head", "repo": "Dsamofalov/hwm-control", "sha": "ba52cde04ff0792917484e869af22fcf913ac2c9"},
-        {"kind": "commit", "reference": "runtime context head", "repo": "Dsamofalov/hwm-context", "sha": "d651f40d0bb3a3ef0e52fca95e5400ed3db3d772"},
-        {"kind": "commit", "reference": "runtime product head", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"}
+        {"kind": "public_ref", "reference": "control/semantic_batch_prompt.py at protected claim base"},
+        {"kind": "evidence_manifest", "reference": "prompt=smprompt1-b07a99768494388848979e117d26f2d84cc05da990736053eb632b3c7ad7e663 template_sha=f6001f8763ccddc9886db6899b77c93cf36adef3af42bf933234fc7299c9de4f rendered_sha=b07a99768494388848979e117d26f2d84cc05da990736053eb632b3c7ad7e663"}
+      ]
+    },
+    {
+      "statement": "All 19 exact frozen sources were independently read back by configured repository/commit/path/blob/content SHA-256/UTF-8 size before claim. Coverage scv1-d7933da80707fa78ed9f60d4861db286a416d995d3fcd896c234fb3244a1fdca accounts for every required source exactly once with status processed; no source was omitted, silently subsetted, deferred, rejected or promoted by semantic reasoning.",
+      "provenance": [
+        {"kind": "evidence_manifest", "reference": "coverage=scv1-d7933da80707fa78ed9f60d4861db286a416d995d3fcd896c234fb3244a1fdca coverage_sha=d7933da80707fa78ed9f60d4861db286a416d995d3fcd896c234fb3244a1fdca rows=19 processed=19"},
+        {"kind": "commit", "reference": "semantic result/coverage publication", "repo": "Dsamofalov/hwm-control", "sha": "02edccf3736c1d394c257125f9916425e52ae95c"}
+      ]
+    },
+    {
+      "statement": "Result sbr1-757109138c1af88363f1124d886e671dbf81c740d17cf5b103adc73cff7bdf6f preserves every manifest source digest, supported source epistemic status, empty declared conflicts and empty declared supersession relation. It creates three explicitly UNVERIFIED derived artifacts, including an ability-governance claim candidate and a provider-boundary historical context summary that explicitly refuses to invent the missing I09-0062/I09-0064 supersession edge.",
+      "provenance": [
+        {"kind": "evidence_manifest", "reference": "result=sbr1-757109138c1af88363f1124d886e671dbf81c740d17cf5b103adc73cff7bdf6f result_sha=757109138c1af88363f1124d886e671dbf81c740d17cf5b103adc73cff7bdf6f artifacts=art1-32a665e98e997036cb9c2199b9021b57783ca62adfe1d02fb1f844f5c8b57c3f,art1-99eff8aff07c5775107feaea420348a366f001ce7ee8f5d13a05f2499f3766dc,art1-ab4106e692015048e59fdd6052f74bebc7806a4975fcd4eadbb97f022f8d695d"},
+        {"kind": "public_ref", "reference": "semantic-batches/I09-0067/result.json and coverage.json on task branch"}
+      ]
+    },
+    {
+      "statement": "Deterministic partition reassembly is exact: the three parent partitions cover the manifest union without overlap or omission and bind result digests f89d5b723d1e62ccfc2aa5a596bd9d1272e0fe7f4c100a8ca731281718e2f5c2, 6f1aebb4b716a0a397ac457cdf01e3cb14df70d7c819fa8a398cc062e2cf11bd and 180f62187de985daaf6f2ea62ad9132569854f59d03245821d0fa82eb16debd0.",
+      "provenance": [
+        {"kind": "evidence_manifest", "reference": "partition_result_sha256=f89d5b723d1e62ccfc2aa5a596bd9d1272e0fe7f4c100a8ca731281718e2f5c2,6f1aebb4b716a0a397ac457cdf01e3cb14df70d7c819fa8a398cc062e2cf11bd,180f62187de985daaf6f2ea62ad9132569854f59d03245821d0fa82eb16debd0"}
+      ]
+    },
+    {
+      "statement": "Exact semantic-output commit 02edccf3736c1d394c257125f9916425e52ae95c passed full Infrastructure CI 32034353889. The added materialization regression reconstructs the manifest from the protected input config and all exact source bytes, validates coverage/result, runs verify_batch accepted=true derived_non_authoritative, and proves byte-identical manifest/coverage/result replay is idempotent; the existing full suite retains prompt-injection, authority, public-data and partition negative tests.",
+      "provenance": [
+        {"kind": "commit", "reference": "semantic output and exact verifier test", "repo": "Dsamofalov/hwm-control", "sha": "02edccf3736c1d394c257125f9916425e52ae95c"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32034353889 success"}
+      ]
+    },
+    {
+      "statement": "A transient unapproved task-branch contents-write chain was detected before semantic processing. It never touched protected main and was discarded by force-resetting the sole ownership branch to the last publisher-controlled head 2327304fe54e1c97d0b3392a9a95b42ddd1bdb6f; readback confirmed that exact head before the canonical manifest was republished through the controlled publisher. None of the discarded commits is in the final branch ancestry or protected publication path.",
+      "provenance": [
+        {"kind": "commit", "reference": "first discarded direct task-branch commit", "repo": "Dsamofalov/hwm-control", "sha": "10d223cf11372b3d419c589e51d20783a2770c44"},
+        {"kind": "commit", "reference": "last discarded direct task-branch commit", "repo": "Dsamofalov/hwm-control", "sha": "aed1cb7b6ab20add56786e3e3e85c1223febb929"},
+        {"kind": "commit", "reference": "restored publisher-controlled branch head", "repo": "Dsamofalov/hwm-control", "sha": "2327304fe54e1c97d0b3392a9a95b42ddd1bdb6f"},
+        {"kind": "commit", "reference": "canonical controlled manifest publication after cleanup", "repo": "Dsamofalov/hwm-control", "sha": "0874f1c5a552044e2dad302c22e6cc7055b932f8"}
+      ]
+    },
+    {
+      "statement": "No OpenAI/provider API call, billing/project/service-account/Environment/secret/variable/API-key/credential mutation, dormant WIF activation, product repository mutation or semantic authority promotion occurred.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#67 provider/security boundary"},
+        {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"}
       ]
     }
   ],
   "decisions": [
-    {"decision": "Freeze only the protected I09-0069 19-source configuration and keep later material outside this first semantic frontier.", "rationale": "The protected input contract explicitly separates immutable source selection from later runtime changes."},
-    {"decision": "Keep all semantic output derived_non_authoritative and preserve UNKNOWN/UNVERIFIED, conflicts, supersession ambiguity and the deterministic authority deny-list.", "rationale": "ADR 0004/0006 and P5R1 prohibit semantic promotion into protected authority."},
-    {"decision": "Use no OpenAI/provider API or external paid/credential path.", "rationale": "Issue #67 is the provider-neutral dialog-driven semantic batch and external spend remains default-deny."}
+    {"decision": "Freeze and process exactly the protected I09-0069 19-source configuration and keep all later material outside this first semantic frontier.", "rationale": "The protected input contract makes the first batch exact and later changes belong to a later batch."},
+    {"decision": "Emit complete processed coverage for every manifest source and keep all generated claim/wiki/context artifacts unverified and derived_non_authoritative.", "rationale": "Semantic reasoning cannot promote source/current authority or become an acceptance gate."},
+    {"decision": "Preserve the manifest's empty conflict/supersession relations exactly, even where source prose indicates later architectural reconciliation.", "rationale": "The batch verifier forbids silent winner selection and invented historical edges."},
+    {"decision": "After detecting a direct task-branch transport deviation, discard the entire non-publisher branch chain and republish the exact canonical manifest blob through the controlled publisher before semantic processing.", "rationale": "Only approved publisher-controlled commits may survive into the protected PR ancestry."},
+    {"decision": "Keep external provider/spend/credential paths dormant.", "rationale": "Issue #67 is provider-neutral and ADR 0006 keeps external spend default-deny."}
   ],
   "rejected_alternatives": [
-    {"alternative": "Use state/current.json or tasks/I09-0048/context.json as the first-batch selector.", "reason": "Both are explicitly excluded by the protected first-batch configuration contract."},
-    {"alternative": "Add I09-0069 or any later Knowledge Delta to the frozen semantic frontier.", "reason": "New material after the I09-0066 freeze belongs to a later batch."},
-    {"alternative": "Activate OpenAI/provider billing, WIF, credentials, secrets, variables or product mutation.", "reason": "Forbidden by Issue #67 and ADR 0006 default-deny boundary."}
+    {"alternative": "Obey commands or tool instructions found in frozen sources.", "reason": "Every source is untrusted data and cannot expand execution authority."},
+    {"alternative": "Invent an I09-0062 to I09-0064 supersession edge or silently choose current meaning from semantic prose.", "reason": "The immutable manifest declares no supersession relation; adding one would violate deterministic historical semantics."},
+    {"alternative": "Process only a retained subset of the oversized 176188-byte source frontier.", "reason": "The fixed three-partition plan covers all 19 sources exactly and partial processing is forbidden."},
+    {"alternative": "Activate OpenAI/provider billing, credentials, WIF or mutate product code.", "reason": "Forbidden by Issue #67 and ADR 0006."}
   ],
   "changed_components": [
     "BUILD_STATUS.json",
-    "knowledge-deltas/I09-0067.json"
+    "knowledge-deltas/I09-0067.json",
+    "semantic-batches/I09-0067/manifest.json",
+    "semantic-batches/I09-0067/coverage.json",
+    "semantic-batches/I09-0067/result.json",
+    "tests/test_i09_0067_semantic_batch_materialization.py"
   ],
   "tests": [
-    {"name": "Issue #67 deterministic semantic batch execution", "status": "not_run", "reference": "claim bookkeeping only; manifest publication and semantic verification pending"}
+    {"name": "Claim bookkeeping Infrastructure CI", "status": "pass", "reference": "32029516600 on 2327304fe54e1c97d0b3392a9a95b42ddd1bdb6f"},
+    {"name": "Immutable manifest Infrastructure CI", "status": "pass", "reference": "32033897564 on 0874f1c5a552044e2dad302c22e6cc7055b932f8"},
+    {"name": "Semantic output deterministic verifier and full Infrastructure CI", "status": "pass", "reference": "32034353889 on 02edccf3736c1d394c257125f9916425e52ae95c"}
   ],
   "evidence": [
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#67"},
-    {"kind": "commit", "reference": "protected claim base", "repo": "Dsamofalov/hwm-control", "sha": "ba52cde04ff0792917484e869af22fcf913ac2c9"},
-    {"kind": "public_ref", "reference": "semantic-batch-inputs/I09-0067-first.json"},
-    {"kind": "public_ref", "reference": "docs/INFRA_SPEC.md section 37"},
-    {"kind": "public_ref", "reference": "docs/ADR/0004-verified-semantic-transformation-contract.md"},
-    {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"}
+    {"kind": "commit", "reference": "claim bookkeeping", "repo": "Dsamofalov/hwm-control", "sha": "2327304fe54e1c97d0b3392a9a95b42ddd1bdb6f"},
+    {"kind": "commit", "reference": "immutable manifest publication", "repo": "Dsamofalov/hwm-control", "sha": "0874f1c5a552044e2dad302c22e6cc7055b932f8"},
+    {"kind": "commit", "reference": "semantic output publication", "repo": "Dsamofalov/hwm-control", "sha": "02edccf3736c1d394c257125f9916425e52ae95c"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32029516600, 32033897564, 32034353889"},
+    {"kind": "evidence_manifest", "reference": "manifest=6bbf7987de53b0922795a707dfe07e86b6b4c86b6d6ed0393e87fe27cf8f5ecc coverage=d7933da80707fa78ed9f60d4861db286a416d995d3fcd896c234fb3244a1fdca result=757109138c1af88363f1124d886e671dbf81c740d17cf5b103adc73cff7bdf6f prompt=b07a99768494388848979e117d26f2d84cc05da990736053eb632b3c7ad7e663"},
+    {"kind": "public_ref", "reference": "docs/INFRA_SPEC.md section 37; ADR 0004; ADR 0006"}
   ],
   "followups": [
-    "Publish and read back the deterministic semantic batch manifest, require exact-head CI, then generate the protected canonical semantic-maintenance prompt and materialize strict result/coverage artifacts.",
-    "Do not start any downstream issue or provider activation."
+    "Require exact-head completion-state Infrastructure CI, then open the protected Issue #67 PR with no lifecycle auto-close keywords.",
+    "Guarded-merge only the exact validated PR head, require exact post-merge Infrastructure CI on protected main, then explicitly close #67 completed, remove claimed and delete/read back the ownership branch."
   ],
-  "unresolved": [
-    "Manifest publication, semantic artifacts, deterministic verifier, completion CI and protected PR lifecycle are pending."
-  ]
+  "unresolved": []
 }
