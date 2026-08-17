@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HWM graph snapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema","product_repository","product_sha","supply_chain","canonicalization","nodes","edges","canonical_payload_sha256"],
+  "properties": {
+    "schema": {"const":"hwm-graph-snapshot/v1"},
+    "product_repository": {"const":"Dsamofalov/hwm_predictor"},
+    "product_sha": {"type":"string","pattern":"^[0-9a-f]{40}$"},
+    "supply_chain": {"type":"object","additionalProperties":false,"required":["repository","tag","commit","package","package_version","artifact_sha256","python_version","mode"],"properties":{"repository":{"const":"Graphify-Labs/graphify"},"tag":{"const":"v0.9.38"},"commit":{"const":"10ad921b423b767dd8a947bbf0fbcc2e95038ad3"},"package":{"const":"graphifyy"},"package_version":{"const":"0.9.38"},"artifact_sha256":{"const":"1335aa0805565279208a47059f8cb0994970ec3dd2155d753d12da425b9d7ee5"},"python_version":{"const":"3.12.10"},"mode":{"const":"structural-code-only"}}},
+    "canonicalization": {"const":"hwm-graph-canonical/v1"},
+    "nodes": {"type":"array","maxItems":1000000,"items":{"$ref":"#/$defs/node"}},
+    "edges": {"type":"array","maxItems":3000000,"items":{"$ref":"#/$defs/edge"}},
+    "canonical_payload_sha256": {"type":"string","pattern":"^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "node": {"type":"object","additionalProperties":false,"required":["id","kind","path","qualified_name","start_line","end_line"],"properties":{"id":{"type":"string","pattern":"^[0-9a-f]{64}$"},"kind":{"type":"string","minLength":1,"maxLength":64},"path":{"type":"string","pattern":"^(?!/)(?!.*(?:^|/)\\.\\.?/)(?!.*\\\\).+$","maxLength":4096},"qualified_name":{"type":"string","maxLength":4096},"start_line":{"type":"integer","minimum":1},"end_line":{"type":"integer","minimum":1}}},
+    "edge": {"type":"object","additionalProperties":false,"required":["id","source","target","kind"],"properties":{"id":{"type":"string","pattern":"^[0-9a-f]{64}$"},"source":{"type":"string","pattern":"^[0-9a-f]{64}$"},"target":{"type":"string","pattern":"^[0-9a-f]{64}$"},"kind":{"type":"string","minLength":1,"maxLength":64}}}
+  }
+}

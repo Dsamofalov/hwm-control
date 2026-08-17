@@ -1,0 +1,28 @@
+{
+  "schema":"hwm-knowledge-delta/v1",
+  "task_id":72,
+  "goal":"Pin a reviewed Graphify structural-only supply chain and define deterministic, stale-safe, bounded HWM graph contracts without building a production graph.",
+  "verified_facts":[
+    {"statement":"I10-P0 started from protected hwm-control/main 76af748c24076ecd86e18e8c32faef237c7890a7 with Issue #72 READY/unclaimed; terminal I09 was complete and BUILD_STATUS had no active tasks or blockers.","provenance":[{"kind":"commit","reference":"protected claim base","repo":"Dsamofalov/hwm-control","sha":"76af748c24076ecd86e18e8c32faef237c7890a7"},{"kind":"issue","reference":"Dsamofalov/hwm-control#72"}]},
+    {"statement":"Reviewed upstream selection is Graphify-Labs/graphify v0.9.38 at commit 10ad921b423b767dd8a947bbf0fbcc2e95038ad3, PyPI graphifyy 0.9.38, with accepted wheel SHA-256 1335aa0805565279208a47059f8cb0994970ec3dd2155d753d12da425b9d7ee5; the known sdist is rejected.","provenance":[{"kind":"public_ref","reference":"Graphify-Labs/graphify v0.9.38 exact tag/source/lock/license/CLI/tests"},{"kind":"public_ref","reference":"PyPI graphifyy 0.9.38 distribution metadata"}]},
+    {"statement":"HWM structural mode is fixed to python -m graphify extract . --code-only --no-cluster --no-viz under exact CPython 3.12.10 with optional extras excluded, provider/remote-service environment denied, and network denied during extraction.","provenance":[{"kind":"public_ref","reference":"docs/ADR/0007-i10-graphify-supply-chain-and-graph-contracts.md"},{"kind":"public_ref","reference":"contracts/graphify-supply-chain.v1.json"}]},
+    {"statement":"Graph identity is derived from exact product SHA, exact supply chain/runtime/mode and canonical normalized structural nodes/edges; generated_at and workflow timing are separate observational metadata.","provenance":[{"kind":"public_ref","reference":"schemas/graph-snapshot.v1.schema.json and schemas/graph-metadata.v1.schema.json"}]},
+    {"statement":"Freshness is exact product-SHA equality only; stale/unhealthy/malformed/wrong-version/nondeterministic/incompatible graphs are rejected and consumers fall back deterministically to raw protected sources.","provenance":[{"kind":"public_ref","reference":"docs/ADR/0007-i10-graphify-supply-chain-and-graph-contracts.md"},{"kind":"public_ref","reference":"schemas/graph-health.v1.schema.json"}]},
+    {"statement":"No production graph, semantic/model/provider call, credential/billing activation, remote database push, persistent Graphify install, or product mutation occurred in P0.","provenance":[{"kind":"issue","reference":"Dsamofalov/hwm-control#72"}]}
+  ],
+  "decisions":[
+    {"decision":"Accept only the reviewed v0.9.38 wheel and exact default hashed lock closure; reject sdist substitution, extras and floating resolution.","rationale":"Package/runtime/dependency acquisition must be fail-closed and reproducible."},
+    {"decision":"Treat Graphify as derived navigation only and require exact requested product SHA equality before use.","rationale":"Graph material cannot become protected project authority."},
+    {"decision":"Canonicalize stable HWM nodes/edges independently of upstream byte ordering/IDs and require three clean fixture rebuilds in P1.","rationale":"Tree-sitter determinism alone does not prove upstream graph bytes are deterministic."},
+    {"decision":"Place future builder in hwm-lab, contracts/governance in hwm-control, snapshots in hwm-context, and future narrow publication authority in hwm-control.","rationale":"Existing trust/write boundaries are preserved without widening product or context authority."}
+  ],
+  "rejected_alternatives":[
+    {"alternative":"Use latest/unbounded Graphify or an observed release without package artifact evidence.","reason":"Release observations are not immutable package pins."},
+    {"alternative":"Allow semantic/docs/provider/MCP/database paths or provider autodetection.","reason":"Initial I10 mode is structural code only."},
+    {"alternative":"Treat latest/timestamp/branch-name graph as fresh.","reason":"Only exact product SHA equality is acceptable."},
+    {"alternative":"Publish a graph despite irreducible nondeterminism.","reason":"P1 must fail closed and continue via raw protected sources."}
+  ],
+  "changed_components":["BUILD_STATUS.json","contracts/graphify-supply-chain.v1.json","docs/ADR/0007-i10-graphify-supply-chain-and-graph-contracts.md","schemas/graph-snapshot.v1.schema.json","schemas/graph-metadata.v1.schema.json","schemas/graph-health.v1.schema.json","schemas/graph-query.v1.schema.json","tests/test_i10_0072_graph_contracts.py","knowledge-deltas/I10-0072.json"],
+  "tests":[{"name":"I10-P0 contract regression","status":"pass","reference":"local pre-publication: 4 passed; protected Infrastructure CI required"}],
+  "evidence":[{"kind":"issue","reference":"Dsamofalov/hwm-control#72"},{"kind":"public_ref","reference":"Graphify-Labs/graphify v0.9.38 exact source and PyPI graphifyy 0.9.38 artifacts"}]
+}

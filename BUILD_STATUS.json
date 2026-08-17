@@ -1,50 +1,12 @@
 {
-  "current_infrastructure_milestone": "I09",
+  "current_infrastructure_milestone": "I10",
   "completed_task_ids": [
-    "I00",
-    "I01",
-    "I02",
-    "I03-0021",
-    "I03-0003",
-    "I03-0004",
-    "I03-0025",
-    "I03-0005",
-    "I03-0028",
-    "I03-0006",
-    "I04-0007",
-    "I05-0008",
-    "I06-0009",
-    "I07-0010",
-    "I08-0035",
-    "I08-0037",
-    "I08-0040",
-    "I08-0042",
-    "I08-0038",
-    "I09-0045",
-    "I09-0046",
-    "I09-0047",
-    "I09-0054",
-    "I09-0056",
-    "I09-0048",
-    "I09-0049",
-    "I09-0064",
-    "I09-0066",
-    "I09-0069",
-    "I09-0067"
+    "I00","I01","I02","I03-0021","I03-0003","I03-0004","I03-0025","I03-0005","I03-0028","I03-0006","I04-0007","I05-0008","I06-0009","I07-0010","I08-0035","I08-0037","I08-0040","I08-0042","I08-0038","I09-0045","I09-0046","I09-0047","I09-0054","I09-0056","I09-0048","I09-0049","I09-0064","I09-0066","I09-0069","I09-0067","I10-0072"
   ],
   "active_task_ids": [],
   "current_schema_versions": {
-    "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
-    "job": "hwm-job/v1",
-    "result": "hwm-result/v1",
-    "task": "hwm-task/v1",
-    "claim": "hwm-claim/v1",
-    "knowledge_delta": "hwm-knowledge-delta/v1",
-    "project_state": "hwm-project-state/v2"
+    "bootstrap_baseline":"hwm-infra-baseline/bootstrap-v0","job":"hwm-job/v1","result":"hwm-result/v1","task":"hwm-task/v1","claim":"hwm-claim/v1","knowledge_delta":"hwm-knowledge-delta/v1","project_state":"hwm-project-state/v2","graph_snapshot":"hwm-graph-snapshot/v1","graph_metadata":"hwm-graph-metadata/v1","graph_health":"hwm-graph-health/v1","graph_query":"hwm-graph-query/v1"
   },
-  "exact_relevant_heads": {
-    "product_main_reference": "8fd669336b36064e842252d69fb4016cc526a9d4",
-    "authoritative_functional_checkpoint": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
-  },
+  "exact_relevant_heads": {"product_main_reference":"8fd669336b36064e842252d69fb4016cc526a9d4","authoritative_functional_checkpoint":"3df0d5ee4434d3cc401dba1b765a4dca068c15c1"},
   "blockers": []
 }

@@ -1,0 +1,8 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"HWM graph health v1",
+  "type":"object","additionalProperties":false,
+  "required":["schema","state","usable","requested_product_sha","snapshot_product_sha","reason_code"],
+  "properties":{"schema":{"const":"hwm-graph-health/v1"},"state":{"enum":["healthy_current","stale_product_sha","unsupported_schema","unsupported_upstream","malformed_snapshot","digest_mismatch","oversized_artifact","timeout_incomplete_build","nondeterministic_rebuild","incompatible_upstream_output"]},"usable":{"type":"boolean"},"requested_product_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},"snapshot_product_sha":{"type":["string","null"],"pattern":"^[0-9a-f]{40}$"},"reason_code":{"type":"string","minLength":1,"maxLength":128},"detail":{"type":"string","maxLength":4096}},
+  "allOf":[{"if":{"properties":{"state":{"const":"healthy_current"}},"required":["state"]},"then":{"properties":{"usable":{"const":true}}}},{"if":{"not":{"properties":{"state":{"const":"healthy_current"}},"required":["state"]}},"then":{"properties":{"usable":{"const":false}}}}]
+}
