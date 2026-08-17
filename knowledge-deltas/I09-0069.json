@@ -1,0 +1,59 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 69,
+  "goal": "Materialize the deterministic protected first semantic-batch input configuration required before Issue #67 can freeze and execute its first provider-neutral semantic maintenance batch.",
+  "verified_facts": [
+    {
+      "statement": "Issue #69 was the sole READY task at claim time; Issue #66 was closed/completed with PR #68 merged and exact post-merge Infrastructure CI 32019615824 successful on d9c0745741315cfd5f3d322e77949d1040dabb9a, while Issue #67 remained blocked and unclaimed.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#66"},
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#68"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32019615824"}
+      ]
+    },
+    {
+      "statement": "The owner-approved first-batch policy selects the architecture-authorized knowledge-health/coverage trigger, exact max_partition_utf8_bytes=65536, a frozen explicit Knowledge Delta frontier through I09-0066, and exact historical ledger sources claims/claims.jsonl and claims/conflicts.json; material after freeze belongs to a later batch.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
+        {"kind": "public_ref", "reference": "docs/INFRA_SPEC.md section 37"},
+        {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"}
+      ]
+    },
+    {
+      "statement": "The frozen source heads at claim are control=d9c0745741315cfd5f3d322e77949d1040dabb9a, context=d651f40d0bb3a3ef0e52fca95e5400ed3db3d772, product=8fd669336b36064e842252d69fb4016cc526a9d4; state/current.json is excluded from current lifecycle/DAG authority and the I09-0048 task-context pack is not a batch selector.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
+        {"kind": "commit", "reference": "frozen control source head", "repo": "Dsamofalov/hwm-control", "sha": "d9c0745741315cfd5f3d322e77949d1040dabb9a"},
+        {"kind": "commit", "reference": "frozen context source head", "repo": "Dsamofalov/hwm-context", "sha": "d651f40d0bb3a3ef0e52fca95e5400ed3db3d772"},
+        {"kind": "commit", "reference": "frozen product readback head", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"}
+      ]
+    }
+  ],
+  "decisions": [
+    {"decision": "Keep the immutable source/config snapshot separate from runtime exact-head readback and the future hwm-semantic-batch-manifest/v1 frozen in Issue #67.", "rationale": "Issue #69 cannot know its own future protected merge SHA and must not create a self-referential identity contract."},
+    {"decision": "Preserve existing P5R1 manifest/result/coverage and ADR 0004 meanings; add only a forward input-configuration contract and deterministic loader/materializer.", "rationale": "The remediation must select concrete inputs without widening already merged semantic contracts."},
+    {"decision": "Treat public-data admission as default deny and every configured source as untrusted data.", "rationale": "ADR 0004/0006 and INFRA_SPEC section 37 require public-safe semantic inputs and forbid source prose from becoming instructions."}
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Reuse I09-0048 task-context pack as the first-batch selector.", "reason": "It is bound to historical heads and is explicitly forbidden as the first-batch selector."},
+    {"alternative": "Select sources with a runtime glob or implicit current-main discovery.", "reason": "The first frontier must be an exact ordered protected snapshot."},
+    {"alternative": "Activate a provider, billing, credential, WIF, service account, secret or product mutation path.", "reason": "Issue #69 is deterministic provider-neutral configuration work only."}
+  ],
+  "changed_components": ["BUILD_STATUS.json", "knowledge-deltas/I09-0069.json"],
+  "tests": [
+    {"name": "Issue #69 implementation tests", "status": "not_run", "reference": "claim bookkeeping only; implementation pending"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
+    {"kind": "commit", "reference": "protected claim base", "repo": "Dsamofalov/hwm-control", "sha": "d9c0745741315cfd5f3d322e77949d1040dabb9a"},
+    {"kind": "public_ref", "reference": "docs/INFRA_SPEC.md section 37"},
+    {"kind": "public_ref", "reference": "docs/ADR/0004-verified-semantic-transformation-contract.md"},
+    {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"}
+  ],
+  "followups": [
+    "Materialize exact source hashes/IDs/frontier digest, implement the config loader/schema/artifact and focused tests, then require exact-head source and completion CI before protected PR/merge.",
+    "Keep Issue #67 blocked and unclaimed until Issue #69 is explicitly completed after exact post-merge CI."
+  ],
+  "unresolved": ["Implementation and exact source/completion CI are pending."]
+}
