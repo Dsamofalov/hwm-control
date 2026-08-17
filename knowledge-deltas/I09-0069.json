@@ -1,0 +1,95 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 69,
+  "goal": "Materialize the deterministic protected first semantic-batch input configuration required before Issue #67 can freeze and execute the first semantic maintenance batch.",
+  "verified_facts": [
+    {
+      "statement": "Issue #69 was the sole READY task at claim time; Issue #66 was closed/completed, PR #68 merged at d9c0745741315cfd5f3d322e77949d1040dabb9a, and post-merge Infrastructure CI 32019615824 succeeded on that exact merge SHA; Issue #67 remained blocked and unclaimed.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#66"},
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#68"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32019615824"}
+      ]
+    },
+    {
+      "statement": "The frozen first-batch configuration identity is sbic1-e3ef5c9f6753c8413cdac51b244ac7c4916302c82d75af722658dff7cdbc52d9. It binds 19 exact ordered public-disclosure-safe sources totaling 176188 UTF-8 bytes; the 17-KD frontier totals 174209 bytes with digest f7aa42bd6573a40e92dc61b755d17aac6a219d8218c8bdfca99cec2991bc9fad and full source frontier digest 0313558479287a3afa6025bd2dbc5ee65ac149eae184b7ab03f4e6f970245f57.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "semantic-batch-inputs/I09-0067-first.json"},
+        {"kind": "public_ref", "reference": "schemas/semantic-batch-input-config.v1.schema.json"}
+      ]
+    },
+    {
+      "statement": "The architecture-authorized first trigger is knowledge_health/coverage with exact zero previous accepted semantic batch/coverage inventory, exact source readback heads control=d9c0745741315cfd5f3d322e77949d1040dabb9a, context=d651f40d0bb3a3ef0e52fca95e5400ed3db3d772, product=8fd669336b36064e842252d69fb4016cc526a9d4, and trigger evidence digest 1a57aadca03dfe936b08d55de65602314a7b5aeb57e34fbeb3f7923f0eda8dd1.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
+        {"kind": "public_ref", "reference": "semantic-batch-inputs/I09-0067-first.json"},
+        {"kind": "public_ref", "reference": "docs/INFRA_SPEC.md section 37"}
+      ]
+    },
+    {
+      "statement": "The exact partition limit is 65536 UTF-8 bytes. The largest frozen source is 22048 bytes, so the first frontier has no oversized-single-source blocker; existing P5R1 PARTITION_SOURCE_OVERSIZE remains the fail-closed behavior if that invariant is violated.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "semantic-batch-inputs/I09-0067-first.json"},
+        {"kind": "public_ref", "reference": "control/semantic_batch_manifest.py"}
+      ]
+    },
+    {
+      "statement": "state/current.json is excluded from current lifecycle/DAG authority, tasks/I09-0048/context.json is excluded as a first-batch selector, later material belongs to a later batch, and the actual hwm-semantic-batch-manifest/v1 is intentionally materialized later by Issue #67 from exact runtime heads.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
+        {"kind": "public_ref", "reference": "control/semantic_batch_input_config.py"},
+        {"kind": "public_ref", "reference": "semantic-batch-inputs/I09-0067-first.json"}
+      ]
+    },
+    {
+      "statement": "The first implementation source CI 32026457447 failed closed on exact head d53d985ed6cf2002bee502ff950c9791fefa4a01 because the adapter omitted P5R1 source content and the in-progress KD used an invalid status spelling; neither failure was accepted as completion. The remediated exact-head source CI 32026746411 then succeeded on 2cbf25d45deb764f0d8573d018c06bafa73c04ea with full repository discovery: 419 tests passed.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Infrastructure CI 32026457447"},
+        {"kind": "commit", "reference": "failed initial implementation head", "repo": "Dsamofalov/hwm-control", "sha": "d53d985ed6cf2002bee502ff950c9791fefa4a01"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32026746411"},
+        {"kind": "commit", "reference": "validated remediated implementation head", "repo": "Dsamofalov/hwm-control", "sha": "2cbf25d45deb764f0d8573d018c06bafa73c04ea"}
+      ]
+    }
+  ],
+  "decisions": [
+    {"decision": "Add hwm-semantic-batch-input-config/v1 as a strict versioned configuration contract without changing P5R1 manifest/result/coverage semantics.", "rationale": "Issue #69 selects and validates exact protected inputs; Issue #67 owns the later frozen manifest and semantic maintenance execution."},
+    {"decision": "Bind every source to repository, exact source commit, path, Git blob SHA, content SHA-256, UTF-8 byte size, media type, stable source_id, public-data classification and deterministic ordering key.", "rationale": "This removes mutable glob/discovery and makes replay/source substitution fail closed."},
+    {"decision": "Keep runtime execution heads separate from immutable source heads.", "rationale": "This avoids a self-referential requirement to know Issue #69's future merge SHA while still making future manifest identity change when runtime heads change."},
+    {"decision": "Preserve the initial failed source CI as audit evidence and accept only the remediated exact-head green run as implementation validation.", "rationale": "The project completion model is fail closed: failed exact-head validation cannot be reinterpreted as success."}
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Use state/current.json or I09-0048 context pack as current selector/authority.", "reason": "Explicitly forbidden by the owner-approved Issue #69 policy."},
+    {"alternative": "Use a runtime glob or mutable main branch name to discover sources.", "reason": "The first frontier must be an exact protected snapshot with canonical identity."},
+    {"alternative": "Silently truncate, approximate-split, or raise the 65536-byte limit for an oversized source.", "reason": "P5R1 exact source partitioning is preserved and fails closed instead."},
+    {"alternative": "Proceed to completion after failed source CI 32026457447.", "reason": "The exact-head source gate found real contract defects; completion was withheld until remediation and green full discovery."}
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "control/semantic_batch.py",
+    "control/semantic_batch_input_config.py",
+    "knowledge-deltas/I09-0069.json",
+    "schemas/semantic-batch-input-config.v1.schema.json",
+    "semantic-batch-inputs/I09-0067-first.json",
+    "tests/test_semantic_batch_input_config.py"
+  ],
+  "tests": [
+    {"name": "Temporary exact frozen-source hash probe / full repository discovery", "status": "pass", "reference": "Infrastructure CI 32025001646; 410 tests passed; diagnostic probe commit was subsequently removed from the ownership branch"},
+    {"name": "Remediated Issue #69 exact-head source CI and full repository discovery", "status": "pass", "reference": "Infrastructure CI 32026746411 on 2cbf25d45deb764f0d8573d018c06bafa73c04ea; 419 tests passed"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
+    {"kind": "commit", "reference": "protected claim base", "repo": "Dsamofalov/hwm-control", "sha": "d9c0745741315cfd5f3d322e77949d1040dabb9a"},
+    {"kind": "commit", "reference": "frozen context source head", "repo": "Dsamofalov/hwm-context", "sha": "d651f40d0bb3a3ef0e52fca95e5400ed3db3d772"},
+    {"kind": "commit", "reference": "frozen product readback head", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32025001646"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32026457447"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32026746411"},
+    {"kind": "public_ref", "reference": "docs/ADR/0004-verified-semantic-transformation-contract.md"},
+    {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"}
+  ],
+  "followups": [
+    "After exact-head completion CI, complete protected PR review/merge/post-merge validation, explicitly close Issue #69 completed, delete its ownership branch, then reconcile Issue #67 blocked -> ready while leaving it unclaimed."
+  ],
+  "unresolved": []
+}

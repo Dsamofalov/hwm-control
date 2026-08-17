@@ -3,6 +3,12 @@ from control.semantic_batch_manifest import (
     canonical_bytes, classify_replay, expected_manifest_sha256, generate_manifest, git_blob_sha,
     sha256_bytes, stable_source_id, trigger_satisfied, validate_manifest, validate_source_readbacks,
 )
+from control.semantic_batch_input_config import (
+    INPUT_CONFIG_PATH, INPUT_CONFIG_SCHEMA, INPUT_CONFIG_SCHEMA_PATH, PARTITION_LIMIT,
+    canonical_source_frontier_sha256, expected_input_config_sha256,
+    generate_manifest_from_input_config, load_input_config, materialize_manifest_generator_inputs,
+    validate_input_config, validate_source_content_readbacks,
+)
 from control.semantic_batch_result import (
     build_artifact, expected_coverage_sha256, expected_result_sha256, finalize_coverage,
     finalize_result, validate_coverage, validate_result, verify_batch,
