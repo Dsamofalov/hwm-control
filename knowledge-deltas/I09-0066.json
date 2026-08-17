@@ -1,0 +1,154 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 66,
+  "goal": "Implement provider-neutral dialog-driven semantic batch contracts and deterministic verification from ADR 0006 without running a semantic batch or activating an external provider.",
+  "verified_facts": [
+    {
+      "statement": "The initial Issue #66 claim commit fcfb84e9cee8a9cec21adc6581d384c6fac84653 added I09-0066 to BUILD_STATUS active_task_ids without the canonical Knowledge Delta required by the established I06+ repository gate; Infrastructure CI run 32011636848 therefore failed exactly test_knowledge_delta_gate.KnowledgeDeltaGateTests.test_actual_repository_gate_is_part_of_full_unittest_discovery with missing knowledge-deltas/I09-0066.json.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#66"},
+        {"kind": "commit", "reference": "initial Issue #66 claim bookkeeping", "repo": "Dsamofalov/hwm-control", "sha": "fcfb84e9cee8a9cec21adc6581d384c6fac84653"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32011636848"}
+      ]
+    },
+    {
+      "statement": "Protected main 7347f25fe67de186c85c5a1ec0459c6ccffcc3b8 was green in Infrastructure CI run 31976745367, proving the first Issue #66 failure was claim-state bookkeeping specific rather than a pre-existing protected-main defect.",
+      "provenance": [
+        {"kind": "commit", "reference": "protected main before Issue #66", "repo": "Dsamofalov/hwm-control", "sha": "7347f25fe67de186c85c5a1ec0459c6ccffcc3b8"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 31976745367"}
+      ]
+    },
+    {
+      "statement": "Claim-state reconciliation used controlled publisher request i09-0066-claim-kd-reconciliation-v1 with exact-head CAS, producing ff17634dcb7a7dd84e25b8245c6fa7d96012f428 and green Infrastructure CI run 32017877506.",
+      "provenance": [
+        {"kind": "commit", "reference": "claim-state Knowledge Delta reconciliation", "repo": "Dsamofalov/hwm-control", "sha": "ff17634dcb7a7dd84e25b8245c6fa7d96012f428"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32017877506"},
+        {"kind": "public_ref", "reference": "publisher request/result i09-0066-claim-kd-reconciliation-v1 on Issue #66"}
+      ]
+    },
+    {
+      "statement": "Source implementation was published through controlled publisher request i09-0066-semantic-batch-source-v1 from exact expected head ff17634dcb7a7dd84e25b8245c6fa7d96012f428, producing source commit 6dfe910ea29b26012a1a941d2a730cd92f250883 and green Infrastructure CI run 32019116752.",
+      "provenance": [
+        {"kind": "commit", "reference": "Issue #66 semantic batch implementation source", "repo": "Dsamofalov/hwm-control", "sha": "6dfe910ea29b26012a1a941d2a730cd92f250883"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32019116752"},
+        {"kind": "public_ref", "reference": "publisher request/result i09-0066-semantic-batch-source-v1 on Issue #66"}
+      ]
+    },
+    {
+      "statement": "The implementation adds strict Draft 2020-12 hwm-semantic-batch-manifest/v1, hwm-semantic-batch-result/v1 and hwm-semantic-coverage/v1 contracts, deterministic canonical identities, exact commit/path/blob/content provenance, Knowledge Delta frontier, public-data policy, complete typed coverage, deterministic partition/reassembly, conflict/supersession and UNKNOWN/UNVERIFIED preservation, and a derived_non_authoritative authority deny-list.",
+      "provenance": [
+        {"kind": "commit", "reference": "Issue #66 semantic batch implementation source", "repo": "Dsamofalov/hwm-control", "sha": "6dfe910ea29b26012a1a941d2a730cd92f250883"},
+        {"kind": "public_ref", "reference": "docs/ADR/0004-verified-semantic-transformation-contract.md"},
+        {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"}
+      ]
+    },
+    {
+      "statement": "All semantic-batch implementation tests passed on completion-state run 32019276020; that run failed only the existing Knowledge Delta repository gate because the first completion delta used seven unsupported provenance/evidence kind values: two issue_comment entries and five adr entries. The protected schema permits only commit, ci_run, evidence_manifest, issue, pull_request and public_ref.",
+      "provenance": [
+        {"kind": "commit", "reference": "first completion-state commit", "repo": "Dsamofalov/hwm-control", "sha": "7181847b3a6b8d76a9e2c4ecb5a8d71687a131cd"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32019276020"},
+        {"kind": "public_ref", "reference": "schemas/knowledge-delta.v1.schema.json at 7181847b3a6b8d76a9e2c4ecb5a8d71687a131cd"}
+      ]
+    },
+    {
+      "statement": "The semantic-batch implementation is offline/provider-neutral: source text is treated as untrusted data; prompt-injection fixtures cannot authorize execution or scope expansion; the canonical prompt requires deterministic readback/publication evidence; and no provider API, billing, credential, secret, variable, Environment, service account, WIF activation, product mutation, or real semantic batch publication is introduced.",
+      "provenance": [
+        {"kind": "commit", "reference": "Issue #66 semantic batch implementation source", "repo": "Dsamofalov/hwm-control", "sha": "6dfe910ea29b26012a1a941d2a730cd92f250883"},
+        {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"}
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Preserve the established Knowledge Delta gate and repair claim/completion bookkeeping through canonical Issue #66 Knowledge Delta publication rather than changing shared validator, reducer, workflow or publisher semantics.",
+      "rationale": "Protected main was green and both observed gate failures were caused by Issue #66 lifecycle artifact content, not shared infrastructure behavior."
+    },
+    {
+      "decision": "Bind manifest, coverage, result, source, partition and prompt identities to deterministic canonical serialization and exact provenance; reject digest/identity mismatch and make byte-identical replay idempotent.",
+      "rationale": "Semantic processing must be replayable and independently verifiable without mutable-source substitution."
+    },
+    {
+      "decision": "Require complete typed coverage and deterministic partition exact-union verification; oversized single sources fail closed rather than permitting silent partial processing.",
+      "rationale": "Every frozen manifest source requires an explicit typed outcome and deterministic reassembly evidence."
+    },
+    {
+      "decision": "Keep every semantic result derived_non_authoritative and deny semantic authority over repository SHAs, project state, GitHub lifecycle/ownership/readiness, dependencies, CI/ruleset state, freshness/provenance/coverage acceptance, requirement completion and merge authority.",
+      "rationale": "ADR 0004 and ADR 0006 separate semantic derivation from deterministic protected authority."
+    },
+    {
+      "decision": "Generate a fully instantiated semantic-maintenance prompt that binds an immutable manifest and requires independent readback, source-as-untrusted-data handling, machine-readable outputs before prose, controlled publisher, protected PR, exact-head CI, guarded merge, post-merge CI, explicit lifecycle closure and branch cleanup without user-manual acceptance.",
+      "rationale": "The dialogue transports deterministic evidence and must not become an authority or provider-activation surface."
+    },
+    {
+      "decision": "Represent only milestone-boundary, configured unprocessed-Knowledge-Delta threshold, explicit task-context budget need, and deterministic knowledge-health/coverage signals as authorized triggers; no signal means no semantic work.",
+      "rationale": "This preserves ADR 0006 event/batch semantics and prevents background semantic busywork."
+    },
+    {
+      "decision": "Do not edit or use stale state/current.json as current lifecycle or DAG truth.",
+      "rationale": "Issue lifecycle and deterministic BUILD_STATUS bookkeeping are established from live GitHub evidence for this recovery."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Relax the Knowledge Delta gate or change reducer/state-generation semantics to make Issue #66 lifecycle projections pass.",
+      "reason": "The gate is behaving as designed; the observed failures are narrow Issue #66 bookkeeping defects."
+    },
+    {
+      "alternative": "Blindly rerun either failed Infrastructure CI run.",
+      "reason": "Both failures have deterministic repository-content causes and must be corrected before a new exact-head run."
+    },
+    {
+      "alternative": "Run the first semantic batch or materialize semantic output in hwm-context during Issue #66.",
+      "reason": "That work belongs to separate Issue #67/P5R2."
+    },
+    {
+      "alternative": "Activate a provider adapter, external API, billing, credentials, secrets, variables, Environments, service accounts or ADR 0005/WIF.",
+      "reason": "Issue #66 is provider-neutral contract/verifier work and ADR 0006 keeps external spend dormant/default-deny."
+    },
+    {
+      "alternative": "Promote semantic output to authoritative state, silently resolve conflicts, or promote UNKNOWN/UNVERIFIED to SUPPORTED by reasoning.",
+      "reason": "Those behaviors violate the protected semantic authority and historical-preservation contracts."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I09-0066.json",
+    "schemas/semantic-batch-manifest.v1.schema.json",
+    "schemas/semantic-batch-result.v1.schema.json",
+    "schemas/semantic-coverage.v1.schema.json",
+    "control/semantic_batch.py",
+    "control/semantic_batch_manifest.py",
+    "control/semantic_batch_result.py",
+    "control/semantic_batch_prompt.py",
+    "tests/test_semantic_batch_contract.py"
+  ],
+  "tests": [
+    {"name": "Initial Issue #66 claim-state Infrastructure CI", "status": "fail", "reference": "run 32011636848; head fcfb84e9cee8a9cec21adc6581d384c6fac84653; missing required knowledge-deltas/I09-0066.json"},
+    {"name": "Protected-main baseline Infrastructure CI", "status": "pass", "reference": "run 31976745367; head 7347f25fe67de186c85c5a1ec0459c6ccffcc3b8"},
+    {"name": "Reconciled claim-state Infrastructure CI", "status": "pass", "reference": "run 32017877506; head ff17634dcb7a7dd84e25b8245c6fa7d96012f428"},
+    {"name": "Issue #66 semantic-batch source Infrastructure CI", "status": "pass", "reference": "run 32019116752; head 6dfe910ea29b26012a1a941d2a730cd92f250883"},
+    {"name": "First completion-state Infrastructure CI", "status": "fail", "reference": "run 32019276020; head 7181847b3a6b8d76a9e2c4ecb5a8d71687a131cd; semantic-batch tests pass; KD gate reports seven unsupported kind values"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#66"},
+    {"kind": "commit", "reference": "protected main before Issue #66", "repo": "Dsamofalov/hwm-control", "sha": "7347f25fe67de186c85c5a1ec0459c6ccffcc3b8"},
+    {"kind": "commit", "reference": "initial claim bookkeeping", "repo": "Dsamofalov/hwm-control", "sha": "fcfb84e9cee8a9cec21adc6581d384c6fac84653"},
+    {"kind": "commit", "reference": "claim-state reconciliation", "repo": "Dsamofalov/hwm-control", "sha": "ff17634dcb7a7dd84e25b8245c6fa7d96012f428"},
+    {"kind": "commit", "reference": "semantic batch implementation source", "repo": "Dsamofalov/hwm-control", "sha": "6dfe910ea29b26012a1a941d2a730cd92f250883"},
+    {"kind": "commit", "reference": "first completion-state commit", "repo": "Dsamofalov/hwm-control", "sha": "7181847b3a6b8d76a9e2c4ecb5a8d71687a131cd"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 31976745367"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32011636848"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32017877506"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32019116752"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32019276020"},
+    {"kind": "public_ref", "reference": "docs/ADR/0004-verified-semantic-transformation-contract.md"},
+    {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"},
+    {"kind": "public_ref", "reference": "schemas/knowledge-delta.v1.schema.json"}
+  ],
+  "followups": [
+    "Require exact-head green completion-state Infrastructure CI after this canonical Knowledge Delta correction before opening the protected Issue #66 PR.",
+    "Verify exact allowed diff, PR-head required CI, mergeability, reviews and unresolved threads; guarded-merge only the exact validated head; require exact post-merge protected-main CI before explicit Issue #66 closure and branch deletion.",
+    "Only after Issue #66 is explicitly completed and its ownership branch is absent may Issue #67 move blocked to ready; keep Issue #67 unclaimed and do not run its semantic batch in this dialogue."
+  ],
+  "unresolved": []
+}
