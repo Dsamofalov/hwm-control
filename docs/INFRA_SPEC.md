@@ -644,6 +644,58 @@ Why this is useful during bootstrap:
 
 Later MCP can wrap the same operations without changing their semantics.
 
+## 10.1 Controlled task-branch publisher
+
+The ordinary browser connector is an accepted control/data-plane client for reads, Issue/label/comment and PR metadata operations, and creation of inert Git blobs. It is **not** a durable ordinary source-commit transport. Ordinary source mutation uses the reviewed controlled publisher contract and its protected workflow.
+
+The versioned interfaces are exactly `hwm-publish-request/bootstrap-v1` and `hwm-publish-result/bootstrap-v1`. A request is bound to the exact repository, task Issue and task id, task branch, expected branch HEAD, request identity, normalized paths, operation, regular-file mode, and declared Git blob identity. The publisher resolves each declared blob identity to the exact inert bytes/object and validates its object kind and bounded size before mutation; the bytes therefore remain bound to the declared blob SHA without widening the bootstrap-v1 request schema.
+
+Only `add` and `replace` of regular blobs are permitted, with modes `100644` and `100755`. Delete, rename/copy, symlink, submodule/gitlink, arbitrary tree insertion, patch programs, arbitrary ref operations, and free-form shell are forbidden.
+
+Before any ref mutation, the trusted path must validate all of the following:
+
+- publisher workflow/provenance comes from protected trusted `main`, not candidate content;
+- the author matches the exact explicit allowlist and the Issue-comment author association;
+- the task Issue is open and `claimed`;
+- Issue number/task id/recorded ownership branch/request branch are mutually consistent;
+- repository identity matches the repository-local publisher policy;
+- paths are normalized, unique, operation-appropriate, and allowlisted by policy;
+- every declared blob identity resolves to the exact expected regular blob bytes, size and allowed mode, and `replace` binds the expected old blob;
+- request-id idempotency is enforced, while changed normalized payload under a reused id is rejected;
+- remote task-branch HEAD still equals `expected_head`, and the final ref update is compare-and-set rather than an unconditional/force update.
+
+Ordinary operation must reject the default branch/`main`, `.github/workflows/**`, `.github/actions/**`, any `CODEOWNERS`, repository rulesets/settings, the publisher implementation/policy/manifest/contracts, and equivalent self-modifying or credential-policy paths. Serialization points — including `INFRA_SPEC.md`, versioned schemas, gatekeeper/root policy, and equivalent contract surfaces — are owned only by the corresponding exclusive architecture/contract Issue and protected merge; ordinary implementation tasks do not acquire that authority merely because a path is syntactically publishable.
+
+The privileged publisher never checks out candidate task-branch content and never imports, executes, evaluates, or shells candidate content. It does not write `main`, approve or merge PRs, alter rulesets/settings, weaken required checks, or publish an acceptance verdict on behalf of ordinary read-only CI. It constructs inert Git objects/trees and moves only the authorized task-branch ref under the exact-head lease.
+
+The publisher uses a short-lived repository-scoped `GITHUB_TOKEN` with the minimum explicit job permissions required by the reviewed workflow. No PAT, deploy key, or GitHub App private key is introduced without a separate security decision and demonstrated need. Every external GitHub Action used in the privileged workflow is pinned to a full commit SHA.
+
+After a successful compare-and-set publication, the publisher explicitly dispatches the allowlisted ordinary read-only CI workflow on the exact new task-branch HEAD and binds the normalized result to that exact CI run/head. A PR is eligible only when the normalized publisher result, current task-branch HEAD, and dispatched CI `head_sha` all match exactly and the required ordinary check succeeded.
+
+Replay and concurrency are fail-closed: a byte-identical successful request-id replay returns the existing normalized result without a second commit/ref move/CI dispatch; changed payload under the same id is rejected; and competing requests sharing one `expected_head` cannot both mutate the same task branch because only one compare-and-set can succeed.
+
+## 10.2 Repository-local rollout and one-time trust bootstrap
+
+Bootstrap-v1 is initially installed and accepted in `hwm-control`. Before the first autonomous ordinary source mutation in `hwm-context` or `hwm-lab`, the same reviewed versioned controlled-publisher contract must be installed locally in that target repository through a separate barrier task and its protected merge.
+
+A least-privilege cross-repository GitHub App design remains an allowed alternative only through a separate architecture/security task. The ordinary `hwm-control` `GITHUB_TOKEN` is repository-scoped, is not a cross-repository writer, and must not be widened into a writer for `hwm-lab` or `hwm-context`. The preferred model is a repository-local publisher, a repository-local ephemeral `GITHUB_TOKEN`, and a separate ordinary read-only CI path.
+
+Publisher self-installation is a one-time trust bootstrap because the target repository does not yet contain the controlled transport that future ordinary publication must use. Only a dedicated architecture/contract installation Issue may explicitly authorize one narrow bootstrap source transport for that installation.
+
+That bootstrap exception is limited to all of the following:
+
+- a dedicated non-default installation branch created from an exact verified protected-main SHA;
+- an exact allowlist limited to the reviewed publisher implementation/policy/manifest, publisher workflow, required focused tests, and versioned installation contract/acceptance paths;
+- a transparent commit whose exact paths and bytes/blob identities are read back before PR acceptance;
+- no direct protected-main write, no force/bypass of the ruleset, and no weakening of required checks;
+- a protected PR with exact full diff inventory, required CI on the exact head, mergeability and requested-change/review-thread verification, guarded exact-head merge, and exact post-merge validation on the resulting protected-main SHA.
+
+After installation, a disposable live acceptance matrix is mandatory before ordinary autonomous source publication is considered available. It covers at least: positive publication; identical replay/idempotency; changed payload under a reused request id; stale expected head; unauthorized repository or actor; Issue/task/branch mismatch; default-branch target; forbidden protected path; malformed or undeclared blob; and invalid mode. Every negative case must prove non-mutation of the target ref.
+
+The one-time bootstrap exception does not authorize product mutation, Graphify implementation or graph publication, unrelated feature work, an arbitrary repository writer, execution of candidate content by the publisher, or recurring generic `create_file`/`update_file`/`create_commit` publication. If the chosen bootstrap transport is rejected before GitHub mutation, equivalent mutation shapes are not retried through alternate writers; the installation task stops with preserved exact branch/HEAD/blob/request evidence and one exact recovery step.
+
+Once installation is complete, repeated manual or generic source publication is a regression: ordinary task-branch source changes must use the installed repository-local controlled publisher. I11 may extend or version this primitive through explicit contracts, but it does not replace the primitive with an unrestricted Git writer or arbitrary shell.
+
 ---
 
 # 11. Deterministic Project State
@@ -656,7 +708,6 @@ Example:
 {
   "schema": "hwm-project-state/v1",
   "generated_at": "2026-08-13T12:00:00Z",
-
   "product": {
     "repo": "Dsamofalov/hwm_predictor",
     "head": "HEAD_SHA",

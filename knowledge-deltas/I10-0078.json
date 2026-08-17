@@ -1,0 +1,43 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 78,
+  "goal": "Authorize repository-local controlled publisher rollout and the one-time target-repository trust bootstrap barrier before autonomous ordinary source mutation in hwm-lab.",
+  "verified_facts": [
+    {"statement": "P0A started from protected hwm-control/main 6abdbdac283b0849d3cd2429ab6985d9762c66c7, hwm-lab/main 74d27e855b9faba7c934d306af0be507f83ac5fe, and hwm_predictor/main 8fd669336b36064e842252d69fb4016cc526a9d4; completed Issue #72 was the only predecessor.", "provenance": [{"kind": "commit", "reference": "protected P0A base", "repo": "Dsamofalov/hwm-control", "sha": "6abdbdac283b0849d3cd2429ab6985d9762c66c7"}, {"kind": "issue", "reference": "Dsamofalov/hwm-control#72"}]},
+    {"statement": "Protected hwm-control already contained the reviewed bootstrap-v1 request/result contracts, ADR 0001, controlled publisher implementation/security tests, and exact-head ordinary CI dispatch; protected hwm-lab at 74d27e855b9faba7c934d306af0be507f83ac5fe had no controlled publisher.", "provenance": [{"kind": "public_ref", "reference": "docs/ADR/0001-controlled-task-branch-publisher-bootstrap.md"}, {"kind": "public_ref", "reference": "control/task_branch_publisher.py and .github/workflows/task-branch-publisher.yml"}, {"kind": "commit", "reference": "protected hwm-lab preflight", "repo": "Dsamofalov/hwm-lab", "sha": "74d27e855b9faba7c934d306af0be507f83ac5fe"}]},
+    {"statement": "Duplicate search found no unfinished equivalent rollout authorization or hwm-lab installation barrier, so P0A Issue #78 and blocked P0B Issue #79 were created; Issue #73 was moved from ready to blocked on completed #79 and remained unclaimed.", "provenance": [{"kind": "issue", "reference": "Dsamofalov/hwm-control#78"}, {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"}, {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"}]},
+    {"statement": "The claim path remained controlled-publisher-only. Early publisher runs encountered GitHub API HTTP 503 result/dispatch failures after CAS, and exact-head CI 32053356795 exposed the required active-task Knowledge Delta; no alternate source writer or manual CI dispatch was used.", "provenance": [{"kind": "commit", "reference": "controlled claim publication", "repo": "Dsamofalov/hwm-control", "sha": "8972325519e6578c6b209f9cd7736126e96306ea"}, {"kind": "commit", "reference": "controlled claim KD publication", "repo": "Dsamofalov/hwm-control", "sha": "92f9ed31b7d21b200896b18a0db39eb5e146ac31"}, {"kind": "ci_run", "reference": "Infrastructure CI 32053356795"}]},
+    {"statement": "Recovery request pub-i10-0078-claim-kd-recovery-01 completed through the controlled publisher at c03678cc486c5a5a83c94a7ab21e5d82e2b11cae and exact Infrastructure CI 32053820984 completed success.", "provenance": [{"kind": "commit", "reference": "controlled claim recovery publication", "repo": "Dsamofalov/hwm-control", "sha": "c03678cc486c5a5a83c94a7ab21e5d82e2b11cae"}, {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32053793112"}, {"kind": "ci_run", "reference": "Infrastructure CI 32053820984"}]},
+    {"statement": "Source request pub-i10-0078-source-01 published only docs/INFRA_SPEC.md and the P0A Knowledge Delta at 509231bcc6f82377e89e78601bad38383b335747; exact CI 32054399061 failed only because followups.0 had the wrong JSON type.", "provenance": [{"kind": "commit", "reference": "controlled source publication", "repo": "Dsamofalov/hwm-control", "sha": "509231bcc6f82377e89e78601bad38383b335747"}, {"kind": "ci_run", "reference": "Infrastructure CI 32054399061"}]},
+    {"statement": "Source-fix request pub-i10-0078-source-fix-01 replaced only the Knowledge Delta, produced commit 17645957616b64b8407d82650ce073f6d7ca2fdb with normalized success result, and exact Infrastructure CI 32054679777 completed success on that SHA.", "provenance": [{"kind": "commit", "reference": "controlled source-fix publication", "repo": "Dsamofalov/hwm-control", "sha": "17645957616b64b8407d82650ce073f6d7ca2fdb"}, {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32054655112"}, {"kind": "ci_run", "reference": "Infrastructure CI 32054679777"}]}
+  ],
+  "decisions": [
+    {"decision": "Keep bootstrap-v1 repository-local and require a separate architecture/contract installation barrier before hwm-lab or hwm-context ordinary autonomous source publication.", "rationale": "The installed hwm-control publisher is repository-bound and its ephemeral token must not be widened into a cross-repository writer."},
+    {"decision": "Authorize only a narrow one-time bootstrap transport for publisher self-installation in a target repository.", "rationale": "A target repository cannot use its controlled publisher before that reviewed transport exists locally; the exception therefore requires an exact protected-main base, dedicated installation branch, narrow path allowlist, protected PR, exact CI/readback/merge checks, and a mandatory live acceptance matrix."},
+    {"decision": "Preserve bootstrap-v1 schemas and publisher implementation unchanged in P0A; record rollout semantics only in authoritative INFRA_SPEC sections 10.1 and 10.2.", "rationale": "Merged bootstrap-v1 contracts/ADR/acceptance already define the primitive; P0A is the architecture authorization barrier, not a schema or implementation widening task."},
+    {"decision": "Do not compensate for publisher-side GitHub API failures with generic source writers or manual CI dispatch.", "rationale": "Exact-head publication and CI association must remain attributable to the reviewed controlled publisher path."},
+    {"decision": "After repository-local installation, recurring generic/manual source publication is a regression; I11 may version or extend the primitive but cannot replace it with unrestricted Git writing or arbitrary shell.", "rationale": "The durable trust boundary depends on typed, exact-head, path-limited publication rather than a generic writer."}
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Use the ordinary hwm-control GITHUB_TOKEN as a cross-repository hwm-lab writer.", "reason": "It is repository-scoped and cross-repository widening violates the selected least-privilege boundary."},
+    {"alternative": "Introduce a PAT, deploy key or GitHub App private key in P0A.", "reason": "No separate security decision or demonstrated necessity authorizes that credential surface."},
+    {"alternative": "Install the hwm-lab publisher or begin Graphify implementation in P0A.", "reason": "Installation is the blocked successor #79; Graphify implementation #73 remains blocked and unclaimed."},
+    {"alternative": "Widen bootstrap-v1 schemas or publisher policy while documenting rollout.", "reason": "The requested barrier is a forward architecture amendment over already reviewed bootstrap-v1 semantics; contract widening is out of scope."}
+  ],
+  "changed_components": ["BUILD_STATUS.json", "docs/INFRA_SPEC.md", "knowledge-deltas/I10-0078.json"],
+  "tests": [
+    {"name": "Initial claim-state exact-head Infrastructure CI", "status": "fail", "reference": "32053356795 on 8972325519e6578c6b209f9cd7736126e96306ea: missing required knowledge-deltas/I10-0078.json"},
+    {"name": "Claim recovery exact-head Infrastructure CI", "status": "pass", "reference": "32053820984 on c03678cc486c5a5a83c94a7ab21e5d82e2b11cae"},
+    {"name": "Initial source exact-head Infrastructure CI", "status": "fail", "reference": "32054399061 on 509231bcc6f82377e89e78601bad38383b335747: followups.0 had wrong JSON type"},
+    {"name": "Source-fix exact-head Infrastructure CI", "status": "pass", "reference": "32054679777 on 17645957616b64b8407d82650ce073f6d7ca2fdb"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#78"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"},
+    {"kind": "commit", "reference": "controlled source-fix publication", "repo": "Dsamofalov/hwm-control", "sha": "17645957616b64b8407d82650ce073f6d7ca2fdb"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32054679777"}
+  ],
+  "followups": ["I10-P1-P0B Issue #79 installs the same reviewed controlled publisher locally in hwm-lab and executes the required one-time bootstrap/live acceptance barrier."],
+  "unresolved": []
+}
