@@ -1,0 +1,36 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 78,
+  "goal": "Authorize a repository-local controlled publisher rollout and one-time trust bootstrap barrier before any autonomous ordinary source mutation in hwm-lab.",
+  "verified_facts": [
+    {"statement": "P0A started from protected hwm-control/main 6abdbdac283b0849d3cd2429ab6985d9762c66c7, hwm-lab/main 74d27e855b9faba7c934d306af0be507f83ac5fe, and hwm_predictor/main 8fd669336b36064e842252d69fb4016cc526a9d4; completed Issue #72 was the only predecessor.", "provenance": [{"kind": "commit", "reference": "protected P0A base", "repo": "Dsamofalov/hwm-control", "sha": "6abdbdac283b0849d3cd2429ab6985d9762c66c7"}, {"kind": "issue", "reference": "Dsamofalov/hwm-control#72"}]},
+    {"statement": "Protected hwm-control already contains the reviewed hwm-publish-request/bootstrap-v1 and hwm-publish-result/bootstrap-v1 contracts, ADR 0001, controlled publisher implementation and security tests, with explicit exact-head ordinary CI dispatch.", "provenance": [{"kind": "public_ref", "reference": "docs/ADR/0001-controlled-task-branch-publisher-bootstrap.md"}, {"kind": "public_ref", "reference": "schemas/publish-request.bootstrap-v1.schema.json and schemas/publish-result.bootstrap-v1.schema.json"}, {"kind": "public_ref", "reference": "control/task_branch_publisher.py and .github/workflows/task-branch-publisher.yml"}]},
+    {"statement": "Protected hwm-lab at 74d27e855b9faba7c934d306af0be507f83ac5fe has only repository bootstrap CI and no controlled task-branch publisher or equivalent exact-head publisher dispatch surface.", "provenance": [{"kind": "commit", "reference": "protected hwm-lab preflight", "repo": "Dsamofalov/hwm-lab", "sha": "74d27e855b9faba7c934d306af0be507f83ac5fe"}]},
+    {"statement": "P0A Issue #78 and blocked installation barrier Issue #79 were created after duplicate search found no unfinished equivalent tasks; Issue #73 was moved from ready to blocked on completed #79 and remains unclaimed.", "provenance": [{"kind": "issue", "reference": "Dsamofalov/hwm-control#78"}, {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"}, {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"}]},
+    {"statement": "Controlled publisher request pub-i10-0078-claim-01 moved only BUILD_STATUS.json to claim commit 8972325519e6578c6b209f9cd7736126e96306ea with request fingerprint 3f15e9a7112e224c0d23bcb5ddcc406e48c16d54ebc352cdde283f6c7d7fc228; publisher workflow run 32053324060 later failed while posting the result comment because GitHub API returned HTTP 503.", "provenance": [{"kind": "commit", "reference": "controlled claim publication", "repo": "Dsamofalov/hwm-control", "sha": "8972325519e6578c6b209f9cd7736126e96306ea"}, {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32053324060"}]},
+    {"statement": "The exact dispatched Infrastructure CI run 32053356795 verified and checked out 8972325519e6578c6b209f9cd7736126e96306ea and failed only because the repository gate requires knowledge-deltas/I10-0078.json while I10-0078 is active.", "provenance": [{"kind": "ci_run", "reference": "Infrastructure CI 32053356795 on 8972325519e6578c6b209f9cd7736126e96306ea"}]}
+  ],
+  "decisions": [
+    {"decision": "Keep bootstrap-v1 repository-local and require a separate architecture/contract installation barrier before hwm-lab ordinary source publication.", "rationale": "The existing hwm-control publisher is intentionally repository-bound; widening its token into a cross-repository writer would violate least privilege."},
+    {"decision": "Authorize only a narrow one-time bootstrap transport for publisher self-installation in a target repository, with exact protected-main base, allowlisted installation paths, protected PR, exact CI/readback and no direct-main or ruleset bypass.", "rationale": "The target repository cannot use its controlled publisher before that publisher exists, so installation is an explicit trust bootstrap rather than ordinary publication."},
+    {"decision": "Treat repeated generic/manual source publication as a regression after repository-local publisher installation.", "rationale": "Ordinary source mutation must return to the reviewed versioned controlled transport once the target repository can enforce it locally."}
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Use the ordinary hwm-control GITHUB_TOKEN as a cross-repository hwm-lab writer.", "reason": "The current token is repository-scoped and must not be widened across repository trust boundaries."},
+    {"alternative": "Introduce a PAT, deploy key or GitHub App private key as part of P0A.", "reason": "No separate security decision or demonstrated necessity authorizes a long-lived or cross-repository credential."},
+    {"alternative": "Install hwm-lab publisher or begin Graphify implementation inside P0A.", "reason": "P0A is an architecture/contract authorization barrier only; installation is Issue #79 and Graphify implementation remains blocked in Issue #73."}
+  ],
+  "changed_components": ["BUILD_STATUS.json", "docs/INFRA_SPEC.md", "knowledge-deltas/I10-0078.json"],
+  "tests": [
+    {"name": "Claim-state exact-head Infrastructure CI", "status": "fail", "reference": "32053356795 on 8972325519e6578c6b209f9cd7736126e96306ea: missing required knowledge-deltas/I10-0078.json"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#78"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"},
+    {"kind": "commit", "reference": "controlled claim publication", "repo": "Dsamofalov/hwm-control", "sha": "8972325519e6578c6b209f9cd7736126e96306ea"},
+    {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32053324060"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32053356795"}
+  ],
+  "followups": [],
+  "unresolved": []
+}
