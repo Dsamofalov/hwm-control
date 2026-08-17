@@ -63,8 +63,9 @@
     "tests/test_semantic_batch_input_config.py"
   ],
   "tests": [
-    {"name": "Temporary exact frozen-source hash probe / full repository discovery", "status": "passed", "reference": "Infrastructure CI 32025001646; 410 tests passed; probe commit was subsequently removed from the ownership branch"},
-    {"name": "Issue #69 focused + full repository implementation CI", "status": "not_run", "reference": "pending controlled publisher implementation commit"}
+    {"name": "Temporary exact frozen-source hash probe / full repository discovery", "status": "pass", "reference": "Infrastructure CI 32025001646; 410 tests passed; probe commit was subsequently removed from the ownership branch"},
+    {"name": "Initial Issue #69 implementation source CI", "status": "fail", "reference": "Infrastructure CI 32026457447 on d53d985ed6cf2002bee502ff950c9791fefa4a01; exact-head CI identified missing P5R1 source content projection plus the invalid KD status spelling and completion was not accepted"},
+    {"name": "Remediated Issue #69 focused + full repository implementation CI", "status": "not_run", "reference": "pending exact-head controlled publisher remediation commit"}
   ],
   "evidence": [
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#69"},
@@ -72,13 +73,14 @@
     {"kind": "commit", "reference": "frozen context source head", "repo": "Dsamofalov/hwm-context", "sha": "d651f40d0bb3a3ef0e52fca95e5400ed3db3d772"},
     {"kind": "commit", "reference": "frozen product readback head", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"},
     {"kind": "ci_run", "reference": "Infrastructure CI 32025001646"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32026457447"},
     {"kind": "public_ref", "reference": "docs/ADR/0004-verified-semantic-transformation-contract.md"},
     {"kind": "public_ref", "reference": "docs/ADR/0006-dialog-driven-semantic-maintenance-and-external-spend-default-deny.md"}
   ],
   "followups": [
-    "Require exact-head implementation CI, then finalize BUILD_STATUS/Knowledge Delta, completion CI, protected PR/merge/post-merge CI, explicit #69 completion and branch cleanup before moving #67 blocked -> ready."
+    "Require exact-head remediated implementation CI, then finalize BUILD_STATUS/Knowledge Delta, completion CI, protected PR/merge/post-merge CI, explicit #69 completion and branch cleanup before moving #67 blocked -> ready."
   ],
   "unresolved": [
-    "Exact implementation source CI is pending."
+    "Exact-head remediation CI is pending."
   ]
 }

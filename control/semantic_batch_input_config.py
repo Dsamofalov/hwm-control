@@ -487,12 +487,14 @@ def materialize_manifest_generator_inputs(
     validate_input_config(config)
     validate_source_content_readbacks(config, source_contents)
     heads = _validate_heads(runtime_heads, "RUNTIME_HEADS_MISMATCH")
+    source_readbacks = []
+    for source in config["source_snapshot"]["sources"]:
+        row = _manifest_source(source)
+        row["content"] = source_contents[source["source_id"]].decode("utf-8")
+        source_readbacks.append(row)
     return {
         "exact_heads": heads,
-        "source_readbacks": [
-            _manifest_source(source)
-            for source in config["source_snapshot"]["sources"]
-        ],
+        "source_readbacks": source_readbacks,
         "conflicts": copy.deepcopy(config["historical_semantics"]["conflicts"]),
         "trigger": copy.deepcopy(config["trigger"]["manifest_projection"]),
         "max_partition_utf8_bytes": (
