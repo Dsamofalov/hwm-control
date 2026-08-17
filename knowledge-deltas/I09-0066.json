@@ -1,0 +1,75 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 66,
+  "goal": "Restore the existing Issue #66 claimed lifecycle projection to the established I06+ Knowledge Delta gate contract before beginning semantic-batch implementation.",
+  "verified_facts": [
+    {
+      "statement": "Issue #66 is open and claimed on ownership branch agent/infra-0066-semantic-batch-contracts; claim bookkeeping commit fcfb84e9cee8a9cec21adc6581d384c6fac84653 is exactly one commit ahead of protected main 7347f25fe67de186c85c5a1ec0459c6ccffcc3b8 and changes only BUILD_STATUS.json by adding I09-0066 to active_task_ids.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#66"},
+        {"kind": "commit", "reference": "Issue #66 claim bookkeeping", "repo": "Dsamofalov/hwm-control", "sha": "fcfb84e9cee8a9cec21adc6581d384c6fac84653"}
+      ]
+    },
+    {
+      "statement": "Infrastructure CI run 32011636848 on exact claim head fcfb84e9cee8a9cec21adc6581d384c6fac84653 failed exactly one of 387 discovered tests: test_knowledge_delta_gate.KnowledgeDeltaGateTests.test_actual_repository_gate_is_part_of_full_unittest_discovery, because knowledge-deltas/I09-0066.json was missing.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Infrastructure CI 32011636848"},
+        {"kind": "commit", "reference": "exact failed claim head", "repo": "Dsamofalov/hwm-control", "sha": "fcfb84e9cee8a9cec21adc6581d384c6fac84653"}
+      ]
+    },
+    {
+      "statement": "Protected main at 7347f25fe67de186c85c5a1ec0459c6ccffcc3b8 has successful Infrastructure CI run 31976745367, so the failed claim-state test is caused by incomplete Issue #66 claim bookkeeping rather than a pre-existing protected-main defect.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Infrastructure CI 31976745367"},
+        {"kind": "commit", "reference": "protected main before Issue #66 claim", "repo": "Dsamofalov/hwm-control", "sha": "7347f25fe67de186c85c5a1ec0459c6ccffcc3b8"}
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Preserve the established Knowledge Delta gate semantics and correct the incomplete claim bookkeeping by adding the canonical knowledge-deltas/I09-0066.json on the existing ownership branch through the controlled publisher with exact-head CAS.",
+      "rationale": "The merged gate explicitly requires a canonical Knowledge Delta for every I06+ active or completed task; changing validator, reducer, workflow, or publisher semantics would be unnecessary scope expansion."
+    },
+    {
+      "decision": "Treat state/current.json as stale historical materialization and do not edit or use it as current lifecycle or DAG truth.",
+      "rationale": "Issue #66 lifecycle is established from live GitHub evidence and BUILD_STATUS; changing the stale materialization would mask neither the exact gate failure nor its root cause."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Relax the Knowledge Delta gate so active tasks do not require a delta.",
+      "reason": "That would change shared validator semantics outside Issue #66 and is unnecessary because the existing lifecycle contract can be satisfied directly."
+    },
+    {
+      "alternative": "Blindly rerun failed Infrastructure CI 32011636848.",
+      "reason": "The failure is deterministic and tied to a missing required repository artifact, so a rerun without state correction would not establish a transient failure."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I09-0066.json"
+  ],
+  "tests": [
+    {
+      "name": "Initial Issue #66 claim-state Infrastructure CI",
+      "status": "fail",
+      "reference": "run 32011636848; exact head fcfb84e9cee8a9cec21adc6581d384c6fac84653; missing knowledge-deltas/I09-0066.json"
+    },
+    {
+      "name": "Protected-main Infrastructure CI baseline",
+      "status": "pass",
+      "reference": "run 31976745367; exact head 7347f25fe67de186c85c5a1ec0459c6ccffcc3b8"
+    }
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#66"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32011636848"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 31976745367"},
+    {"kind": "commit", "reference": "Issue #66 claim bookkeeping", "repo": "Dsamofalov/hwm-control", "sha": "fcfb84e9cee8a9cec21adc6581d384c6fac84653"}
+  ],
+  "followups": [
+    "Require exact-head green Infrastructure CI for this repaired claim state before publishing any Issue #66 implementation source.",
+    "After claim-state CI is green, implement only the complete numbered scope and Done conditions of Issue #66; do not run the first semantic batch or start Issue #67."
+  ],
+  "unresolved": []
+}
