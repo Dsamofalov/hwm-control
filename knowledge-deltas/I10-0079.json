@@ -1,0 +1,104 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 79,
+  "goal": "Record retrospective canonical completion evidence for the accepted hwm-lab controlled task-branch publisher installation and disposable live acceptance from Issue #79.",
+  "verified_facts": [
+    {
+      "statement": "Issue #79 completed the repository-local publisher installation through merged hwm-lab PR #2. The exact installation ancestry is base 74d27e855b9faba7c934d306af0be507f83ac5fe, validated head 8867304827946d3094fc9d2eb2fe165281eb3d2d, and merge e37ea628d9c793d5e87bc8b903a9b85b4371991c.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"},
+        {"kind": "public_ref", "reference": "Dsamofalov/hwm-lab PR #2"},
+        {"kind": "commit", "reference": "installation base", "repo": "Dsamofalov/hwm-lab", "sha": "74d27e855b9faba7c934d306af0be507f83ac5fe"},
+        {"kind": "commit", "reference": "validated installation head", "repo": "Dsamofalov/hwm-lab", "sha": "8867304827946d3094fc9d2eb2fe165281eb3d2d"},
+        {"kind": "commit", "reference": "protected installation merge", "repo": "Dsamofalov/hwm-lab", "sha": "e37ea628d9c793d5e87bc8b903a9b85b4371991c"}
+      ]
+    },
+    {
+      "statement": "The exact 20-path installation inventory is canonically bound by Issue #79 comment 5318993561, including source-to-target blob identities for .github/workflows/infrastructure-ci.yml, .github/workflows/repository-bootstrap-ci.yml, .github/workflows/task-branch-publisher.yml, control/publisher_backend.py, control/publisher_contract.py, control/publisher_manifest.bootstrap-v1.json, control/publisher_policy.py, control/publisher_runtime_backend.py, control/run_task_branch_publisher.py, control/task_branch_publisher.py, schemas/publish-request.bootstrap-v1.schema.json, schemas/publish-result.bootstrap-v1.schema.json, tests/contracts/__init__.py, tests/contracts/test_publish_contracts.py, tests/security/__init__.py, tests/security/publisher_test_support.py, tests/security/test_publisher_core.py, tests/security/test_publisher_github_token.py, tests/security/test_publisher_policy.py, and tests/security/test_publisher_security.py. PR #2 changed exactly these 20 paths.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "Issue #79 canonical installation authorization comment 5318993561"},
+        {"kind": "public_ref", "reference": "Dsamofalov/hwm-lab PR #2 changed-files readback: exactly 20 paths"}
+      ]
+    },
+    {
+      "statement": "Installation and merge validation was green on exact heads: Repository Bootstrap CI 32058341282 push on 8867304827946d3094fc9d2eb2fe165281eb3d2d; Repository Bootstrap CI 32058405092 pull_request on the same head; Publisher Ordinary CI 32058405551 pull_request on the same head; post-merge Repository Bootstrap CI 32058470007 push on e37ea628d9c793d5e87bc8b903a9b85b4371991c; and post-merge Publisher Ordinary CI 32058469997 push on the same merge SHA. All conclusions were success.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Repository Bootstrap CI 32058341282"},
+        {"kind": "ci_run", "reference": "Repository Bootstrap CI 32058405092"},
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32058405551"},
+        {"kind": "ci_run", "reference": "Repository Bootstrap CI 32058470007"},
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32058469997"}
+      ]
+    },
+    {
+      "statement": "Disposable live acceptance used hwm-lab Issue #3 and branch agent/infra-0003-publisher-acceptance. Positive request comment 5319043660 with request_id i10-p0b-live-positive-0003 produced success result 5319049281 and exact head ff9e65803de9ad163c03cc290cd059b8b889b6ec; exact workflow_dispatch Publisher Ordinary CI 32058749109 succeeded on that head. Identical replay request 5319054611/result 5319057466 was idempotent with no ref movement. Reused-id negative request 5319060837/result 5319064614 failed REQUEST_ID_REUSE without mutation; stale-head request 5319069178/result 5319073256 failed EXPECTED_HEAD_MISMATCH without mutation.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-lab#3"},
+        {"kind": "commit", "reference": "disposable accepted head", "repo": "Dsamofalov/hwm-lab", "sha": "ff9e65803de9ad163c03cc290cd059b8b889b6ec"},
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32058749109"},
+        {"kind": "public_ref", "reference": "Issue #79 acceptance comments 5319043660, 5319049281, 5319054611, 5319057466, 5319060837, 5319064614, 5319069178, 5319073256"}
+      ]
+    },
+    {
+      "statement": "The unauthorized-repository live request 5319078949/result 5319082083 failed closed and was non-mutating: the event/request repository mismatch produced BRANCH_TASK_MISMATCH and left the disposable ref unchanged. The deeper repository allowlist is covered by the exact merged wrong-repository security test in the green CI matrix.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "Issue #79 unauthorized-repository request/result comments 5319078949 and 5319082083"},
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32058749109"}
+      ]
+    },
+    {
+      "statement": "Unauthorized-actor live impersonation was intentionally not attempted because the available tooling cannot safely impersonate a second GitHub identity. Corresponding deterministic protected security evidence is accepted: test_transport_exact_author_allowlist rejects wrong-login/same-id, wrong-id/same-login and github-actions[bot] as UNAUTHORIZED_AUTHOR, and test_preflight_concurrency_key_is_branch_local_and_unauthorized_never_mints_privileged_job proves unauthorized preflight cannot mint the privileged publisher job; these tests passed on protected installation/post-merge and exact-head ordinary CI.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "Issue #79 durable acceptance matrix"},
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32058405551"},
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32058469997"},
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32058749109"}
+      ]
+    },
+    {
+      "statement": "Final cleanup readback confirms the installation ownership branch agent/infra-0079-controlled-publisher-install and disposable branch agent/infra-0003-publisher-acceptance both return GitHub 404; the disposable branch has no open PR. Disposable Issue #3 is closed with state_reason=completed.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "GitHub exact ref 404 readback for agent/infra-0079-controlled-publisher-install"},
+        {"kind": "public_ref", "reference": "GitHub exact ref 404 readback for agent/infra-0003-publisher-acceptance"},
+        {"kind": "public_ref", "reference": "GitHub open PR search for head agent/infra-0003-publisher-acceptance returned none"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-lab#3"}
+      ]
+    },
+    {
+      "statement": "Issue #79 installation and acceptance made no Graphify, product, provider, credential, model, billing, hwm-context, or hwm_predictor mutation. Green publisher installation evidence establishes the infrastructure transport boundary only and is not product functional-green evidence.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"},
+        {"kind": "public_ref", "reference": "Dsamofalov/hwm-lab PR #2 exact 20-path installation diff"}
+      ]
+    }
+  ],
+  "decisions": [
+    {"decision": "Accept the merged hwm-lab publisher installation and completed disposable acceptance without repetition.", "rationale": "Exact PR ancestry, exact 20-path inventory, exact-head CI, idempotency, negative fail-closed behavior, and cleanup evidence are already durable and valid."},
+    {"decision": "Treat deterministic protected security tests as the correct unauthorized-actor evidence rather than impersonating another live GitHub identity.", "rationale": "Live identity impersonation is not safely available and would weaken rather than improve the controlled authorization boundary."},
+    {"decision": "Keep publisher-installation green distinct from product functional-green.", "rationale": "This task installed and validated infrastructure transport only; it did not execute or validate Graphify or product behavior."}
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Repeat the live acceptance matrix during recovery.", "reason": "The original matrix is already terminally accepted and recovery is limited to missing control-plane projection."},
+    {"alternative": "Treat publisher CI success as Graphify or product functional acceptance.", "reason": "No Graphify/product implementation or functional test was performed by Issue #79."},
+    {"alternative": "Live-impersonate an unauthorized actor.", "reason": "No safe second identity is available; exact deterministic protected tests exercise the authorization boundary without credential or identity manipulation."}
+  ],
+  "changed_components": ["knowledge-deltas/I10-0079.json"],
+  "tests": [
+    {"name": "Pre-PR Repository Bootstrap CI", "status": "pass", "reference": "32058341282 on 8867304827946d3094fc9d2eb2fe165281eb3d2d"},
+    {"name": "PR-head Repository Bootstrap CI", "status": "pass", "reference": "32058405092 on 8867304827946d3094fc9d2eb2fe165281eb3d2d"},
+    {"name": "PR-head Publisher Ordinary CI", "status": "pass", "reference": "32058405551 on 8867304827946d3094fc9d2eb2fe165281eb3d2d"},
+    {"name": "Post-merge Repository Bootstrap CI", "status": "pass", "reference": "32058470007 on e37ea628d9c793d5e87bc8b903a9b85b4371991c"},
+    {"name": "Post-merge Publisher Ordinary CI", "status": "pass", "reference": "32058469997 on e37ea628d9c793d5e87bc8b903a9b85b4371991c"},
+    {"name": "Disposable exact-head Publisher Ordinary CI", "status": "pass", "reference": "32058749109 on ff9e65803de9ad163c03cc290cd059b8b889b6ec"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"},
+    {"kind": "public_ref", "reference": "Dsamofalov/hwm-lab PR #2"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-lab#3"},
+    {"kind": "commit", "reference": "protected hwm-lab merge", "repo": "Dsamofalov/hwm-lab", "sha": "e37ea628d9c793d5e87bc8b903a9b85b4371991c"},
+    {"kind": "ci_run", "reference": "Publisher Ordinary CI 32058749109"},
+    {"kind": "public_ref", "reference": "Issue #79 canonical installation inventory comment 5318993561"}
+  ],
+  "followups": ["Recovery Issue #81 reconciles the omitted BUILD_STATUS and Knowledge Delta projection only; downstream Graphify Issue #73 remains blocked until that recovery completes."],
+  "unresolved": []
+}
