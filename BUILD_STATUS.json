@@ -32,11 +32,11 @@
     "I09-0069",
     "I09-0067",
     "I10-0072",
-    "I10-0078"
-  ],
-  "active_task_ids": [
+    "I10-0078",
+    "I10-0079",
     "I10-0081"
   ],
+  "active_task_ids": [],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
     "job": "hwm-job/v1",
