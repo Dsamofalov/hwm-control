@@ -13,35 +13,64 @@
       ]
     },
     {
-      "statement": "The protected I10-P0 supply-chain contract, ADR 0007, graph-health schema, focused P0 tests, I10-0072 Knowledge Delta, and Issue #72 surfaces define timeout fail-closed semantics but do not pin an exact numeric Graphify builder execution timeout.",
+      "statement": "The protected I10-P0 supply-chain contract, ADR 0007, graph-health schema, focused P0 tests, I10-0072 Knowledge Delta, and Issue #72 surfaces define timeout fail-closed semantics but contain no exact numeric Graphify builder execution timeout; protected code search also contained no builder_wall_clock_timeout_seconds field before this remediation.",
       "provenance": [
         {"kind": "public_ref", "reference": "contracts/graphify-supply-chain.v1.json at protected base"},
         {"kind": "public_ref", "reference": "docs/ADR/0007-i10-graphify-supply-chain-and-graph-contracts.md at protected base"},
+        {"kind": "public_ref", "reference": "schemas/graph-health.v1.schema.json at protected base"},
+        {"kind": "public_ref", "reference": "tests/test_i10_0072_graph_contracts.py at protected base"},
+        {"kind": "public_ref", "reference": "knowledge-deltas/I10-0072.json at protected base"},
         {"kind": "issue", "reference": "Dsamofalov/hwm-control#72"}
       ]
     },
     {
-      "statement": "The historical v1 predecessor is immutable at exact Git blob a22feb23061d96e920f4a8974bdbb94de9e8988e and the protected core BUILD_STATUS schema map remains closed and unchanged.",
+      "statement": "The historical hwm-graphify-supply-chain/v1 predecessor remains immutable at exact Git blob a22feb23061d96e920f4a8974bdbb94de9e8988e; ADR 0007 and all graph snapshot/metadata/health/query schemas also remain immutable, and the protected core BUILD_STATUS schema map remains closed.",
       "provenance": [
         {"kind": "commit", "reference": "protected I10-P0-R1 starting state", "repo": "Dsamofalov/hwm-control", "sha": "8d0c62c5b5c147a3cfd6d0ef202850292cda2bd4"}
       ]
     },
     {
-      "statement": "Owner-approved remediation decision is one authoritative monotonic full-builder wall-clock timeout of exactly 900 seconds with fail-closed timeout_incomplete_build behavior, partial-output discard, deterministic raw-source fallback, and clean disposable retry only.",
+      "statement": "Owner-approved remediation decision is one authoritative monotonic full-builder wall-clock timeout of exactly 900 seconds, starting only at verified-wheelhouse-ready, network-denied, read-only-exact-source-ready and ending only at canonical-artifact-emission-complete.",
       "provenance": [
         {"kind": "issue", "reference": "Dsamofalov/hwm-control#83"}
       ]
     },
     {
-      "statement": "Controlled publisher request i10-0083-claim-v1 published the claim BUILD_STATUS to exact task-branch commit 026ed7fb3b352e4941857b8da4b87f82ad0296c7; its exact-head Infrastructure CI 32903269083 passed bootstrap invariants but failed only because the repository Knowledge Delta gate required knowledge-deltas/I10-0083.json for the active task.",
+      "statement": "The 900-second timeout covers offline installation, exact structural Graphify invocation, output parsing, normalization, schema validation, digest calculation, and canonical artifact emission; timeout terminates the process tree, rejects partial snapshot/metadata, deletes partial canonical artifacts, sets timeout_incomplete_build with usable=false and null snapshot identity, forbids publication, selects deterministic raw-source fallback, and permits only a new clean disposable retry with the same exact inputs and no partial-output reuse.",
       "provenance": [
-        {"kind": "commit", "reference": "controlled claim publication", "repo": "Dsamofalov/hwm-control", "sha": "026ed7fb3b352e4941857b8da4b87f82ad0296c7"},
-        {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32903241315 success"},
-        {"kind": "ci_run", "reference": "Infrastructure CI 32903269083 failure: missing I10-0083 Knowledge Delta only"}
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#83"},
+        {"kind": "public_ref", "reference": "inert candidate blob f42132a2f52d1d7af84155a56a86fca2fe4d8605 for contracts/graphify-supply-chain.v2.json"},
+        {"kind": "public_ref", "reference": "inert candidate blob 31764c9a917d6fb5a11a4e9d7f8b43dbccd8260b for ADR 0008"}
       ]
     },
     {
-      "statement": "Issue #73 was left open and unclaimed and was changed from ready to blocked with an explicit dependency on I10-0083; Issues #74 and #75 remain ready/unclaimed and Issue #76 remains blocked.",
+      "statement": "Any future change from 900 seconds requires a new versioned contract amendment; Issue #73 cannot silently increase it, while GitHub Actions job containment may exceed 900 only to record the fail-closed health/result without altering the semantic builder timeout.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#83"},
+        {"kind": "public_ref", "reference": "inert candidate blob f42132a2f52d1d7af84155a56a86fca2fe4d8605 for contracts/graphify-supply-chain.v2.json"}
+      ]
+    },
+    {
+      "statement": "Controlled publisher request i10-0083-claim-v1 published claim state at 026ed7fb3b352e4941857b8da4b87f82ad0296c7; its CI 32903269083 exposed the active-task Knowledge Delta gate. Controlled publisher request i10-0083-claim-kd-v1 then published the required intermediate delta at eacbbf660396acd6f14bd06c26d62d90efab10c8, and exact-head Infrastructure CI 32903503517 succeeded.",
+      "provenance": [
+        {"kind": "commit", "reference": "controlled claim publication", "repo": "Dsamofalov/hwm-control", "sha": "026ed7fb3b352e4941857b8da4b87f82ad0296c7"},
+        {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32903241315 success for i10-0083-claim-v1"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32903269083 failure: missing active-task Knowledge Delta only"},
+        {"kind": "commit", "reference": "controlled claim-KD recovery publication", "repo": "Dsamofalov/hwm-control", "sha": "eacbbf660396acd6f14bd06c26d62d90efab10c8"},
+        {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32903465884 success for i10-0083-claim-kd-v1"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32903503517 success on eacbbf660396acd6f14bd06c26d62d90efab10c8"}
+      ]
+    },
+    {
+      "statement": "The source amendment candidates are exact inert blobs: v2 f42132a2f52d1d7af84155a56a86fca2fe4d8605, ADR 0008 31764c9a917d6fb5a11a4e9d7f8b43dbccd8260b, and focused timeout test c1fc9a6bfea4f4aec49ff8b0128ed0a03069cf73.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "Git object f42132a2f52d1d7af84155a56a86fca2fe4d8605"},
+        {"kind": "public_ref", "reference": "Git object 31764c9a917d6fb5a11a4e9d7f8b43dbccd8260b"},
+        {"kind": "public_ref", "reference": "Git object c1fc9a6bfea4f4aec49ff8b0128ed0a03069cf73"}
+      ]
+    },
+    {
+      "statement": "Issue #73 remains open, blocked, and unclaimed with an explicit dependency on I10-0083; Issues #74 and #75 remain ready/unclaimed and Issue #76 remains blocked.",
       "provenance": [
         {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"},
         {"kind": "issue", "reference": "Dsamofalov/hwm-control#83"}
@@ -64,33 +93,46 @@
       "rationale": "The implementation agent must not choose or silently relax a correctness- and availability-affecting timeout."
     },
     {
-      "decision": "Materialize an intermediate task Knowledge Delta before source-contract publication.",
-      "rationale": "The protected repository Knowledge Delta gate requires a canonical delta as soon as I10-0083 appears in active_task_ids; recording unresolved terminal evidence preserves fail-closed lifecycle truth without weakening CI."
+      "decision": "Keep the existing graph schemas and closed BUILD_STATUS core schema map unchanged.",
+      "rationale": "This remediation changes only the supply-chain execution policy, not graph serialization or bootstrap core schema registration."
     }
   ],
   "rejected_alternatives": [
     {
-      "alternative": "Edit graphify-supply-chain.v1.json in place.",
-      "reason": "The accepted v1 blob is historical contract evidence and must remain immutable."
+      "alternative": "Edit graphify-supply-chain.v1.json or ADR 0007 in place.",
+      "reason": "The accepted v1/ADR 0007 state is historical contract evidence and must remain immutable."
     },
     {
       "alternative": "Let Issue #73 choose a timeout or increase it after a timeout failure.",
       "reason": "That would move a normative architecture decision into implementation and permit silent policy drift."
     },
     {
-      "alternative": "Bypass the failing claim CI or use a generic source writer.",
+      "alternative": "Bypass exact-head CI or use a generic source writer after the claim gate failure.",
       "reason": "Exact-head CI and the installed controlled publisher are mandatory trust boundaries."
     }
   ],
   "changed_components": [
     "BUILD_STATUS.json",
+    "contracts/graphify-supply-chain.v2.json",
+    "docs/ADR/0008-pin-exact-graphify-builder-execution-timeout.md",
+    "tests/test_i10_0083_graphify_timeout_contract.py",
     "knowledge-deltas/I10-0083.json"
   ],
   "tests": [
     {
-      "name": "Claim-state Infrastructure CI",
+      "name": "Initial claim-state Infrastructure CI",
       "status": "fail",
-      "reference": "32903269083 on 026ed7fb3b352e4941857b8da4b87f82ad0296c7: bootstrap invariants passed; repository Knowledge Delta gate required I10-0083.json"
+      "reference": "32903269083 on 026ed7fb3b352e4941857b8da4b87f82ad0296c7: bootstrap invariants passed; active-task Knowledge Delta was required"
+    },
+    {
+      "name": "Recovered claim-state Infrastructure CI",
+      "status": "pass",
+      "reference": "32903503517 on eacbbf660396acd6f14bd06c26d62d90efab10c8"
+    },
+    {
+      "name": "Focused v2 timeout contract tests",
+      "status": "not_run",
+      "reference": "candidate tests/test_i10_0083_graphify_timeout_contract.py blob c1fc9a6bfea4f4aec49ff8b0128ed0a03069cf73 awaiting controlled source publication"
     }
   ],
   "evidence": [
@@ -98,11 +140,14 @@
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"},
     {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32903241315 success"},
     {"kind": "commit", "reference": "controlled claim publication", "repo": "Dsamofalov/hwm-control", "sha": "026ed7fb3b352e4941857b8da4b87f82ad0296c7"},
-    {"kind": "ci_run", "reference": "Infrastructure CI 32903269083 failure"}
+    {"kind": "ci_run", "reference": "Infrastructure CI 32903269083 failure"},
+    {"kind": "ci_run", "reference": "Controlled Task Branch Publisher 32903465884 success"},
+    {"kind": "commit", "reference": "controlled claim-KD recovery publication", "repo": "Dsamofalov/hwm-control", "sha": "eacbbf660396acd6f14bd06c26d62d90efab10c8"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32903503517 success"}
   ],
   "followups": [],
   "unresolved": [
-    "Publish and validate the forward-only v2 supply-chain contract, ADR 0008, and focused timeout contract test through the controlled publisher.",
-    "Complete exact-head source and completion CI, protected PR review/merge, post-merge CI, issue closure, ownership cleanup, Issue #72 reconciliation, and downstream DAG restoration."
+    "Publish the v2/ADR/test/source-KD candidate blobs through the controlled publisher and require exact-head source CI success.",
+    "Complete the completion-state publication/CI, protected PR review/merge, post-merge CI, Issue #83 terminal lifecycle, ownership cleanup, Issue #72 reconciliation, and downstream DAG restoration."
   ]
 }
