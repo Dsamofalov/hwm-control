@@ -1,0 +1,58 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 81,
+  "goal": "Reconcile the omitted hwm-control lifecycle and Knowledge Delta completion projection for the already accepted Issue #79 publisher installation without redoing implementation or acceptance.",
+  "verified_facts": [
+    {
+      "statement": "Recovery Issue #81 was created only after readback confirmed hwm-control/main b03b9a2593d2e379a7324ba39beaea2fb4027f89, hwm-lab/main e37ea628d9c793d5e87bc8b903a9b85b4371991c, hwm_predictor/main 8fd669336b36064e842252d69fb4016cc526a9d4, closed/completed Issues #78 and #79, merged hwm-lab PR #2, and final 404 for both publisher-installation and disposable acceptance branches.",
+      "provenance": [
+        {"kind": "commit", "reference": "protected recovery base", "repo": "Dsamofalov/hwm-control", "sha": "b03b9a2593d2e379a7324ba39beaea2fb4027f89"},
+        {"kind": "commit", "reference": "protected hwm-lab main readback", "repo": "Dsamofalov/hwm-lab", "sha": "e37ea628d9c793d5e87bc8b903a9b85b4371991c"},
+        {"kind": "commit", "reference": "protected product main readback", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#81"}
+      ]
+    },
+    {
+      "statement": "The original completion was premature only in control-plane projection: protected BUILD_STATUS lacked I10-0079 and protected knowledge-deltas/I10-0079.json returned 404; the hwm-lab implementation, PR, CI, and live disposable acceptance remain accepted and are not being repeated.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "BUILD_STATUS.json blob cfccb27a4c947670ddf396dc30cea0b6cec7ec1b at b03b9a2593d2e379a7324ba39beaea2fb4027f89"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"},
+        {"kind": "public_ref", "reference": "GitHub contents readback 404 for knowledge-deltas/I10-0079.json at b03b9a2593d2e379a7324ba39beaea2fb4027f89"}
+      ]
+    },
+    {
+      "statement": "Claim publication request pub-i10-0081-claim-01 used the controlled publisher only, moved the ownership branch from b03b9a2593d2e379a7324ba39beaea2fb4027f89 to 753e6928e40bbcc108e48c84c49c97cbfa531ee0, and dispatched exact-head Infrastructure CI 32899919290; that CI failed solely because the active I10-0081 projection requires its canonical Knowledge Delta, so this same-branch recovery adds that required delta without changing scope or using an alternate writer.",
+      "provenance": [
+        {"kind": "commit", "reference": "controlled claim publication", "repo": "Dsamofalov/hwm-control", "sha": "753e6928e40bbcc108e48c84c49c97cbfa531ee0"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32899919290"},
+        {"kind": "public_ref", "reference": "Issue #81 request comment 5416881342 and publisher result comment 5416886228"}
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Keep the recovery append-only and confined to BUILD_STATUS plus the two canonical Knowledge Delta paths.",
+      "rationale": "Issue #79 implementation evidence is already terminally valid; only omitted lifecycle/KD projections and branch cleanup verification need reconciliation."
+    },
+    {
+      "decision": "Use only the installed hwm-control controlled task-branch publisher for every recovery source commit.",
+      "rationale": "The recovery must preserve the controlled publication trust boundary and must not introduce or temporarily use a generic Git writer."
+    }
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Redo the hwm-lab publisher installation or live acceptance.", "reason": "Both were already accepted with merged PR and exact CI evidence; repetition is explicitly out of scope."},
+    {"alternative": "Use a generic create/update/commit writer after the claim CI failure.", "reason": "The transport hard gate requires controlled publisher publication only; the failure is a repository lifecycle gate requiring this canonical KD."}
+  ],
+  "changed_components": ["BUILD_STATUS.json", "knowledge-deltas/I10-0081.json"],
+  "tests": [
+    {"name": "Claim exact-head Infrastructure CI", "status": "fail", "reference": "32899919290 on 753e6928e40bbcc108e48c84c49c97cbfa531ee0: missing required knowledge-deltas/I10-0081.json"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#81"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#79"},
+    {"kind": "commit", "reference": "controlled claim publication", "repo": "Dsamofalov/hwm-control", "sha": "753e6928e40bbcc108e48c84c49c97cbfa531ee0"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32899919290"}
+  ],
+  "followups": ["Materialize I10-0079 retrospective completion evidence and final I10-0081 completion projection, then complete protected PR/merge cleanup without claiming downstream Graphify work."],
+  "unresolved": []
+}
