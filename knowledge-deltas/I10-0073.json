@@ -1,0 +1,62 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 73,
+  "goal": "Implement and terminally validate the disposable exact-SHA structural Graphify builder in hwm-lab under hwm-graphify-supply-chain/v2 without publishing a production graph.",
+  "verified_facts": [
+    {
+      "statement": "I10-0073 is the single active control task; protected hwm-control/main started at bc8a05f6c728d15e32048e5737d9703cd768b731 and the implementation carrier branch in hwm-lab was already at source-v2 SHA 3259ea71dd2aee4c4dde0c8b7eac51d5831dd9b0 with exact-head Publisher Ordinary CI 32908444462 successful.",
+      "provenance": [
+        {"kind": "commit", "reference": "protected control base", "repo": "Dsamofalov/hwm-control", "sha": "bc8a05f6c728d15e32048e5737d9703cd768b731"},
+        {"kind": "commit", "reference": "hwm-lab source-v2 head", "repo": "Dsamofalov/hwm-lab", "sha": "3259ea71dd2aee4c4dde0c8b7eac51d5831dd9b0"},
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32908444462 success on exact hwm-lab source-v2 head"}
+      ]
+    },
+    {
+      "statement": "The authoritative supply-chain contract for this task is hwm-graphify-supply-chain/v2 exact blob f42132a2f52d1d7af84155a56a86fca2fe4d8605, including an exact integer 900-second monotonic builder timeout and unchanged closed bootstrap schema map.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "contracts/graphify-supply-chain.v2.json blob f42132a2f52d1d7af84155a56a86fca2fe4d8605"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#83"}
+      ]
+    },
+    {
+      "statement": "The initial control claim projection publisher request i10-0073-control-claim-projection-v1 produced exact branch SHA 97a08534407edafb3a30e2bd09df8e73914138ef, but Infrastructure CI 32945596163 failed only because active task I10-0073 requires its canonical Knowledge Delta; checkout/exact-head verification and the bootstrap validator passed.",
+      "provenance": [
+        {"kind": "commit", "reference": "control claim projection", "repo": "Dsamofalov/hwm-control", "sha": "97a08534407edafb3a30e2bd09df8e73914138ef"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 32945596163: exact-head verification passed; active-task Knowledge Delta gate failed"},
+        {"kind": "public_ref", "reference": "publisher request/result comments 5422354300/5422358970"}
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Use an interim canonical active-task Knowledge Delta to satisfy the repository claim-state gate, then replace it with terminal completion evidence only after the protected hwm-lab implementation merge and post-merge CI.",
+      "rationale": "This is the established hwm-control lifecycle used by I10-0083 and preserves a final cumulative control diff of only BUILD_STATUS.json plus knowledge-deltas/I10-0073.json."
+    }
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Open a control completion PR or mark I10-0073 completed before hwm-lab terminal validation.", "reason": "Completion evidence is not yet terminal and would violate the required lifecycle ordering."},
+    {"alternative": "Ignore or bypass the active-task Knowledge Delta gate.", "reason": "The protected repository gate is authoritative and must pass on the exact claim head."}
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I10-0073.json"
+  ],
+  "tests": [
+    {"name": "Initial control claim projection Infrastructure CI", "status": "fail", "reference": "32945596163 on 97a08534407edafb3a30e2bd09df8e73914138ef: only active-task Knowledge Delta missing"},
+    {"name": "hwm-lab source-v2 exact-head Publisher Ordinary CI", "status": "pass", "reference": "32908444462 on 3259ea71dd2aee4c4dde0c8b7eac51d5831dd9b0"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-lab#4"},
+    {"kind": "commit", "reference": "current control claim projection head", "repo": "Dsamofalov/hwm-control", "sha": "97a08534407edafb3a30e2bd09df8e73914138ef"},
+    {"kind": "ci_run", "reference": "Infrastructure CI 32945596163"},
+    {"kind": "commit", "reference": "current hwm-lab source-v2 head", "repo": "Dsamofalov/hwm-lab", "sha": "3259ea71dd2aee4c4dde0c8b7eac51d5831dd9b0"},
+    {"kind": "ci_run", "reference": "Publisher Ordinary CI 32908444462"}
+  ],
+  "followups": [
+    "Complete source-v3 exact Git checkout binding and three-run real Graphify acceptance in hwm-lab, merge it through the protected lifecycle, then replace this interim KD with terminal evidence and complete the control BUILD_STATUS projection."
+  ],
+  "unresolved": [
+    "source-v3 real Git checkout verification, three-run exact Graphify integration acceptance, protected hwm-lab PR/merge/post-merge CI, and final hwm-control completion lifecycle remain pending."
+  ]
+}
