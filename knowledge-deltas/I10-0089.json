@@ -104,7 +104,7 @@
   ],
   "tests": [
     {"name": "Claim projection Infrastructure CI", "status": "pass", "reference": "33118500026 on 268c1bd1cbf46229c40fd8be2ae7d9f1b3940f9a"},
-    {"name": "I10-0089 RED architecture/runtime contract gate", "status": "expected_fail", "reference": "33118606238 on c8a016fc8472d784339a017c4838cd72b0f2dce5; ADR 0010, INFRA_SPEC §39 and runtime contract intentionally absent"},
+    {"name": "I10-0089 RED architecture/runtime contract gate", "status": "fail", "reference": "33118606238 on c8a016fc8472d784339a017c4838cd72b0f2dce5; expected RED failure because ADR 0010, INFRA_SPEC §39 and runtime contract were intentionally absent"},
     {"name": "Initial GREEN source Infrastructure CI", "status": "fail", "reference": "33124683312 on dd00853dc1824b729adb1c91cc32e2ad36c351ba; predecessor-byte defect plus legacy #86 whole-file identity assertion"},
     {"name": "Corrected exact-head GREEN Infrastructure CI", "status": "pass", "reference": "33125162225 on dc26421a7b5ccd4f97ae0f7bda433ed78daaa2e4"},
     {"name": "Exact INFRA_SPEC append-only predecessor identity and §39 contract", "status": "pass", "reference": "I10-0089 and corrected I10-0086 tests in CI 33125162225"},
