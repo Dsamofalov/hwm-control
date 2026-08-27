@@ -1,47 +1,68 @@
 {
   "schema": "hwm-knowledge-delta/v1",
   "task_id": 89,
-  "goal": "Reconcile the failed live protected-path mutation authority, keep the installed #87 implementation dormant/fail-closed, and authorize exact CPython 3.12.10 acquisition inside ordinary read-only hwm-lab CI without adding credentials or mutating hwm-lab source in this task.",
+  "goal": "Reconcile the failed live protected-path mutation authority, supersede #87 without completing it, and authorize exact CPython 3.12.10 acquisition inside ordinary read-only hwm-lab CI without adding credentials or implementing #85/#73.",
   "verified_facts": [
     {
-      "statement": "At reconciliation start the protected heads are hwm-control 64d321795557901119e3af3beab95fd349b507ff, hwm-lab 18f24ccc0866b29c24c56659479ca02f20fb4b9c, hwm-context d651f40d0bb3a3ef0e52fca95e5400ed3db3d772, and hwm_predictor 8fd669336b36064e842252d69fb4016cc526a9d4.",
+      "statement": "I10-0089 started from protected hwm-control/main 64d321795557901119e3af3beab95fd349b507ff while hwm-lab/main was 18f24ccc0866b29c24c56659479ca02f20fb4b9c and product main reference remained 8fd669336b36064e842252d69fb4016cc526a9d4.",
       "provenance": [
         {"kind": "commit", "reference": "protected hwm-control/main start", "repo": "Dsamofalov/hwm-control", "sha": "64d321795557901119e3af3beab95fd349b507ff"},
         {"kind": "commit", "reference": "protected hwm-lab/main start", "repo": "Dsamofalov/hwm-lab", "sha": "18f24ccc0866b29c24c56659479ca02f20fb4b9c"},
-        {"kind": "commit", "reference": "protected hwm-context/main start", "repo": "Dsamofalov/hwm-context", "sha": "d651f40d0bb3a3ef0e52fca95e5400ed3db3d772"},
-        {"kind": "commit", "reference": "protected hwm_predictor/main start", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"}
+        {"kind": "commit", "reference": "product main reference", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"}
       ]
     },
     {
-      "statement": "Issue #86 is closed/completed and hwm-control PR #88 merged at 64d321795557901119e3af3beab95fd349b507ff; hwm-lab PR #5 merged the exact ten-path P0B installation at 18f24ccc0866b29c24c56659479ca02f20fb4b9c and both post-merge CI runs succeeded.",
-      "provenance": [
-        {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 completed"},
-        {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#88"},
-        {"kind": "pull_request", "reference": "Dsamofalov/hwm-lab#5"},
-        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Repository Bootstrap CI 33104499235 success"},
-        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33104499173 success"}
-      ]
-    },
-    {
-      "statement": "Disposable live acceptance request i10-0087-acceptance-positive-v1 returned hwm-protected-path-install-result/bootstrap-v1 status=error code=INTERNAL_ERROR in comment 5443652191; the acceptance ref remained at 18f24ccc0866b29c24c56659479ca02f20fb4b9c and protected-path-installer/trusted-static was skipped.",
+      "statement": "Disposable #87 live acceptance is authoritative failure evidence: request i10-0087-acceptance-positive-v1 targeted the disposable hwm-lab acceptance branch at 18f24ccc0866b29c24c56659479ca02f20fb4b9c, and the protected installer returned hwm-protected-path-install-result/bootstrap-v1 status=error code=INTERNAL_ERROR in Issue #6 comment 5443652191 without advancing the acceptance ref.",
       "provenance": [
         {"kind": "issue", "reference": "Dsamofalov/hwm-lab#6 request comment 5443648387 and protected result comment 5443652191"},
-        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Actions run 33104668829"},
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab protected-path live run 33104668829"},
         {"kind": "public_ref", "reference": "refs/heads/agent/infra-0087-protected-path-installer-acceptance remained 18f24ccc0866b29c24c56659479ca02f20fb4b9c"}
       ]
     },
     {
-      "statement": "The live install job had Actions: write, Contents: write, Issues: write, Metadata: read and no Workflows permission. Official GitHub documentation requires the GitHub App Workflows repository permission to edit Actions workflow files, while GITHUB_TOKEN workflow syntax exposes no workflows permission.",
+      "statement": "The live installer authority was operationally insufficient for .github/workflows/**: the repository-scoped GITHUB_TOKEN job did not have GitHub App Workflows repository permission, so the P0A contract was internally coherent but not live-implementable with that credential boundary.",
       "provenance": [
-        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Actions job 98631202233 permission report in run 33104668829"},
-        {"kind": "public_ref", "reference": "GitHub Docs: Choosing permissions for a GitHub App — Workflows permission for editing .github/workflows"},
-        {"kind": "public_ref", "reference": "GitHub Docs: Workflow syntax for GitHub Actions — GITHUB_TOKEN permissions list has no workflows scope"}
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Actions run 33104668829 permission evidence"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#89 owner-approved reconciliation"}
       ]
     },
     {
-      "statement": "The #87 active Knowledge Delta is blob a19481504e9bf8cdd0d08c6dd0a7c071c54de5f4 on agent/infra-0087-protected-path-installer-install; #73 historical anchors remain 994730d637d4e4c7c4eb492b22c49993e971d1e4 in hwm-control and 1595b39b4684143bc34cb5d157eabf1ad4d86c37 in hwm-lab.",
+      "statement": "The controlled RED request i10-0089-contract-red-v1 produced exact head c8a016fc8472d784339a017c4838cd72b0f2dce5 and Infrastructure CI 33118606238 failed as expected because ADR 0010, INFRA_SPEC §39, and contracts/graphify-acceptance-runtime.v1.json did not yet exist.",
       "provenance": [
-        {"kind": "commit", "reference": "#87 active control branch", "repo": "Dsamofalov/hwm-control", "sha": "e03b0bb7787e104f03d77a4f366d040cc3f11720"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#89 RED request/result comments 5445470234 and 5445474827"},
+        {"kind": "commit", "reference": "RED exact head", "repo": "Dsamofalov/hwm-control", "sha": "c8a016fc8472d784339a017c4838cd72b0f2dce5"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 33118606238 expected failure"}
+      ]
+    },
+    {
+      "statement": "The first GREEN publication produced dd00853dc1824b729adb1c91cc32e2ad36c351ba and CI 33124683312; that run exposed one accidental pre-§39 INFRA_SPEC word insertion and one genuine legacy #86 full-file identity assertion incompatible with the owner-approved append-only §39 successor. The #89 RED test itself was not changed.",
+      "provenance": [
+        {"kind": "commit", "reference": "initial GREEN source attempt", "repo": "Dsamofalov/hwm-control", "sha": "dd00853dc1824b729adb1c91cc32e2ad36c351ba"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 33124683312 failure"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#89 controlled request i10-0089-contract-green-v1"}
+      ]
+    },
+    {
+      "statement": "Controlled fix request i10-0089-contract-green-fix-v1 restored the exact 77477-byte predecessor identity and changed only the legacy #86 test so its historical §38 identity is checked over that exact prefix. It produced source GREEN head dc26421a7b5ccd4f97ae0f7bda433ed78daaa2e4; Infrastructure CI 33125162225 ran on exactly that SHA and succeeded.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#89 fix request/result comments 5446282491 and 5446286463"},
+        {"kind": "commit", "reference": "exact GREEN source head", "repo": "Dsamofalov/hwm-control", "sha": "dc26421a7b5ccd4f97ae0f7bda433ed78daaa2e4"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 33125162225 success on dc26421a7b5ccd4f97ae0f7bda433ed78daaa2e4"}
+      ]
+    },
+    {
+      "statement": "The exact runtime contract authorizes actions/python-versions release 3.12.10-14343898437, artifact python-3.12.10-linux-24.04-x64.tar.gz, size 121612690 bytes, SHA-256 b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33, executable report CPython 3.12.10, anonymous exact-URL acquisition and verified bounded task-local setup before the 900-second semantic builder timer.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "contracts/graphify-acceptance-runtime.v1.json at exact GREEN source head dc26421a7b5ccd4f97ae0f7bda433ed78daaa2e4"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 33125162225 contract assertions success"}
+      ]
+    },
+    {
+      "statement": "Historical evidence remains immutable: #87 Knowledge Delta blob a19481504e9bf8cdd0d08c6dd0a7c071c54de5f4, #73 Knowledge Delta blob fd84a5df1bb91a0b56693469d8e74532b6fd8584, ADR 0009 blob 3a8bb58ca4886590fd82d5920f6078a7710c9899, and the historical #73 recovery anchors hwm-control 994730d637d4e4c7c4eb492b22c49993e971d1e4 / hwm-lab 1595b39b4684143bc34cb5d157eabf1ad4d86c37 remain historical anchors rather than future execution branches.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "knowledge-deltas/I10-0087.json blob a19481504e9bf8cdd0d08c6dd0a7c071c54de5f4"},
+        {"kind": "public_ref", "reference": "knowledge-deltas/I10-0073.json blob fd84a5df1bb91a0b56693469d8e74532b6fd8584"},
+        {"kind": "public_ref", "reference": "docs/ADR/0009-controlled-protected-path-installer-contract.md blob 3a8bb58ca4886590fd82d5920f6078a7710c9899"},
         {"kind": "commit", "reference": "#73 control historical anchor", "repo": "Dsamofalov/hwm-control", "sha": "994730d637d4e4c7c4eb492b22c49993e971d1e4"},
         {"kind": "commit", "reference": "#73 lab historical anchor", "repo": "Dsamofalov/hwm-lab", "sha": "1595b39b4684143bc34cb5d157eabf1ad4d86c37"}
       ]
@@ -49,44 +70,58 @@
   ],
   "decisions": [
     {
-      "decision": "Treat #87 as superseded/not-planned rather than completed and leave the installed implementation dormant/fail-closed; do not repair either the missing Workflows authority or the job-conclusion projection defect in #87.",
-      "rationale": "Live acceptance is authoritative and proves the repository-local GITHUB_TOKEN cannot satisfy the contract for .github/workflows mutation."
+      "decision": "Treat #87 as superseded/not-planned, never completed, and keep the installed implementation dormant historical/fail-closed rather than repair it.",
+      "rationale": "Live acceptance is authoritative and disproved the protected-path authority assumed by the installed route."
     },
     {
-      "decision": "Defer any credentialed protected-path mutation capability to I11 and authorize no GitHub App, PAT, deploy key, private key, or other long-lived secret now.",
-      "rationale": "A future activation requires a separate owner-approved security task with explicit permission, scope, storage, rotation, revocation, duration, audit, and cleanup terms."
+      "decision": "Defer credentialed protected-path mutation to I11 and authorize no PAT, GitHub App credential/private key, deploy key, connector credential, or other substitute long-lived privilege in I10-0089.",
+      "rationale": "Future protected-path authority requires a separate security/architecture decision covering exact Workflows permission, repository scope, storage, rotation, revocation, duration/review date, audit and cleanup."
     },
     {
-      "decision": "Move #85 to exact in-job CPython 3.12.10 acquisition in ordinary read-only hwm-lab CI code, with no .github mutation, then resume #73 only after completed #85 using a fresh replacement branch from the new hwm-lab/main.",
-      "rationale": "This is the owner-approved least-authority route that avoids the impossible protected-path credential requirement while preserving historical #73 anchors."
+      "decision": "Make exact in-job CPython 3.12.10 acquisition inside ordinary read-only CI the mandatory future #85 route; #85 depends on completed #89 rather than completed #87 and must avoid .github/**.",
+      "rationale": "This is the least-authority implementation route consistent with the live failure evidence."
+    },
+    {
+      "decision": "Keep #73 paused until completed #85 and require any resumed execution to use a fresh replacement hwm-lab branch from then-current hwm-lab/main, leaving both historical #73 recovery anchors immutable.",
+      "rationale": "The failed historical runtime path must not be resumed or mutated in place."
     }
   ],
   "rejected_alternatives": [
-    {"alternative": "Repair the #87 installer with GITHUB_TOKEN or retry its CAS/path policy.", "reason": "The missing Workflows permission is a capability impossibility, not a CAS, path-policy, or Contents permission defect."},
-    {"alternative": "Introduce a GitHub App, PAT, deploy key, private key, connector credential, or other substitute credential now.", "reason": "Owner authorization explicitly defers credentialed protected-path mutation to I11."},
-    {"alternative": "Resume #85 implementation, #73 Graphify work, or mutate hwm-lab source during reconciliation.", "reason": "Those changes are downstream and explicitly outside I10-P1-R2 scope."}
+    {"alternative": "Repair the #87 installer with GITHUB_TOKEN or another credential.", "reason": "The active route is superseded and credentialed protected-path authority is explicitly deferred to I11."},
+    {"alternative": "Reuse the P0B bootstrap exception.", "reason": "The exception is historical, one-time and must never be reused after this reconciliation."},
+    {"alternative": "Use actions/setup-python, toolcache fallback, mirror fallback, or current-main mutable version-manifest lookup for #85.", "reason": "ADR 0010, INFRA_SPEC §39 and the exact runtime contract explicitly forbid those acquisition routes."},
+    {"alternative": "Weaken the I10-0089 RED test to obtain GREEN.", "reason": "The RED contract was correct; CI instead proved an accidental predecessor-byte mutation and a separate legacy #86 whole-file assertion defect, both fixed without changing the #89 RED test."},
+    {"alternative": "Start #85 or resume #73 during I10-0089.", "reason": "Both are downstream and explicitly outside this reconciliation task."}
   ],
   "changed_components": [
-    "BUILD_STATUS.json",
-    "knowledge-deltas/I10-0087.json",
-    "knowledge-deltas/I10-0089.json"
+    "docs/ADR/0010-defer-protected-path-credentials-and-use-in-job-runtime-acquisition.md",
+    "docs/INFRA_SPEC.md §39",
+    "contracts/graphify-acceptance-runtime.v1.json",
+    "tests/test_i10_0089_protected_path_authority_reconciliation.py (existing RED test, unchanged during GREEN)",
+    "tests/test_i10_0086_protected_path_install_contract.py (legacy append-only compatibility correction)",
+    "knowledge-deltas/I10-0089.json",
+    "BUILD_STATUS.json"
   ],
   "tests": [
-    {"name": "I10-0089 Phase 0 independent readback", "status": "pass", "reference": "protected heads, #86/#87/#73, PR #88/#5, CI, live comments/run/logs, installed bytes, official permission docs, BUILD_STATUS, KDs, branches, duplicate Issue/PR search"},
-    {"name": "I10-0089 multi-active claim projection Infrastructure CI", "status": "not_run", "reference": "required immediately after controlled-publisher claim projection"},
-    {"name": "I10-0089 architecture/runtime contract source tests", "status": "not_run", "reference": "pending after claim projection"}
+    {"name": "Claim projection Infrastructure CI", "status": "pass", "reference": "33118500026 on 268c1bd1cbf46229c40fd8be2ae7d9f1b3940f9a"},
+    {"name": "I10-0089 RED architecture/runtime contract gate", "status": "expected_fail", "reference": "33118606238 on c8a016fc8472d784339a017c4838cd72b0f2dce5; ADR 0010, INFRA_SPEC §39 and runtime contract intentionally absent"},
+    {"name": "Initial GREEN source Infrastructure CI", "status": "fail", "reference": "33124683312 on dd00853dc1824b729adb1c91cc32e2ad36c351ba; predecessor-byte defect plus legacy #86 whole-file identity assertion"},
+    {"name": "Corrected exact-head GREEN Infrastructure CI", "status": "pass", "reference": "33125162225 on dc26421a7b5ccd4f97ae0f7bda433ed78daaa2e4"},
+    {"name": "Exact INFRA_SPEC append-only predecessor identity and §39 contract", "status": "pass", "reference": "I10-0089 and corrected I10-0086 tests in CI 33125162225"},
+    {"name": "ADR 0010 and graphify acceptance runtime v1 contract assertions", "status": "pass", "reference": "tests/test_i10_0089_protected_path_authority_reconciliation.py in CI 33125162225"}
   ],
   "evidence": [
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#89"},
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#87"},
-    {"kind": "issue", "reference": "Dsamofalov/hwm-lab#6"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-lab#6 live failure carrier"},
     {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab protected-path live run 33104668829"},
-    {"kind": "public_ref", "reference": "GitHub official Workflows repository permission and GITHUB_TOKEN permissions documentation"}
+    {"kind": "ci_run", "reference": "Dsamofalov/hwm-control RED run 33118606238"},
+    {"kind": "ci_run", "reference": "Dsamofalov/hwm-control source GREEN run 33125162225"},
+    {"kind": "public_ref", "reference": "actions/python-versions release 3.12.10-14343898437 exact artifact/hash identity encoded in contracts/graphify-acceptance-runtime.v1.json"}
   ],
   "followups": [
-    "Publish the multi-active claim projection through the hwm-control controlled publisher, require exact-head Infrastructure CI success, then publish the reconciliation test red gate followed by ADR 0010, append-only INFRA_SPEC §39, exact runtime contract and final KD; complete protected PR/merge/post-merge CI before external cleanup and final Issue/DAG reconciliation."
+    "After protected merge and terminal #89 external reconciliation, #85 may become the unclaimed future implementation task for the exact in-job runtime route; do not infer completion from #87.",
+    "#73 remains paused until completed #85 and must then use a fresh replacement hwm-lab branch from then-current hwm-lab/main."
   ],
-  "unresolved": [
-    "Claim projection CI, architecture source publication, focused test green gate, completion BUILD_STATUS, protected hwm-control PR/merge/post-merge CI, exact post-merge workflow/ref cleanup, #6/#87/#85/#73 Issue reconciliation, and final BUILD_STATUS/KD tail remain pending."
-  ]
+  "unresolved": []
 }

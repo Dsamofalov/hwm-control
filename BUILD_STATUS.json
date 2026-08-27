@@ -36,12 +36,11 @@
     "I10-0079",
     "I10-0081",
     "I10-0083",
-    "I10-0086"
+    "I10-0086",
+    "I10-0089"
   ],
   "active_task_ids": [
-    "I10-0073",
-    "I10-0087",
-    "I10-0089"
+    "I10-0073"
   ],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
@@ -57,6 +56,6 @@
     "authoritative_functional_checkpoint": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
   },
   "blockers": [
-    "I10-0073 is paused on hwm-control#85; #85 is blocked on hwm-control#89 while protected-path authority is reconciled; I10-0087 remains active only as superseded live-failure evidence pending post-merge cleanup"
+    "I10-0073 remains paused on hwm-control#85; #85 is the future unclaimed exact-runtime implementation task under ADR 0010/INFRA_SPEC §39 after terminal I10-0089 reconciliation; I10-0087 is superseded/not-planned and is not completed"
   ]
 }
