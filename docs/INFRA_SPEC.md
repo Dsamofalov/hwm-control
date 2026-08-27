@@ -2210,3 +2210,101 @@ The old activation DAG is superseded rather than marked completed. After protect
 - I10 is not started by this reconciliation.
 
 Closed `not_planned` Issues are historical reconciliation outcomes, not `completed` dependencies. Replacement tasks must reference the replacement DAG rather than infer completion from #62/#50.
+
+# 38. Controlled protected-path installer
+
+This section is a forward-only I10 architecture amendment. It defines a separate privileged installation primitive without widening the ordinary task-branch publisher or changing any downstream task authority.
+
+## 38.1 Separate primitive
+
+The controlled protected-path installer is separate from the ordinary task-branch publisher and does not widen `hwm-publish-request/bootstrap-v1` or `hwm-publish-result/bootstrap-v1`. It is repository-local and is available only for an open, claimed installation Issue carrying all of `architecture`, `trusted`, and `contract`.
+
+The installer is not a generic Git writer. Its authority exists only inside the repository, Issue, task, branch, path, object, validation, and exact-head bindings declared by this section and the corresponding versioned contracts.
+
+## 38.2 Versioned interfaces
+
+The forward-only interfaces are exactly:
+
+- `hwm-protected-path-install-request/bootstrap-v1`;
+- `hwm-protected-path-install-result/bootstrap-v1`.
+
+Every request/result binds the request id, repository, architecture Issue, task id, exact protected-main base, dedicated installation branch, expected branch HEAD, normalized exact Issue-declared path allowlist, typed operation, regular-file mode, exact blob identity, expected previous blob identity for `replace`, and trusted validation workflow/check association. A result also binds the observed pre-mutation head and the exact resulting head/commit and validation association when successful.
+
+## 38.3 Allowed operations
+
+Bootstrap-v1 allows only `add` and `replace` of regular Git blobs in mode `100644` or `100755`. Every mutated path must be exactly enumerated by the owning architecture Issue and must be under one of these initial protected path classes:
+
+- `.github/workflows/**`;
+- `.github/actions/**`.
+
+Schema acceptance does not itself grant semantic path authority. The protected policy must independently enforce the exact Issue-declared allowlist and every absolute denial below.
+
+## 38.4 Absolute denials
+
+The installer always rejects all of the following, even if requested or Issue-declared:
+
+- the default branch, `main`, or any protected-main target;
+- delete, rename, or copy operations;
+- symlinks;
+- submodules/gitlinks;
+- arbitrary ref operations;
+- arbitrary or free-form shell execution;
+- every undeclared path;
+- `CODEOWNERS`;
+- repository rulesets or settings;
+- secrets or environment configuration;
+- installer self-modification, including its own workflow/backend/policy/contracts;
+- ordinary publisher implementation/workflow/policy/contracts;
+- the existing required bootstrap workflow;
+- credential-policy paths or equivalent credential-bearing configuration.
+
+No request shape may be reinterpreted to obtain an operation that bootstrap-v1 does not explicitly allow.
+
+## 38.5 Trust boundary
+
+Privileged installer implementation and policy come only from protected `main`. Candidate content remains inert Git data: the installer never checks out, imports, sources, renders as executable configuration, evaluates, or executes candidate bytes. It constructs inert Git objects only and may compare-and-set only the dedicated non-default installation branch.
+
+The installer does not approve or merge a PR, does not write protected `main`, and does not modify rulesets, required checks, repository settings, secrets, or environments. Before mutation it verifies an exact actor/author association allowlist; an open claimed Issue carrying `architecture`, `trusted`, and `contract`; exact Issue/task/repository/branch consistency; the exact protected-main base; path and object constraints; and exact expected-head compare-and-swap state.
+
+A byte-identical successful request replay is idempotent and does not perform a second ref move or validation dispatch. Reuse of a request id with changed normalized payload is rejected. Competing or stale requests fail without mutation when the expected branch HEAD no longer matches.
+
+## 38.6 Trusted validation
+
+Candidate workflows and Actions remain untrusted data until protected merge. Trusted/static validation is sourced only from protected `main` and reads the exact candidate blobs, tree, and head without executing candidate content.
+
+Validation must check the exact path/mode/blob inventory, workflow triggers, minimum permissions, absence of secret consumption, and full commit-SHA pins for every external Action. The existing required bootstrap workflow is immutable through the installer and remains an independent required check. Candidate content cannot mint credentials, publish its own trusted acceptance verdict, or self-certify its installation.
+
+A protected PR is eligible only for the exact validated head, with the existing required `bootstrap` check successful, clean mergeability, no requested changes, and zero unresolved review threads. The head must be re-read immediately before guarded merge. A newly installed workflow may be dispatched only after merge and only from the exact protected-main state containing it.
+
+If a token-created PR suppresses normal validation events, the allowed recovery is an explicit protected-main `workflow_dispatch` with exact status/head association. `pull_request_target` must not be used to execute candidate content.
+
+## 38.7 P0B bootstrap
+
+Issue #87 receives exactly one non-reusable bootstrap exception because it must install the protected-path installer before that installer exists. The transaction is limited to one dedicated `hwm-lab` installation branch created from an exact verified protected `main`, one transparent exact-parent Git-object transaction, a non-force update of that branch only, exact object/path readback, a protected PR, required CI, guarded exact-head merge, exact post-merge CI, and disposable live acceptance. It grants no protected-main write or bypass.
+
+The exact predeclared #87 bootstrap path allowlist is:
+
+- `.github/workflows/protected-path-installer.yml`;
+- `control/protected_path_installer.py`;
+- `control/protected_path_installer_backend.py`;
+- `control/protected_path_installer_contract.py`;
+- `control/protected_path_installer_policy.py`;
+- `control/protected_path_installer_manifest.bootstrap-v1.json`;
+- `schemas/protected-path-install-request.bootstrap-v1.schema.json`;
+- `schemas/protected-path-install-result.bootstrap-v1.schema.json`;
+- `tests/contracts/test_protected_path_install_contracts.py`;
+- `tests/security/test_protected_path_installer.py`.
+
+No other path is authorized by the #87 exception. The exception expires permanently after #87 completion and cannot be reused by #85, #73, I11, or later work.
+
+## 38.8 Required live acceptance
+
+Before the installed primitive is considered available, #87 must prove positive protected-path publication and byte-identical replay, plus non-mutating rejection of all required negative cases: changed payload under a reused request id; stale expected head; wrong repository, Issue, task, or branch; unauthorized actor; default-branch target; undeclared path; installer self-modification; ordinary publisher modification; existing required bootstrap workflow modification; `CODEOWNERS`; ruleset/settings paths; and secret/environment or credential-policy paths.
+
+Every negative case must prove that the target ref is unchanged. Disposable acceptance content must remain non-production and must not be merged into protected `main` except for the installer implementation itself through the guarded #87 lifecycle.
+
+## 38.9 Relationship to later milestones
+
+#85 may resume only after completed #87. #73 remains paused until completed #85. Completion of this P0A contract does not implement #87, choose a CPython acquisition method, modify Graphify builder source, or publish a production graph.
+
+I11 may version or extend this primitive through explicit forward contracts and protected architecture work, but it cannot replace the primitive with an unrestricted Git writer, arbitrary ref mutation surface, or arbitrary shell.
