@@ -39,7 +39,9 @@
     "I10-0086"
   ],
   "active_task_ids": [
-    "I10-0073"
+    "I10-0073",
+    "I10-0087",
+    "I10-0089"
   ],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
@@ -55,6 +57,6 @@
     "authoritative_functional_checkpoint": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
   },
   "blockers": [
-    "I10-0073 is paused on hwm-control#85; #85 is blocked on hwm-control#87 until controlled protected-path installation transport is live-proven"
+    "I10-0073 is paused on hwm-control#85; #85 is blocked on hwm-control#89 while protected-path authority is reconciled; I10-0087 remains active only as superseded live-failure evidence pending post-merge cleanup"
   ]
 }

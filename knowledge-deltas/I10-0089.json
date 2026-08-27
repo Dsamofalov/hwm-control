@@ -1,0 +1,92 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 89,
+  "goal": "Reconcile the failed live protected-path mutation authority, keep the installed #87 implementation dormant/fail-closed, and authorize exact CPython 3.12.10 acquisition inside ordinary read-only hwm-lab CI without adding credentials or mutating hwm-lab source in this task.",
+  "verified_facts": [
+    {
+      "statement": "At reconciliation start the protected heads are hwm-control 64d321795557901119e3af3beab95fd349b507ff, hwm-lab 18f24ccc0866b29c24c56659479ca02f20fb4b9c, hwm-context d651f40d0bb3a3ef0e52fca95e5400ed3db3d772, and hwm_predictor 8fd669336b36064e842252d69fb4016cc526a9d4.",
+      "provenance": [
+        {"kind": "commit", "reference": "protected hwm-control/main start", "repo": "Dsamofalov/hwm-control", "sha": "64d321795557901119e3af3beab95fd349b507ff"},
+        {"kind": "commit", "reference": "protected hwm-lab/main start", "repo": "Dsamofalov/hwm-lab", "sha": "18f24ccc0866b29c24c56659479ca02f20fb4b9c"},
+        {"kind": "commit", "reference": "protected hwm-context/main start", "repo": "Dsamofalov/hwm-context", "sha": "d651f40d0bb3a3ef0e52fca95e5400ed3db3d772"},
+        {"kind": "commit", "reference": "protected hwm_predictor/main start", "repo": "Dsamofalov/hwm_predictor", "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"}
+      ]
+    },
+    {
+      "statement": "Issue #86 is closed/completed and hwm-control PR #88 merged at 64d321795557901119e3af3beab95fd349b507ff; hwm-lab PR #5 merged the exact ten-path P0B installation at 18f24ccc0866b29c24c56659479ca02f20fb4b9c and both post-merge CI runs succeeded.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 completed"},
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-control#88"},
+        {"kind": "pull_request", "reference": "Dsamofalov/hwm-lab#5"},
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Repository Bootstrap CI 33104499235 success"},
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33104499173 success"}
+      ]
+    },
+    {
+      "statement": "Disposable live acceptance request i10-0087-acceptance-positive-v1 returned hwm-protected-path-install-result/bootstrap-v1 status=error code=INTERNAL_ERROR in comment 5443652191; the acceptance ref remained at 18f24ccc0866b29c24c56659479ca02f20fb4b9c and protected-path-installer/trusted-static was skipped.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-lab#6 request comment 5443648387 and protected result comment 5443652191"},
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Actions run 33104668829"},
+        {"kind": "public_ref", "reference": "refs/heads/agent/infra-0087-protected-path-installer-acceptance remained 18f24ccc0866b29c24c56659479ca02f20fb4b9c"}
+      ]
+    },
+    {
+      "statement": "The live install job had Actions: write, Contents: write, Issues: write, Metadata: read and no Workflows permission. Official GitHub documentation requires the GitHub App Workflows repository permission to edit Actions workflow files, while GITHUB_TOKEN workflow syntax exposes no workflows permission.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab Actions job 98631202233 permission report in run 33104668829"},
+        {"kind": "public_ref", "reference": "GitHub Docs: Choosing permissions for a GitHub App — Workflows permission for editing .github/workflows"},
+        {"kind": "public_ref", "reference": "GitHub Docs: Workflow syntax for GitHub Actions — GITHUB_TOKEN permissions list has no workflows scope"}
+      ]
+    },
+    {
+      "statement": "The #87 active Knowledge Delta is blob a19481504e9bf8cdd0d08c6dd0a7c071c54de5f4 on agent/infra-0087-protected-path-installer-install; #73 historical anchors remain 994730d637d4e4c7c4eb492b22c49993e971d1e4 in hwm-control and 1595b39b4684143bc34cb5d157eabf1ad4d86c37 in hwm-lab.",
+      "provenance": [
+        {"kind": "commit", "reference": "#87 active control branch", "repo": "Dsamofalov/hwm-control", "sha": "e03b0bb7787e104f03d77a4f366d040cc3f11720"},
+        {"kind": "commit", "reference": "#73 control historical anchor", "repo": "Dsamofalov/hwm-control", "sha": "994730d637d4e4c7c4eb492b22c49993e971d1e4"},
+        {"kind": "commit", "reference": "#73 lab historical anchor", "repo": "Dsamofalov/hwm-lab", "sha": "1595b39b4684143bc34cb5d157eabf1ad4d86c37"}
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Treat #87 as superseded/not-planned rather than completed and leave the installed implementation dormant/fail-closed; do not repair either the missing Workflows authority or the job-conclusion projection defect in #87.",
+      "rationale": "Live acceptance is authoritative and proves the repository-local GITHUB_TOKEN cannot satisfy the contract for .github/workflows mutation."
+    },
+    {
+      "decision": "Defer any credentialed protected-path mutation capability to I11 and authorize no GitHub App, PAT, deploy key, private key, or other long-lived secret now.",
+      "rationale": "A future activation requires a separate owner-approved security task with explicit permission, scope, storage, rotation, revocation, duration, audit, and cleanup terms."
+    },
+    {
+      "decision": "Move #85 to exact in-job CPython 3.12.10 acquisition in ordinary read-only hwm-lab CI code, with no .github mutation, then resume #73 only after completed #85 using a fresh replacement branch from the new hwm-lab/main.",
+      "rationale": "This is the owner-approved least-authority route that avoids the impossible protected-path credential requirement while preserving historical #73 anchors."
+    }
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Repair the #87 installer with GITHUB_TOKEN or retry its CAS/path policy.", "reason": "The missing Workflows permission is a capability impossibility, not a CAS, path-policy, or Contents permission defect."},
+    {"alternative": "Introduce a GitHub App, PAT, deploy key, private key, connector credential, or other substitute credential now.", "reason": "Owner authorization explicitly defers credentialed protected-path mutation to I11."},
+    {"alternative": "Resume #85 implementation, #73 Graphify work, or mutate hwm-lab source during reconciliation.", "reason": "Those changes are downstream and explicitly outside I10-P1-R2 scope."}
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I10-0087.json",
+    "knowledge-deltas/I10-0089.json"
+  ],
+  "tests": [
+    {"name": "I10-0089 Phase 0 independent readback", "status": "pass", "reference": "protected heads, #86/#87/#73, PR #88/#5, CI, live comments/run/logs, installed bytes, official permission docs, BUILD_STATUS, KDs, branches, duplicate Issue/PR search"},
+    {"name": "I10-0089 multi-active claim projection Infrastructure CI", "status": "not_run", "reference": "required immediately after controlled-publisher claim projection"},
+    {"name": "I10-0089 architecture/runtime contract source tests", "status": "not_run", "reference": "pending after claim projection"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#89"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#87"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-lab#6"},
+    {"kind": "ci_run", "reference": "Dsamofalov/hwm-lab protected-path live run 33104668829"},
+    {"kind": "public_ref", "reference": "GitHub official Workflows repository permission and GITHUB_TOKEN permissions documentation"}
+  ],
+  "followups": [
+    "Publish the multi-active claim projection through the hwm-control controlled publisher, require exact-head Infrastructure CI success, then publish the reconciliation test red gate followed by ADR 0010, append-only INFRA_SPEC §39, exact runtime contract and final KD; complete protected PR/merge/post-merge CI before external cleanup and final Issue/DAG reconciliation."
+  ],
+  "unresolved": [
+    "Claim projection CI, architecture source publication, focused test green gate, completion BUILD_STATUS, protected hwm-control PR/merge/post-merge CI, exact post-merge workflow/ref cleanup, #6/#87/#85/#73 Issue reconciliation, and final BUILD_STATUS/KD tail remain pending."
+  ]
+}
