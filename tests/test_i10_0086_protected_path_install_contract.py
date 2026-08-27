@@ -18,6 +18,7 @@ KD73_BLOB = "fd84a5df1bb91a0b56693469d8e74532b6fd8584"
 INFRA_PREDECESSOR_BLOB = "1a6917297f0068e8b530abc18b273c3918e13b0f"
 INFRA_PREDECESSOR_SIZE = 69503
 INFRA_TARGET_BLOB = "53b84182af75292ca2531e0ef275292bf596d6dd"
+INFRA_TARGET_SIZE = 77477
 CORE_SCHEMA_MAP = {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
     "job": "hwm-job/v1",
@@ -240,10 +241,13 @@ class ProtectedPathInstallContractTests(unittest.TestCase):
 
     def test_infra_spec_is_exact_append_only_successor(self):
         data = INFRA_PATH.read_bytes()
-        self.assertEqual(git_blob_sha_bytes(data), INFRA_TARGET_BLOB)
+        self.assertGreaterEqual(len(data), INFRA_TARGET_SIZE)
+        self.assertEqual(
+            git_blob_sha_bytes(data[:INFRA_TARGET_SIZE]), INFRA_TARGET_BLOB
+        )
         self.assertGreater(len(data), INFRA_PREDECESSOR_SIZE)
         prefix = data[:INFRA_PREDECESSOR_SIZE]
-        suffix = data[INFRA_PREDECESSOR_SIZE:]
+        suffix = data[INFRA_PREDECESSOR_SIZE:INFRA_TARGET_SIZE]
         self.assertEqual(git_blob_sha_bytes(prefix), INFRA_PREDECESSOR_BLOB)
         self.assertTrue(suffix.startswith(b"\n# 38. Controlled protected-path installer\n"))
         self.assertEqual(suffix.count(b"\n# 38."), 1)

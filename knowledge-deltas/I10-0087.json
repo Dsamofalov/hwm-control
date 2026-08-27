@@ -1,0 +1,183 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 87,
+  "goal": "Install and live-prove the P0A-authorized repository-local controlled protected-path installer in Dsamofalov/hwm-lab without starting #85 or resuming #73.",
+  "verified_facts": [
+    {
+      "statement": "P0A is protected-merged on hwm-control/main at 64d321795557901119e3af3beab95fd349b507ff. ADR 0009 is blob 3a8bb58ca4886590fd82d5920f6078a7710c9899, INFRA_SPEC §38 is in blob 53b84182af75292ca2531e0ef275292bf596d6dd, request schema is blob 250cfcf77e84148daeefe230a66e0f2acae471d9, and result schema is blob 761e9650d9b8ea462c7c6b6da16ac0bbc815a5ef.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "P0A protected merge / hwm-control PR #88",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "64d321795557901119e3af3beab95fd349b507ff"
+        },
+        {
+          "kind": "public_ref",
+          "reference": "docs/ADR/0009-controlled-protected-path-installer-contract.md blob 3a8bb58ca4886590fd82d5920f6078a7710c9899"
+        },
+        {
+          "kind": "public_ref",
+          "reference": "docs/INFRA_SPEC.md blob 53b84182af75292ca2531e0ef275292bf596d6dd"
+        },
+        {
+          "kind": "public_ref",
+          "reference": "protected-path request/result schema blobs 250cfcf77e84148daeefe230a66e0f2acae471d9 / 761e9650d9b8ea462c7c6b6da16ac0bbc815a5ef"
+        }
+      ]
+    },
+    {
+      "statement": "At I10-0087 continuation start, protected heads are hwm-control 64d321795557901119e3af3beab95fd349b507ff, hwm-lab e37ea628d9c793d5e87bc8b903a9b85b4371991c, hwm-context d651f40d0bb3a3ef0e52fca95e5400ed3db3d772, and hwm_predictor 8fd669336b36064e842252d69fb4016cc526a9d4.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "protected control start",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "64d321795557901119e3af3beab95fd349b507ff"
+        },
+        {
+          "kind": "commit",
+          "reference": "protected lab start",
+          "repo": "Dsamofalov/hwm-lab",
+          "sha": "e37ea628d9c793d5e87bc8b903a9b85b4371991c"
+        },
+        {
+          "kind": "commit",
+          "reference": "protected context start",
+          "repo": "Dsamofalov/hwm-context",
+          "sha": "d651f40d0bb3a3ef0e52fca95e5400ed3db3d772"
+        },
+        {
+          "kind": "commit",
+          "reference": "protected product start",
+          "repo": "Dsamofalov/hwm_predictor",
+          "sha": "8fd669336b36064e842252d69fb4016cc526a9d4"
+        }
+      ]
+    },
+    {
+      "statement": "Issue #87 is open and claimed as task I10-0087 on sole branch agent/infra-0087-protected-path-installer-install. Dsamofalov/hwm-control is the lifecycle/KD projection repository and Dsamofalov/hwm-lab is the implementation target; both companion branches started from their exact protected main heads.",
+      "provenance": [
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#87"
+        },
+        {
+          "kind": "commit",
+          "reference": "control companion branch creation base",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "64d321795557901119e3af3beab95fd349b507ff"
+        },
+        {
+          "kind": "commit",
+          "reference": "lab installation branch base",
+          "repo": "Dsamofalov/hwm-lab",
+          "sha": "e37ea628d9c793d5e87bc8b903a9b85b4371991c"
+        }
+      ]
+    },
+    {
+      "statement": "Previously referenced prepared candidate identities b4a659…, 8f92b8…, cfd11f…, 31edd9…, cb6b4d…, and 66f416… are abandoned non-authoritative identities because their source bytes were not retained. Owner authorization requires deterministic regeneration from the protected P0A contract and makes the regenerated Git blob SHAs authoritative.",
+      "provenance": [
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#87 owner-authorized continuation correction"
+        },
+        {
+          "kind": "public_ref",
+          "reference": "I10-0087 continuation owner correction: missing prepared candidate objects abandoned; deterministic regeneration authorized"
+        }
+      ]
+    },
+    {
+      "statement": "The one-time P0B bootstrap transaction is restricted to exactly ten paths: .github/workflows/protected-path-installer.yml; control/protected_path_installer.py; control/protected_path_installer_backend.py; control/protected_path_installer_contract.py; control/protected_path_installer_policy.py; control/protected_path_installer_manifest.bootstrap-v1.json; schemas/protected-path-install-request.bootstrap-v1.schema.json; schemas/protected-path-install-result.bootstrap-v1.schema.json; tests/contracts/test_protected_path_install_contracts.py; tests/security/test_protected_path_installer.py.",
+      "provenance": [
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#87 exact P0B bootstrap installation allowlist"
+        },
+        {
+          "kind": "public_ref",
+          "reference": "ADR 0009 Exact #87 bootstrap installation allowlist"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Regenerate the protected-path installer implementation deterministically under the exact ten-path P0B bootstrap allowlist and preserve the two P0A schemas byte-exact.",
+      "rationale": "The prior missing candidate identities were explicitly abandoned by the owner; P0A contracts, ADR 0009, INFRA_SPEC §38 and Issue #87 are the authoritative implementation boundary."
+    },
+    {
+      "decision": "Preserve I10-0073 as active and paused on #85 while I10-0087 is active, with #85 remaining blocked on #87 until P0B live proof completes.",
+      "rationale": "This truthfully projects the existing DAG and does not resume Graphify or runtime acquisition."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Reproduce or brute-force the abandoned candidate hashes.",
+      "reason": "The owner explicitly made those identities non-authoritative and forbade guessing or brute-forcing them."
+    },
+    {
+      "alternative": "Use generic create_file/update_file/create_commit to publish hwm-control lifecycle source.",
+      "reason": "I10-0087 requires the existing hwm-control controlled publisher for lifecycle/KD commits."
+    },
+    {
+      "alternative": "Start #85 or alter #73 recovery anchors while #87 is active.",
+      "reason": "Both are outside I10-0087 scope and violate the dependency/lifecycle boundary."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I10-0087.json"
+  ],
+  "tests": [
+    {
+      "name": "I10-0087 Phase 0 independent live readback",
+      "status": "pass",
+      "reference": "protected heads, Issue/DAG, hwm-lab ruleset/bootstrap, main tree, P0B absence and recovery anchors independently read before mutation"
+    },
+    {
+      "name": "I10-0087 control claim-projection Infrastructure CI",
+      "status": "not_run",
+      "reference": "required immediately after controlled publisher claim projection"
+    },
+    {
+      "name": "I10-0087 hwm-lab P0B implementation and live acceptance",
+      "status": "not_run",
+      "reference": "pending after control claim projection"
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#87"
+    },
+    {
+      "kind": "pull_request",
+      "reference": "Dsamofalov/hwm-control#88"
+    },
+    {
+      "kind": "commit",
+      "reference": "P0A protected control main",
+      "repo": "Dsamofalov/hwm-control",
+      "sha": "64d321795557901119e3af3beab95fd349b507ff"
+    },
+    {
+      "kind": "commit",
+      "reference": "P0B protected lab base",
+      "repo": "Dsamofalov/hwm-lab",
+      "sha": "e37ea628d9c793d5e87bc8b903a9b85b4371991c"
+    },
+    {
+      "kind": "public_ref",
+      "reference": "hwm-lab active main ruleset requires bootstrap with no bypass actors"
+    }
+  ],
+  "followups": [
+    "Obtain exact-head Infrastructure CI success for this claim projection, deterministically regenerate and test the exact ten P0B files, perform the one-time hwm-lab bootstrap transaction, complete protected hwm-lab PR/merge/post-merge CI, execute disposable live acceptance, then publish terminal hwm-control completion bookkeeping and reconcile Issue/DAG state."
+  ],
+  "unresolved": [
+    "Exact regenerated ten-path implementation identities, P0B tree/commit/ref mutation, hwm-lab exact-head CI, protected PR/merge/post-merge CI, disposable live acceptance matrix, hwm-control completion PR/merge/CI, and terminal branch cleanup remain pending."
+  ]
+}
