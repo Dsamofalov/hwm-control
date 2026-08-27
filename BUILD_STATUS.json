@@ -40,7 +40,8 @@
     "I10-0089"
   ],
   "active_task_ids": [
-    "I10-0073"
+    "I10-0073",
+    "I10-0085"
   ],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
@@ -56,6 +57,6 @@
     "authoritative_functional_checkpoint": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
   },
   "blockers": [
-    "I10-0073 remains paused on hwm-control#85; #85 is the future unclaimed exact-runtime implementation task under ADR 0010/INFRA_SPEC §39 after terminal I10-0089 reconciliation; I10-0087 is superseded/not-planned and is not completed"
+    "I10-0073 remains paused on claimed hwm-control#85; I10-0085 is active under ADR 0010/INFRA_SPEC §39 to provide exact task-local CPython 3.12.10 acceptance runtime acquisition; I10-0087 remains superseded/not-planned and is not completed"
   ]
 }
