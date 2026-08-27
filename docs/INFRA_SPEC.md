@@ -424,7 +424,7 @@ Can, subject to scoped permissions:
 
 T1 changes require dedicated infrastructure tasks and the protected infrastructure merge path. They are not modified by ordinary product-development tasks.
 
-A T1 job may execute on a GitHub-hosted runner when the job is launched from trusted protected workflow/main state, is pinned to the intended exact trusted SHA/event policy, has only the minimum required permissions, and uses only inputs appropriate for public/ephemeral execution.
+A T1 job may execute on a GitHub-hosted runner when the job is launched from trusted protected workflow/main state, is pinned to the intended exact SHA/event policy, has only the minimum required permissions, and uses only inputs appropriate for public/ephemeral execution.
 
 ---
 
