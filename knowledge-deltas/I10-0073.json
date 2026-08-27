@@ -1,0 +1,86 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 73,
+  "goal": "Implement and terminally validate the disposable exact-SHA structural Graphify builder in hwm-lab under hwm-graphify-supply-chain/v2 without publishing a production graph.",
+  "verified_facts": [
+    {
+      "statement": "I10-0073 remains the active claimed control task. Protected hwm-control/main is bc8a05f6c728d15e32048e5737d9703cd768b731; the control recovery anchor is agent/infra-0073-graphify-builder-control at 81139110cbf398a8301cb108e8b8b246dfad0d5d; protected hwm-lab/main is e37ea628d9c793d5e87bc8b903a9b85b4371991c; and the lab recovery anchor is agent/infra-0004-i10-p1-0073-graphify-builder at 1595b39b4684143bc34cb5d157eabf1ad4d86c37.",
+      "provenance": [
+        {"kind": "commit", "reference": "protected control base", "repo": "Dsamofalov/hwm-control", "sha": "bc8a05f6c728d15e32048e5737d9703cd768b731"},
+        {"kind": "commit", "reference": "control recovery anchor", "repo": "Dsamofalov/hwm-control", "sha": "81139110cbf398a8301cb108e8b8b246dfad0d5d"},
+        {"kind": "commit", "reference": "protected lab base", "repo": "Dsamofalov/hwm-lab", "sha": "e37ea628d9c793d5e87bc8b903a9b85b4371991c"},
+        {"kind": "commit", "reference": "lab source-v3 recovery anchor", "repo": "Dsamofalov/hwm-lab", "sha": "1595b39b4684143bc34cb5d157eabf1ad4d86c37"}
+      ]
+    },
+    {
+      "statement": "The authoritative supply-chain contract for this task is hwm-graphify-supply-chain/v2 exact blob f42132a2f52d1d7af84155a56a86fca2fe4d8605, requiring exact CPython 3.12.10 and an exact integer 900-second monotonic builder timeout.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "contracts/graphify-supply-chain.v2.json blob f42132a2f52d1d7af84155a56a86fca2fe4d8605"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#83"}
+      ]
+    },
+    {
+      "statement": "hwm-lab Publisher Ordinary CI 32947264396 ran exact source-v3 head 1595b39b4684143bc34cb5d157eabf1ad4d86c37 and failed only in test_graphify_builder_integration.RealGraphifyIntegrationTests.test_exact_graphify_three_clean_isolated_runs_are_identical_and_contract_valid because _exact_python() raised AssertionError: exact CPython 3.12.10 is unavailable on GitHub-hosted runner.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32947264396 failure on exact source-v3 head"},
+        {"kind": "commit", "reference": "source-v3 head", "repo": "Dsamofalov/hwm-lab", "sha": "1595b39b4684143bc34cb5d157eabf1ad4d86c37"}
+      ]
+    },
+    {
+      "statement": "Run 32947264396 used GitHub-hosted Ubuntu 24.04 runner image 20260816.277.1. The exact runner-image manifest declares system Python 3.12.3 and cached Python 3.10.21, 3.11.16, 3.12.14, 3.13.15, and 3.14.7; exact CPython 3.12.10 is absent.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32947264396 runner metadata"},
+        {"kind": "public_ref", "reference": "actions/runner-images Ubuntu2404-Readme.md at ubuntu24/20260816.277"}
+      ]
+    },
+    {
+      "statement": "The source-v3 failure occurred before real Graphify execution. Graphify wheel acquisition, acceptance network isolation, Graphify invocation, and Graphify compatibility were not reached; no evidence supports a transient or rate-limit classification.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32947264396 full job log"},
+        {"kind": "public_ref", "reference": "tests/test_graphify_builder_integration.py source-v3 _exact_python and integration ordering"}
+      ]
+    },
+    {
+      "statement": "Recovery classification is PATH B: missing trusted runtime/workflow capability. Prerequisite hwm-control#85, I10-P1-R1: Install exact Graphify builder acceptance runtime in hwm-lab CI, is open with ready/infrastructure/architecture/trusted/contract labels and milestone I10 Graphify; #73 is explicitly paused on #85 while remaining open and claimed.",
+      "provenance": [
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#85"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"}
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Pause #73 source implementation at source-v3 and require #85 to install the exact trusted CPython 3.12.10 acceptance capability through a dedicated protected architecture flow before #73 resumes.",
+      "rationale": "Exact CPython 3.12.10 is absent from the runner and the failure occurs before Graphify. Changing #73 source or rerunning the same exact-head CI would not repair the missing trusted runtime capability and would violate the recovery decision boundary."
+    }
+  ],
+  "rejected_alternatives": [
+    {"alternative": "Publish source-v4 to work around the missing interpreter.", "reason": "The failed run proves a trusted runtime/workflow capability gap rather than an allowed #73 implementation defect."},
+    {"alternative": "Re-run CI 32947264396 as a transient failure.", "reason": "The exact runner-image manifest confirms 3.12.10 is absent; there is no evidence of rate limiting or transient package-host failure."},
+    {"alternative": "Install or download Python ad hoc inside ordinary #73 source/CI.", "reason": "Runtime acquisition requires pinned artifact/action identity, SHA-256, authorized host/network boundary, provenance and cache policy; workflow/self-modification requires dedicated architecture installation flow."}
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I10-0073.json"
+  ],
+  "tests": [
+    {"name": "Initial control claim projection Infrastructure CI", "status": "fail", "reference": "32945596163 on 97a08534407edafb3a30e2bd09df8e73914138ef: only active-task Knowledge Delta missing"},
+    {"name": "Control claim Knowledge Delta Infrastructure CI", "status": "pass", "reference": "32946001850 on 81139110cbf398a8301cb108e8b8b246dfad0d5d"},
+    {"name": "hwm-lab source-v2 exact-head Publisher Ordinary CI", "status": "pass", "reference": "32908444462 on 3259ea71dd2aee4c4dde0c8b7eac51d5831dd9b0"},
+    {"name": "hwm-lab source-v3 exact-head Publisher Ordinary CI", "status": "fail", "reference": "32947264396 on 1595b39b4684143bc34cb5d157eabf1ad4d86c37: exact CPython 3.12.10 unavailable before Graphify execution"}
+  ],
+  "evidence": [
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#85"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-lab#4"},
+    {"kind": "commit", "reference": "control recovery anchor", "repo": "Dsamofalov/hwm-control", "sha": "81139110cbf398a8301cb108e8b8b246dfad0d5d"},
+    {"kind": "commit", "reference": "lab source-v3 recovery anchor", "repo": "Dsamofalov/hwm-lab", "sha": "1595b39b4684143bc34cb5d157eabf1ad4d86c37"},
+    {"kind": "ci_run", "reference": "Publisher Ordinary CI 32947264396"}
+  ],
+  "followups": [
+    "Complete hwm-control#85 through its own protected architecture installation lifecycle, then resume #73 from the immutable source-v3 anchor and obtain real exact-CPython-3.12.10 three-run Graphify acceptance without source changes made merely to compensate for runner runtime absence."
+  ],
+  "unresolved": [
+    "Exact CPython 3.12.10 trusted acceptance runtime installation (#85), then source-v3 real Graphify three-run acceptance, protected hwm-lab PR/merge/post-merge CI, and final hwm-control completion lifecycle remain pending."
+  ]
+}
