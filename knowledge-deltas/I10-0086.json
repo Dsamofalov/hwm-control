@@ -1,10 +1,10 @@
 {
   "schema": "hwm-knowledge-delta/v1",
   "task_id": 86,
-  "goal": "Define the forward-only architecture and typed fail-closed contracts for a separate repository-local controlled protected-path installer without implementing it or widening the ordinary source publisher.",
+  "goal": "Define the forward-only architecture and typed fail-closed contracts for a separate repository-local controlled protected-path installer without implementing it, widening the ordinary source publisher, or mutating downstream repositories/tasks.",
   "verified_facts": [
     {
-      "statement": "I10-0086 started from protected hwm-control/main bc8a05f6c728d15e32048e5737d9703cd768b731, hwm-lab/main e37ea628d9c793d5e87bc8b903a9b85b4371991c, hwm-context/main d651f40d0bb3a3ef0e52fca95e5400ed3db3d772, and hwm_predictor/main 8fd669336b36064e842252d69fb4016cc526a9d4.",
+      "statement": "I10-0086 started from protected hwm-control/main bc8a05f6c728d15e32048e5737d9703cd768b731 while hwm-lab/main e37ea628d9c793d5e87bc8b903a9b85b4371991c, hwm-context/main d651f40d0bb3a3ef0e52fca95e5400ed3db3d772, and hwm_predictor/main 8fd669336b36064e842252d69fb4016cc526a9d4 remained outside P0A mutation scope.",
       "provenance": [
         {"kind": "commit", "reference": "protected P0A base", "repo": "Dsamofalov/hwm-control", "sha": "bc8a05f6c728d15e32048e5737d9703cd768b731"},
         {"kind": "commit", "reference": "protected lab checkpoint", "repo": "Dsamofalov/hwm-lab", "sha": "e37ea628d9c793d5e87bc8b903a9b85b4371991c"},
@@ -13,86 +13,128 @@
       ]
     },
     {
-      "statement": "Issue #73 is open + claimed and paused on #85; its control recovery branch is agent/infra-0073-graphify-builder-control at 994730d637d4e4c7c4eb492b22c49993e971d1e4 and its hwm-lab recovery branch is agent/infra-0004-i10-p1-0073-graphify-builder at 1595b39b4684143bc34cb5d157eabf1ad4d86c37. Exact-head Infrastructure CI 33061987639 succeeded on the control anchor.",
+      "statement": "Issue #73 remains open + claimed and paused on #85 with immutable recovery anchors hwm-control 994730d637d4e4c7c4eb492b22c49993e971d1e4 and hwm-lab 1595b39b4684143bc34cb5d157eabf1ad4d86c37; P0A does not complete or mutate #73.",
       "provenance": [
         {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"},
-        {"kind": "commit", "reference": "control recovery anchor", "repo": "Dsamofalov/hwm-control", "sha": "994730d637d4e4c7c4eb492b22c49993e971d1e4"},
-        {"kind": "commit", "reference": "lab recovery anchor", "repo": "Dsamofalov/hwm-lab", "sha": "1595b39b4684143bc34cb5d157eabf1ad4d86c37"},
-        {"kind": "ci_run", "reference": "Infrastructure CI 33061987639 success"}
+        {"kind": "commit", "reference": "#73 control recovery anchor", "repo": "Dsamofalov/hwm-control", "sha": "994730d637d4e4c7c4eb492b22c49993e971d1e4"},
+        {"kind": "commit", "reference": "#73 lab recovery anchor", "repo": "Dsamofalov/hwm-lab", "sha": "1595b39b4684143bc34cb5d157eabf1ad4d86c37"}
       ]
     },
     {
-      "statement": "hwm-lab Publisher Ordinary CI 32947264396 failed on exact source-v3 head 1595b39b4684143bc34cb5d157eabf1ad4d86c37 only because _exact_python() raised AssertionError that exact CPython 3.12.10 is unavailable on the GitHub-hosted runner; the runner image was ubuntu-24.04 20260816.277.1.",
+      "statement": "Owner correction comment 5439088184 revoked obsolete candidate blob 2334e79f36ccce964b090eb501e9a1072adb7eb6 as non-authoritative: it was never published into GitHub and retained no authoritative literal bytes. The owner instead authorized deterministic append-only regeneration from exact predecessor INFRA_SPEC blob 1a6917297f0068e8b530abc18b273c3918e13b0f (69503 bytes), with the actually created blob becoming source identity.",
       "provenance": [
-        {"kind": "ci_run", "reference": "Publisher Ordinary CI 32947264396 failure and job log"},
-        {"kind": "commit", "reference": "failed source-v3 head", "repo": "Dsamofalov/hwm-lab", "sha": "1595b39b4684143bc34cb5d157eabf1ad4d86c37"}
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 comment 5439088184 owner correction"},
+        {"kind": "public_ref", "reference": "docs/INFRA_SPEC.md predecessor Git blob 1a6917297f0068e8b530abc18b273c3918e13b0f"}
       ]
     },
     {
-      "statement": "INFRA_SPEC sections 10.1/10.2 and ADR 0001 authorize a narrow ordinary task-branch publisher and one completed publisher self-installation bootstrap, while explicitly preserving protected-path denial and prohibiting recurring generic source mutation. hwm-lab publisher policy rejects .github/workflows/**, .github/actions/**, CODEOWNERS and publisher-owned paths.",
+      "statement": "The regenerated append-only INFRA_SPEC source identity is Git blob 53b84182af75292ca2531e0ef275292bf596d6dd. Its exact first 69503 bytes hash as predecessor Git blob 1a6917297f0068e8b530abc18b273c3918e13b0f and its only appended normative section is '# 38. Controlled protected-path installer' with LF newlines and one terminating newline.",
       "provenance": [
-        {"kind": "public_ref", "reference": "docs/INFRA_SPEC.md sections 10.1 and 10.2 at protected base"},
-        {"kind": "public_ref", "reference": "docs/ADR/0001-controlled-task-branch-publisher-bootstrap.md at protected base"},
-        {"kind": "public_ref", "reference": "hwm-lab control/publisher_policy.py and control/publisher_manifest.bootstrap-v1.json at e37ea628d9c793d5e87bc8b903a9b85b4371991c"}
+        {"kind": "commit", "reference": "architecture source commit carrying regenerated §38", "repo": "Dsamofalov/hwm-control", "sha": "6a7b8ff4683d035b303a2d4614d8411c35d4ced1"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 33072434565 exact append-only identity test success"}
       ]
     },
     {
-      "statement": "hwm-lab ruleset 20817493 is active on the default branch, requires a PR, strict bootstrap status from integration 15368, review-thread resolution, and has no bypass actors. hwm-control ruleset 20817498 has the same strict bootstrap/no-bypass protected-main model.",
+      "statement": "The protected-path architecture artifacts are request schema blob 250cfcf77e84148daeefe230a66e0f2acae471d9, result schema blob 761e9650d9b8ea462c7c6b6da16ac0bbc815a5ef, ADR 0009 blob 3a8bb58ca4886590fd82d5920f6078a7710c9899, and final focused contract-test blob 6af5da205356e4a9cd721b56fb11dfee411a5219. Ordinary publish-request/result schema blobs remain immutable at 34a6724c7064864f48a214a94f9006da8e4944eb and ee952b5f3a1a2e0a71dbe4d647539f645ab416d9.",
       "provenance": [
-        {"kind": "public_ref", "reference": "hwm-lab ruleset 20817493"},
-        {"kind": "public_ref", "reference": "hwm-control ruleset 20817498"}
+        {"kind": "commit", "reference": "final source head after focused-test correction", "repo": "Dsamofalov/hwm-control", "sha": "fe7d563f4a8a495e8ad9ea97bf91b1e3a9343724"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 33072434565 success"}
       ]
     },
     {
-      "statement": "No open PR exists in hwm-control or hwm-lab for #73 or #85, and preflight found no existing equivalent protected-path installer Issue, contract marker, or implementation path. New DAG nodes are #86 P0A and #87 P0B; #85 is now blocked on #87 and remains unclaimed.",
+      "statement": "Prepared focused test blob 45c7b741fed77f49295343a806cb5fac199ff47b was superseded because it expected the pre-correction §38 heading. Intermediate blobs e82aa7407887038323bd3e38e283b9b89f74df0b and c6f7b81e73d9c5fd627fc2552d11965db80f140e were also superseded; c6f7b81 bound the actual regenerated INFRA_SPEC identity but had one brittle ADR whitespace literal. Final blob 6af5da205356e4a9cd721b56fb11dfee411a5219 preserves all identity/append-only checks while removing only that brittle literal assumption.",
       "provenance": [
-        {"kind": "issue", "reference": "Dsamofalov/hwm-control#86"},
-        {"kind": "issue", "reference": "Dsamofalov/hwm-control#87"},
-        {"kind": "issue", "reference": "Dsamofalov/hwm-control#85"}
+        {"kind": "ci_run", "reference": "Infrastructure CI 33072125538 failed solely on brittle ADR literal assertion"},
+        {"kind": "commit", "reference": "minimal focused-test correction commit", "repo": "Dsamofalov/hwm-control", "sha": "fe7d563f4a8a495e8ad9ea97bf91b1e3a9343724"}
       ]
     },
     {
-      "statement": "I10-0086 is claimed on the sole branch agent/infra-0086-protected-path-install-contract created strictly from exact protected hwm-control/main bc8a05f6c728d15e32048e5737d9703cd768b731. The claim projection intentionally carries both active ownership facts I10-0073 and I10-0086 without changing the closed core schema map or product checkpoint.",
+      "statement": "Controlled publisher request i10-0086-architecture-source-v1 (comment 5439146818) produced commit 6a7b8ff4683d035b303a2d4614d8411c35d4ced1 and CI 33072125538. That CI failed only one brittle focused-test marker after exact-head, checkout, bootstrap and append-only identity checks passed. Controlled request i10-0086-architecture-source-fix-v1 (comment 5439188992) then changed only the focused test, producing exact head fe7d563f4a8a495e8ad9ea97bf91b1e3a9343724; result comment 5439193928 bound CI 33072434565.",
       "provenance": [
-        {"kind": "issue", "reference": "Dsamofalov/hwm-control#86"},
-        {"kind": "commit", "reference": "protected branch base", "repo": "Dsamofalov/hwm-control", "sha": "bc8a05f6c728d15e32048e5737d9703cd768b731"}
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 comments 5439146818, 5439151192, 5439188992, 5439193928"},
+        {"kind": "commit", "reference": "architecture source commit", "repo": "Dsamofalov/hwm-control", "sha": "6a7b8ff4683d035b303a2d4614d8411c35d4ced1"},
+        {"kind": "commit", "reference": "corrected architecture source commit", "repo": "Dsamofalov/hwm-control", "sha": "fe7d563f4a8a495e8ad9ea97bf91b1e3a9343724"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 33072125538 failure"},
+        {"kind": "ci_run", "reference": "Infrastructure CI 33072434565 success"}
+      ]
+    },
+    {
+      "statement": "Exact-head Infrastructure CI 33072434565 checked out fe7d563f4a8a495e8ad9ea97bf91b1e3a9343724 with read-only contents permission, passed bootstrap lifecycle validation, passed every protected-path contract test including exact regenerated INFRA_SPEC Git-blob identity and immutable KD73/ordinary-publisher assertions, and completed the full repository suite: 434 tests, OK.",
+      "provenance": [
+        {"kind": "ci_run", "reference": "Infrastructure CI 33072434565 success and job log"},
+        {"kind": "commit", "reference": "validated exact source head", "repo": "Dsamofalov/hwm-control", "sha": "fe7d563f4a8a495e8ad9ea97bf91b1e3a9343724"}
+      ]
+    },
+    {
+      "statement": "P0A defines a separate repository-local, typed, fail-closed protected-path installer contract only. It does not implement the installer, does not choose Python/runtime acquisition, does not alter Graphify builder source, does not publish a graph, and does not mutate hwm-lab, hwm-context or hwm_predictor. The one-time #87 bootstrap exception is bounded to the ten exact paths declared in ADR 0009/INFRA_SPEC §38.7 and expires permanently after #87.",
+      "provenance": [
+        {"kind": "public_ref", "reference": "docs/INFRA_SPEC.md §38 at blob 53b84182af75292ca2531e0ef275292bf596d6dd"},
+        {"kind": "public_ref", "reference": "docs/ADR/0009-controlled-protected-path-installer-contract.md blob 3a8bb58ca4886590fd82d5920f6078a7710c9899"},
+        {"kind": "issue", "reference": "Dsamofalov/hwm-control#87"}
       ]
     }
   ],
   "decisions": [
     {
-      "decision": "Introduce a distinct protected-path installer primitive rather than widen hwm-publish-request/bootstrap-v1 or the ordinary publisher authority.",
-      "rationale": "The required .github installation authority is privileged and recurrent, while the existing ordinary publisher is intentionally fail-closed on protected/self-modifying paths."
+      "decision": "Introduce hwm-protected-path-install-request/bootstrap-v1 and hwm-protected-path-install-result/bootstrap-v1 as a distinct forward-only primitive rather than widen the ordinary task-branch publisher.",
+      "rationale": "Recurring protected-path mutation has a stronger trust boundary than ordinary source publication and must remain separately typed, repository-local and fail-closed."
     },
     {
-      "decision": "Keep P0A architecture-only in hwm-control and defer installer implementation/live acceptance to blocked P0B #87.",
-      "rationale": "Separating contract authorization from privileged installation preserves the architecture barrier and prevents #85 from claiming before transport exists."
+      "decision": "Treat candidate protected workflow/action bytes as inert Git data until protected merge and source privileged installer/validator logic only from protected main.",
+      "rationale": "This prevents candidate content from executing inside the privileged installation boundary or self-certifying trusted acceptance."
+    },
+    {
+      "decision": "Require exact Issue/task/repository/branch/base/head/path/blob/replace-precondition/validation bindings, expected-head CAS, byte-identical replay idempotency, changed-request-id rejection and non-mutating stale-request failure.",
+      "rationale": "These bindings constrain both authority and concurrency and prevent an installation request from becoming an arbitrary Git/ref mutation channel."
+    },
+    {
+      "decision": "Authorize #87 exactly one non-reusable bootstrap transaction limited to the ten predeclared installer workflow/backend/policy/manifest/schema/test paths, protected PR/CI/merge/post-merge lifecycle and disposable live acceptance.",
+      "rationale": "The installer cannot install itself before it exists, so one bounded transparent Git-object bootstrap is necessary; permanent expiry prevents it becoming a generic bypass."
+    },
+    {
+      "decision": "Abandon obsolete candidate identity 2334e79f36ccce964b090eb501e9a1072adb7eb6 and make actual regenerated INFRA_SPEC blob 53b84182af75292ca2531e0ef275292bf596d6dd the source identity.",
+      "rationale": "The obsolete candidate was never a retained authoritative Git object. Owner correction explicitly replaced an impossible byte-reproduction precondition with deterministic append-only regeneration from the exact protected predecessor."
     }
   ],
   "rejected_alternatives": [
-    {"alternative": "Widen the ordinary hwm-lab publisher to accept .github paths.", "reason": "That collapses distinct trust boundaries and violates the existing bootstrap-v1 protected-path contract."},
-    {"alternative": "Reuse the completed #79 one-time publisher bootstrap exception.", "reason": "INFRA_SPEC limits that exception to the one-time ordinary publisher self-installation and explicitly denies recurring generic mutation."},
-    {"alternative": "Use generic connector create_file/update_file/create_commit, direct push, or force reset.", "reason": "P0A source transport and future protected installation are explicitly controlled and fail-closed; generic writers are not authorized continuation paths."}
+    {"alternative": "Widen hwm-publish-request/bootstrap-v1 or the ordinary publisher to accept protected .github paths.", "reason": "That collapses the ordinary and privileged trust boundaries and violates the existing publisher contract."},
+    {"alternative": "Reuse the completed #79 publisher self-installation bootstrap exception for #85 or later protected-path work.", "reason": "That exception was one-time and expired; #87 receives a separate, exact-path, non-reusable architecture-authorized bootstrap."},
+    {"alternative": "Use generic connector create_file/update_file/create_commit, direct push, force reset, or main mutation.", "reason": "P0A source transport is restricted to inert blob creation plus the existing controlled publisher and protected PR lifecycle."},
+    {"alternative": "Guess or brute-force the obsolete 2334e79 candidate bytes.", "reason": "Owner correction explicitly revoked that non-authoritative identity and authorized deterministic append-only regeneration from the exact predecessor."},
+    {"alternative": "Repair failed CI by changing §38, ADR semantics, or schemas.", "reason": "CI 33072125538 proved the only failure was a brittle whitespace-sensitive test literal, so the legal minimal correction changed only that focused test."}
   ],
   "changed_components": [
     "BUILD_STATUS.json",
-    "knowledge-deltas/I10-0086.json"
+    "knowledge-deltas/I10-0073.json",
+    "knowledge-deltas/I10-0086.json",
+    "docs/INFRA_SPEC.md",
+    "docs/ADR/0009-controlled-protected-path-installer-contract.md",
+    "schemas/protected-path-install-request.bootstrap-v1.schema.json",
+    "schemas/protected-path-install-result.bootstrap-v1.schema.json",
+    "tests/test_i10_0086_protected_path_install_contract.py"
   ],
   "tests": [
-    {"name": "Claim-state Infrastructure CI", "status": "not_run", "reference": "Pending controlled publisher exact-head dispatch"}
+    {"name": "Recovery exact-head Infrastructure CI", "status": "pass", "reference": "33065893475 on 2d213a8304841b2b670a6d70d216e16ab6315605"},
+    {"name": "Initial architecture source Infrastructure CI", "status": "fail", "reference": "33072125538 on 6a7b8ff4683d035b303a2d4614d8411c35d4ced1; one brittle focused-test literal only"},
+    {"name": "Corrected architecture source Infrastructure CI", "status": "pass", "reference": "33072434565 on fe7d563f4a8a495e8ad9ea97bf91b1e3a9343724; 434 tests OK"},
+    {"name": "Exact append-only regenerated INFRA_SPEC identity", "status": "pass", "reference": "test_infra_spec_is_exact_append_only_successor in CI 33072434565"},
+    {"name": "Protected-path request/result schema and policy contract suite", "status": "pass", "reference": "test_i10_0086_protected_path_install_contract.py in CI 33072434565"}
   ],
   "evidence": [
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#86"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 comment 5439088184 owner correction"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 comment 5439146818 architecture source request"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 comment 5439151192 architecture source result"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 comment 5439188992 focused-test correction request"},
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#86 comment 5439193928 focused-test correction result"},
+    {"kind": "commit", "reference": "validated corrected P0A source head", "repo": "Dsamofalov/hwm-control", "sha": "fe7d563f4a8a495e8ad9ea97bf91b1e3a9343724"},
+    {"kind": "ci_run", "reference": "hwm-control Infrastructure CI 33072434565 success"},
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#87"},
     {"kind": "issue", "reference": "Dsamofalov/hwm-control#85"},
-    {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"},
-    {"kind": "ci_run", "reference": "hwm-lab Publisher Ordinary CI 32947264396"},
-    {"kind": "ci_run", "reference": "hwm-control Infrastructure CI 33061987639"}
+    {"kind": "issue", "reference": "Dsamofalov/hwm-control#73"}
   ],
   "followups": [
-    "Publish the protected-path install request/result schemas, ADR 0009, INFRA_SPEC amendment and focused tests through the existing hwm-control controlled publisher; then complete protected P0A lifecycle."
+    "After the protected #86 PR is merged, exact post-merge Infrastructure CI and Issue/branch lifecycle evidence remain authoritative in the PR/Issue audit trail; only then may #87 become READY/unclaimed. #85 remains blocked on completed #87 and #73 remains claimed/paused on completed #85."
   ],
-  "unresolved": [
-    "Architecture source publication, source exact-head CI, completion bookkeeping, protected PR/merge/post-merge evidence and terminal DAG reconciliation remain pending."
-  ]
+  "unresolved": []
 }
