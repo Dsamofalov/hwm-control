@@ -37,7 +37,10 @@
     "I10-0081",
     "I10-0083"
   ],
-  "active_task_ids": [],
+  "active_task_ids": [
+    "I10-0073",
+    "I10-0086"
+  ],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
     "job": "hwm-job/v1",
@@ -51,5 +54,7 @@
     "product_main_reference": "8fd669336b36064e842252d69fb4016cc526a9d4",
     "authoritative_functional_checkpoint": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
   },
-  "blockers": []
+  "blockers": [
+    "I10-0073 is paused on hwm-control#85; #85 is blocked on hwm-control#87 until controlled protected-path installation transport is live-proven"
+  ]
 }
