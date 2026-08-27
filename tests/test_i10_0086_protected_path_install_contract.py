@@ -261,7 +261,7 @@ class ProtectedPathInstallContractTests(unittest.TestCase):
             "existing required bootstrap workflow modification is rejected",
             "`CODEOWNERS`, ruleset/settings, and secret/environment paths are rejected",
             "`pull_request_target`",
-            "one non-reusable bootstrap exception",
+            "non-reusable bootstrap exception",
             "Exact #87 bootstrap installation allowlist",
             "`control/protected_path_installer_policy.py`",
             "`tests/security/test_protected_path_installer.py`",
