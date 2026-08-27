@@ -1,0 +1,86 @@
+{
+  "schema": "hwm-graphify-acceptance-runtime/v1",
+  "producer": "actions/python-versions",
+  "repository": "actions/python-versions",
+  "release": {
+    "tag": "3.12.10-14343898437",
+    "url": "https://github.com/actions/python-versions/releases/tag/3.12.10-14343898437"
+  },
+  "artifact": {
+    "filename": "python-3.12.10-linux-24.04-x64.tar.gz",
+    "url": "https://github.com/actions/python-versions/releases/download/3.12.10-14343898437/python-3.12.10-linux-24.04-x64.tar.gz",
+    "size_bytes": 121612690,
+    "sha256": "b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33",
+    "official_release_hash_manifest": "https://github.com/actions/python-versions/releases/download/3.12.10-14343898437/hashes.sha256"
+  },
+  "runtime": {
+    "implementation": "CPython",
+    "version": "3.12.10",
+    "platform": "linux",
+    "distribution": "Ubuntu 24.04",
+    "architecture": "x86_64",
+    "executable_report_exact": "CPython 3.12.10"
+  },
+  "acquisition": {
+    "transport": "anonymous HTTPS GET",
+    "exact_artifact_url_only": true,
+    "max_redirects": 1,
+    "final_redirect_host": "release-assets.githubusercontent.com",
+    "authorization_header": false,
+    "cookies": false,
+    "credentials": false,
+    "exact_filename_required": true,
+    "exact_byte_size_required": true,
+    "exact_sha256_required": true,
+    "fail_closed_on": [
+      "unexpected_redirect",
+      "unexpected_host",
+      "unexpected_content_length",
+      "unexpected_hash"
+    ],
+    "mirror_fallback": false,
+    "mutable_manifest_lookup": false,
+    "actions_setup_python": false,
+    "toolcache_fallback": false,
+    "current_main_version_manifest_lookup": false
+  },
+  "workspace": {
+    "preexisting_runtime_or_cache_target": "reject",
+    "extraction_root": "RUNNER_TEMP",
+    "install_root": "RUNNER_TEMP/task-local",
+    "global_or_shared_cache": false,
+    "cross_run_reuse": false,
+    "safe_bounded_extraction": {
+      "path_traversal": "reject",
+      "symlink": "reject",
+      "special_file": "reject"
+    },
+    "delete_runtime_after_acceptance": true
+  },
+  "network_boundary": {
+    "deny_network_before": [
+      "artifact_setup",
+      "product_parsing",
+      "graphify_invocation"
+    ]
+  },
+  "setup": {
+    "procedure": "verified archive bounded setup only",
+    "execute_only_verified_archive_setup": true
+  },
+  "verification": {
+    "executable_report_exact": "CPython 3.12.10",
+    "record_artifact_and_runtime_provenance": true
+  },
+  "timer_boundary": {
+    "runtime_acquisition_and_setup_before_builder_timer": true,
+    "semantic_builder_timer_seconds": 900
+  },
+  "capabilities": {
+    "provider_credentials": false,
+    "api_credentials": false,
+    "model_credentials": false,
+    "database_credentials": false,
+    "protected_path_mutation": false
+  }
+}

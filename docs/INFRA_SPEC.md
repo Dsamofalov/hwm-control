@@ -424,7 +424,7 @@ Can, subject to scoped permissions:
 
 T1 changes require dedicated infrastructure tasks and the protected infrastructure merge path. They are not modified by ordinary product-development tasks.
 
-A T1 job may execute on a GitHub-hosted runner when the job is launched from trusted protected workflow/main state, is pinned to the intended exact SHA/event policy, has only the minimum required permissions, and uses only inputs appropriate for public/ephemeral execution.
+A T1 job may execute on a GitHub-hosted runner when the job is launched from trusted protected workflow/main state, is pinned to the intended exact trusted SHA/event policy, has only the minimum required permissions, and uses only inputs appropriate for public/ephemeral execution.
 
 ---
 
@@ -2308,3 +2308,29 @@ Every negative case must prove that the target ref is unchanged. Disposable acce
 #85 may resume only after completed #87. #73 remains paused until completed #85. Completion of this P0A contract does not implement #87, choose a CPython acquisition method, modify Graphify builder source, or publish a production graph.
 
 I11 may version or extend this primitive through explicit forward contracts and protected architecture work, but it cannot replace the primitive with an unrestricted Git writer, arbitrary ref mutation surface, or arbitrary shell.
+
+# 39. Protected-path credential reconciliation and in-job runtime acquisition
+
+This section supersedes §38 only as the active implementation route. §38 and ADR 0009 remain historical audit evidence, together with the installed hwm-lab implementation and the failed disposable live-acceptance evidence. Live acceptance is authoritative: the installed route could not exercise its intended `.github/workflows/**` mutation authority with the repository-scoped `GITHUB_TOKEN`, so #87 must not be treated as completed. The installed route is now a dormant historical/fail-closed path and must not be invoked after this reconciliation.
+
+The P0B bootstrap exception must never be reused. The installed route must not be repaired using `GITHUB_TOKEN`, a connector, PAT, GitHub App, deploy key, or substitute credential. No long-lived or privileged credential is authorized by I10-0089. The general protected-path mutation is deferred to I11, where any future authority requires a separate security/architecture decision. The ordinary publisher and existing rulesets remain unchanged.
+
+For the current I10 path, in-job runtime acquisition is the mandatory current #85 route. #85 must depend on completed I10-0089, not on completed #87, and must avoid `.github/**`. It acquires exactly CPython 3.12.10 for Ubuntu 24.04 x86_64 from the actions/python-versions release `3.12.10-14343898437` inside ordinary read-only CI.
+
+The authoritative runtime archive is exactly:
+
+- release URL: `https://github.com/actions/python-versions/releases/tag/3.12.10-14343898437`
+- artifact filename: `python-3.12.10-linux-24.04-x64.tar.gz`
+- artifact URL: `https://github.com/actions/python-versions/releases/download/3.12.10-14343898437/python-3.12.10-linux-24.04-x64.tar.gz`
+- artifact byte size: `121612690`
+- artifact SHA-256: `b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33`
+- official release hash manifest: `https://github.com/actions/python-versions/releases/download/3.12.10-14343898437/hashes.sha256`
+- executable report: `CPython 3.12.10`
+
+Acquisition is anonymous HTTPS GET of that exact artifact URL only, with at most one redirect and final redirect host exactly `release-assets.githubusercontent.com`. Authorization headers, cookies and credentials are forbidden. The exact filename, byte size and SHA-256 are mandatory. Unexpected redirects, host, content length or hash fail closed. Mirror fallback, mutable-manifest lookup, toolcache fallback and current-main version-manifest lookup are forbidden.
+
+Do not use `actions/setup-python`. There is no runtime lookup through the current `main` version-manifest and no provider/API/model/database credentials. The archive is verified before any setup code from it may execute. Bounded extraction occurs only under `RUNNER_TEMP`, rejects path traversal, symlinks and special files, installs under `RUNNER_TEMP/task-local`, rejects any preexisting runtime or cache target, uses no shared/global cache or cross-run reuse, and deletes the runtime after acceptance.
+
+Runtime acquisition and verified bounded setup occur before the 900-second semantic builder timer. Network is denied before `artifact_setup`, `product_parsing`, and `graphify_invocation` as declared by `contracts/graphify-acceptance-runtime.v1.json`. Runtime and artifact provenance must be recorded, and the executable report must be exactly `CPython 3.12.10`.
+
+This reconciliation changes no hwm-lab source and performs no Graphify invocation. #73 remains paused until completed #85. When #73 later resumes, it must use a fresh replacement hwm-lab branch created from then-current `hwm-lab/main`; the historical #73 recovery branches remain immutable anchors.
