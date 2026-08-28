@@ -421,5 +421,121 @@ class ExactPinnedArchiveInventoryEvidence(unittest.TestCase):
             )
 
 
+RUNTIME_V1_PATH = Path(__file__).resolve().parents[1] / "contracts" / "graphify-acceptance-runtime.v1.json"
+RUNTIME_V2_PATH = Path(__file__).resolve().parents[1] / "contracts" / "graphify-acceptance-runtime.v2.json"
+ADR11_PATH = Path(__file__).resolve().parents[1] / "docs" / "ADR" / "0011-exact-cpython-archive-link-layout-and-safe-extraction.md"
+INFRA_SPEC_PATH = Path(__file__).resolve().parents[1] / "docs" / "INFRA_SPEC.md"
+RUNTIME_V1_BLOB = "8a0a97b2cce8ac7de22c6fe19ed6f9321d5d8f19"
+INFRA_V1_PREDECESSOR_BLOB = "2b6a2ed8a019068c6ec426c2a4ee2c6f95c9bedf"
+INFRA_V1_PREDECESSOR_SIZE = 81155
+INVENTORY_SHA256 = "266fbc38be6ffdc9c565953d44cc208e74d6db8a2f038186580fd4904279f3db"
+EXPECTED_LINKS = json.loads(r'''[
+{"raw_name":"./bin/2to3","normalized_path":"bin/2to3","linkname":"2to3-3.12","normalized_linkname":"2to3-3.12","resolved_target":"bin/2to3-3.12","terminal_target":"bin/2to3-3.12","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0},
+{"raw_name":"./bin/idle3","normalized_path":"bin/idle3","linkname":"idle3.12","normalized_linkname":"idle3.12","resolved_target":"bin/idle3.12","terminal_target":"bin/idle3.12","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0},
+{"raw_name":"./bin/pydoc3","normalized_path":"bin/pydoc3","linkname":"pydoc3.12","normalized_linkname":"pydoc3.12","resolved_target":"bin/pydoc3.12","terminal_target":"bin/pydoc3.12","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0},
+{"raw_name":"./bin/python3","normalized_path":"bin/python3","linkname":"python3.12","normalized_linkname":"python3.12","resolved_target":"bin/python3.12","terminal_target":"bin/python3.12","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0},
+{"raw_name":"./bin/python3-config","normalized_path":"bin/python3-config","linkname":"python3.12-config","normalized_linkname":"python3.12-config","resolved_target":"bin/python3.12-config","terminal_target":"bin/python3.12-config","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0},
+{"raw_name":"./lib/libpython3.12.so","normalized_path":"lib/libpython3.12.so","linkname":"libpython3.12.so.1.0","normalized_linkname":"libpython3.12.so.1.0","resolved_target":"lib/libpython3.12.so.1.0","terminal_target":"lib/libpython3.12.so.1.0","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0},
+{"raw_name":"./lib/pkgconfig/python3-embed.pc","normalized_path":"lib/pkgconfig/python3-embed.pc","linkname":"python-3.12-embed.pc","normalized_linkname":"python-3.12-embed.pc","resolved_target":"lib/pkgconfig/python-3.12-embed.pc","terminal_target":"lib/pkgconfig/python-3.12-embed.pc","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0},
+{"raw_name":"./lib/pkgconfig/python3.pc","normalized_path":"lib/pkgconfig/python3.pc","linkname":"python-3.12.pc","normalized_linkname":"python-3.12.pc","resolved_target":"lib/pkgconfig/python-3.12.pc","terminal_target":"lib/pkgconfig/python-3.12.pc","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0},
+{"raw_name":"./share/man/man1/python3.1","normalized_path":"share/man/man1/python3.1","linkname":"python3.12.1","normalized_linkname":"python3.12.1","resolved_target":"share/man/man1/python3.12.1","terminal_target":"share/man/man1/python3.12.1","terminal_target_type":"regular","tar_type":"2","mode":511,"size":0}
+]''')
+
+
+class RuntimeV2ArchitectureContract(unittest.TestCase):
+    def _json_path(self, path: Path):
+        self.assertTrue(path.is_file(), f"missing runtime-v2 artifact: {path}")
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def test_v1_is_immutable_and_v2_is_forward_only(self):
+        self.assertEqual(git_blob_sha_bytes(RUNTIME_V1_PATH.read_bytes()), RUNTIME_V1_BLOB)
+        v2 = self._json_path(RUNTIME_V2_PATH)
+        self.assertEqual(v2["schema"], "hwm-graphify-acceptance-runtime/v2")
+        self.assertEqual(v2["supersedes"], "hwm-graphify-acceptance-runtime/v1")
+        v1 = self._json_path(RUNTIME_V1_PATH)
+        for key in ("producer", "repository", "release", "artifact", "runtime", "acquisition",
+                    "network_boundary", "setup", "verification", "timer_boundary", "capabilities"):
+            self.assertEqual(v2[key], v1[key], key)
+
+    def test_exact_inventory_identity_counts_and_root_sentinel(self):
+        layout = self._json_path(RUNTIME_V2_PATH)["archive_layout"]
+        self.assertEqual(layout["canonical_inventory_sha256"], INVENTORY_SHA256)
+        self.assertEqual(layout["canonical_inventory_bytes"], 2361714)
+        self.assertEqual(layout["counts"], {
+            "total_member_count": 9341,
+            "archive_root_sentinel_count": 1,
+            "directory_count": 447,
+            "regular_count": 8884,
+            "symlink_count": 9,
+            "hardlink_count": 0,
+            "special_count": 0,
+        })
+        self.assertEqual(layout["root_sentinel"], {
+            "extract": False,
+            "linkname": "",
+            "member_type": "archive_root_sentinel",
+            "mode": 493,
+            "normalized_path": None,
+            "raw_name": ".",
+            "size": 0,
+            "tar_type": "5",
+        })
+        self.assertEqual(layout["hardlinks"], [])
+        self.assertEqual(layout["specials"], [])
+
+    def test_exact_symlink_allowlist(self):
+        links = self._json_path(RUNTIME_V2_PATH)["archive_layout"]["symlinks"]
+        compact = [
+            {key: item[key] for key in (
+                "raw_name", "normalized_path", "linkname", "normalized_linkname",
+                "resolved_target", "terminal_target", "terminal_target_type",
+                "tar_type", "mode", "size"
+            )}
+            for item in links
+        ]
+        self.assertEqual(compact, EXPECTED_LINKS)
+        self.assertTrue(all(item["member_type"] == "symlink" and item["extract"] is True for item in links))
+
+    def test_transport_normalization_and_containment_are_closed(self):
+        policy = self._json_path(RUNTIME_V2_PATH)["extraction_policy"]
+        self.assertEqual(policy["member_name_normalization"], {
+            "root_sentinel_raw_name": ".",
+            "ordinary_optional_single_leading_prefix": "./",
+            "directory_optional_single_trailing_slash": True,
+            "preserve_raw_name_in_identity": True,
+            "reject_repeated_or_embedded_dot_segments": True,
+            "reject_absolute_drive_backslash_control_non_nfc": True,
+            "reject_duplicate_canonical_paths": True,
+        })
+        self.assertEqual(policy["linkname_normalization"]["symlink_resolution"], "member-parent-relative")
+        self.assertEqual(policy["linkname_normalization"]["hardlink_resolution"], "archive-root-relative")
+        self.assertEqual(policy["passes"], [
+            "pass-0-complete-inventory-and-link-validation",
+            "pass-1-directories-and-regular-files-no-link-follow",
+            "pass-2-exact-allowlisted-links",
+            "post-extraction-exact-containment-verification",
+        ])
+        self.assertTrue(policy["parents_must_be_real_directories"])
+        self.assertTrue(policy["never_overwrite_existing_entry"])
+        self.assertTrue(policy["reject_dangling_cycles_escape_special_and_unexpected"])
+        self.assertTrue(policy["cleanup_required"])
+
+    def test_adr_and_infra_spec_record_forward_decision(self):
+        adr = ADR11_PATH.read_text(encoding="utf-8")
+        infra_bytes = INFRA_SPEC_PATH.read_bytes()
+        self.assertEqual(git_blob_sha_bytes(infra_bytes[:INFRA_V1_PREDECESSOR_SIZE]), INFRA_V1_PREDECESSOR_BLOB)
+        suffix = infra_bytes[INFRA_V1_PREDECESSOR_SIZE:]
+        self.assertTrue(suffix.startswith(b"\n# 40. Exact runtime archive link containment\n"))
+        self.assertNotIn(b"\r\n", suffix)
+        self.assertTrue(infra_bytes.endswith(b"\n"))
+        for marker in (
+            "266fbc38be6ffdc9c565953d44cc208e74d6db8a2f038186580fd4904279f3db",
+            "9341", "447", "8884", "9 symlinks", "0 hardlinks", "0 special",
+            "two-pass", "raw-to-canonical", "I10-0091", "runtime v2"
+        ):
+            self.assertIn(marker, adr)
+            self.assertIn(marker, suffix.decode("utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()
