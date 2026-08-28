@@ -1,0 +1,272 @@
+{
+  "schema": "hwm-graphify-acceptance-runtime/v2",
+  "producer": "actions/python-versions",
+  "repository": "actions/python-versions",
+  "release": {
+    "tag": "3.12.10-14343898437",
+    "url": "https://github.com/actions/python-versions/releases/tag/3.12.10-14343898437"
+  },
+  "artifact": {
+    "filename": "python-3.12.10-linux-24.04-x64.tar.gz",
+    "url": "https://github.com/actions/python-versions/releases/download/3.12.10-14343898437/python-3.12.10-linux-24.04-x64.tar.gz",
+    "size_bytes": 121612690,
+    "sha256": "b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33",
+    "official_release_hash_manifest": "https://github.com/actions/python-versions/releases/download/3.12.10-14343898437/hashes.sha256"
+  },
+  "runtime": {
+    "implementation": "CPython",
+    "version": "3.12.10",
+    "platform": "linux",
+    "distribution": "Ubuntu 24.04",
+    "architecture": "x86_64",
+    "executable_report_exact": "CPython 3.12.10"
+  },
+  "acquisition": {
+    "transport": "anonymous HTTPS GET",
+    "exact_artifact_url_only": true,
+    "max_redirects": 1,
+    "final_redirect_host": "release-assets.githubusercontent.com",
+    "authorization_header": false,
+    "cookies": false,
+    "credentials": false,
+    "exact_filename_required": true,
+    "exact_byte_size_required": true,
+    "exact_sha256_required": true,
+    "fail_closed_on": [
+      "unexpected_redirect",
+      "unexpected_host",
+      "unexpected_content_length",
+      "unexpected_hash"
+    ],
+    "mirror_fallback": false,
+    "mutable_manifest_lookup": false,
+    "actions_setup_python": false,
+    "toolcache_fallback": false,
+    "current_main_version_manifest_lookup": false
+  },
+  "workspace": {
+    "preexisting_runtime_or_cache_target": "reject",
+    "extraction_root": "RUNNER_TEMP",
+    "install_root": "RUNNER_TEMP/task-local",
+    "global_or_shared_cache": false,
+    "cross_run_reuse": false,
+    "safe_bounded_extraction": {
+      "path_traversal": "reject",
+      "symlink": "exact-allowlist-only",
+      "hardlink": "exact-allowlist-only",
+      "special_file": "reject",
+      "two_pass": true,
+      "post_extraction_containment": true
+    },
+    "delete_runtime_after_acceptance": true
+  },
+  "network_boundary": {
+    "deny_network_before": [
+      "artifact_setup",
+      "product_parsing",
+      "graphify_invocation"
+    ]
+  },
+  "setup": {
+    "procedure": "verified archive bounded setup only",
+    "execute_only_verified_archive_setup": true
+  },
+  "verification": {
+    "executable_report_exact": "CPython 3.12.10",
+    "record_artifact_and_runtime_provenance": true
+  },
+  "timer_boundary": {
+    "runtime_acquisition_and_setup_before_builder_timer": true,
+    "semantic_builder_timer_seconds": 900
+  },
+  "capabilities": {
+    "provider_credentials": false,
+    "api_credentials": false,
+    "model_credentials": false,
+    "database_credentials": false,
+    "protected_path_mutation": false
+  },
+  "supersedes": "hwm-graphify-acceptance-runtime/v1",
+  "archive_layout": {
+    "canonical_inventory_sha256": "266fbc38be6ffdc9c565953d44cc208e74d6db8a2f038186580fd4904279f3db",
+    "canonical_inventory_bytes": 2361714,
+    "counts": {
+      "total_member_count": 9341,
+      "archive_root_sentinel_count": 1,
+      "directory_count": 447,
+      "regular_count": 8884,
+      "symlink_count": 9,
+      "hardlink_count": 0,
+      "special_count": 0
+    },
+    "root_sentinel": {
+      "extract": false,
+      "linkname": "",
+      "member_type": "archive_root_sentinel",
+      "mode": 493,
+      "normalized_path": null,
+      "raw_name": ".",
+      "size": 0,
+      "tar_type": "5"
+    },
+    "symlinks": [
+      {
+        "extract": true,
+        "linkname": "2to3-3.12",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "2to3-3.12",
+        "normalized_path": "bin/2to3",
+        "raw_name": "./bin/2to3",
+        "resolved_target": "bin/2to3-3.12",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "bin/2to3-3.12",
+        "terminal_target_type": "regular"
+      },
+      {
+        "extract": true,
+        "linkname": "idle3.12",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "idle3.12",
+        "normalized_path": "bin/idle3",
+        "raw_name": "./bin/idle3",
+        "resolved_target": "bin/idle3.12",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "bin/idle3.12",
+        "terminal_target_type": "regular"
+      },
+      {
+        "extract": true,
+        "linkname": "pydoc3.12",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "pydoc3.12",
+        "normalized_path": "bin/pydoc3",
+        "raw_name": "./bin/pydoc3",
+        "resolved_target": "bin/pydoc3.12",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "bin/pydoc3.12",
+        "terminal_target_type": "regular"
+      },
+      {
+        "extract": true,
+        "linkname": "python3.12",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "python3.12",
+        "normalized_path": "bin/python3",
+        "raw_name": "./bin/python3",
+        "resolved_target": "bin/python3.12",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "bin/python3.12",
+        "terminal_target_type": "regular"
+      },
+      {
+        "extract": true,
+        "linkname": "python3.12-config",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "python3.12-config",
+        "normalized_path": "bin/python3-config",
+        "raw_name": "./bin/python3-config",
+        "resolved_target": "bin/python3.12-config",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "bin/python3.12-config",
+        "terminal_target_type": "regular"
+      },
+      {
+        "extract": true,
+        "linkname": "libpython3.12.so.1.0",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "libpython3.12.so.1.0",
+        "normalized_path": "lib/libpython3.12.so",
+        "raw_name": "./lib/libpython3.12.so",
+        "resolved_target": "lib/libpython3.12.so.1.0",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "lib/libpython3.12.so.1.0",
+        "terminal_target_type": "regular"
+      },
+      {
+        "extract": true,
+        "linkname": "python-3.12-embed.pc",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "python-3.12-embed.pc",
+        "normalized_path": "lib/pkgconfig/python3-embed.pc",
+        "raw_name": "./lib/pkgconfig/python3-embed.pc",
+        "resolved_target": "lib/pkgconfig/python-3.12-embed.pc",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "lib/pkgconfig/python-3.12-embed.pc",
+        "terminal_target_type": "regular"
+      },
+      {
+        "extract": true,
+        "linkname": "python-3.12.pc",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "python-3.12.pc",
+        "normalized_path": "lib/pkgconfig/python3.pc",
+        "raw_name": "./lib/pkgconfig/python3.pc",
+        "resolved_target": "lib/pkgconfig/python-3.12.pc",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "lib/pkgconfig/python-3.12.pc",
+        "terminal_target_type": "regular"
+      },
+      {
+        "extract": true,
+        "linkname": "python3.12.1",
+        "member_type": "symlink",
+        "mode": 511,
+        "normalized_linkname": "python3.12.1",
+        "normalized_path": "share/man/man1/python3.1",
+        "raw_name": "./share/man/man1/python3.1",
+        "resolved_target": "share/man/man1/python3.12.1",
+        "size": 0,
+        "tar_type": "2",
+        "terminal_target": "share/man/man1/python3.12.1",
+        "terminal_target_type": "regular"
+      }
+    ],
+    "hardlinks": [],
+    "specials": []
+  },
+  "extraction_policy": {
+    "member_name_normalization": {
+      "root_sentinel_raw_name": ".",
+      "ordinary_optional_single_leading_prefix": "./",
+      "directory_optional_single_trailing_slash": true,
+      "preserve_raw_name_in_identity": true,
+      "reject_repeated_or_embedded_dot_segments": true,
+      "reject_absolute_drive_backslash_control_non_nfc": true,
+      "reject_duplicate_canonical_paths": true
+    },
+    "linkname_normalization": {
+      "ordinary_optional_single_leading_prefix": "./",
+      "preserve_raw_linkname_in_identity": true,
+      "reject_repeated_or_embedded_dot_segments": true,
+      "reject_absolute_drive_backslash_control_non_nfc": true,
+      "symlink_resolution": "member-parent-relative",
+      "hardlink_resolution": "archive-root-relative"
+    },
+    "passes": [
+      "pass-0-complete-inventory-and-link-validation",
+      "pass-1-directories-and-regular-files-no-link-follow",
+      "pass-2-exact-allowlisted-links",
+      "post-extraction-exact-containment-verification"
+    ],
+    "parents_must_be_real_directories": true,
+    "never_overwrite_existing_entry": true,
+    "reject_dangling_cycles_escape_special_and_unexpected": true,
+    "cleanup_required": true
+  }
+}
