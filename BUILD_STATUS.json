@@ -40,7 +40,9 @@
     "I10-0089"
   ],
   "active_task_ids": [
-    "I10-0073"
+    "I10-0073",
+    "I10-0085",
+    "I10-0091"
   ],
   "current_schema_versions": {
     "bootstrap_baseline": "hwm-infra-baseline/bootstrap-v0",
@@ -56,6 +58,6 @@
     "authoritative_functional_checkpoint": "3df0d5ee4434d3cc401dba1b765a4dca068c15c1"
   },
   "blockers": [
-    "I10-0073 remains paused on hwm-control#85; #85 is the future unclaimed exact-runtime implementation task under ADR 0010/INFRA_SPEC §39 after terminal I10-0089 reconciliation; I10-0087 is superseded/not-planned and is not completed"
+    "I10-0073 remains paused on hwm-control#85; I10-0085 remains open + claimed and is paused on hwm-control#91 after exact live runtime-acquisition failure 33128282449 proved the pinned archive contains symlink layout forbidden by runtime v1; I10-0091 is the active forward-only runtime-v2 reconciliation task"
   ]
 }

@@ -1,0 +1,106 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 91,
+  "goal": "Reconcile the exact pinned CPython 3.12.10 archive link layout and define a containment-safe forward-only runtime v2 extraction contract without continuing #85 implementation.",
+  "verified_facts": [
+    {
+      "statement": "Protected hwm-control/main is b0bda55894c3445654c8f73feea0af75da2d26d2; hwm-lab/main is 18f24ccc0866b29c24c56659479ca02f20fb4b9c; hwm-context/main is d651f40d0bb3a3ef0e52fca95e5400ed3db3d772; hwm_predictor/main is 8fd669336b36064e842252d69fb4016cc526a9d4.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "protected hwm-control/main claim base",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "b0bda55894c3445654c8f73feea0af75da2d26d2"
+        }
+      ]
+    },
+    {
+      "statement": "hwm-lab Publisher Ordinary CI 33128282449, job 98711544342, ran exact head 95f9bd98729a8b44b832aa16173c2a751eafc197 via workflow_dispatch; all pre-live tests passed and the sole live error was RuntimeAcquisitionError: archive symlink entries are forbidden during archive validation after exact acquisition identity checks.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33128282449"
+        }
+      ]
+    },
+    {
+      "statement": "The protected runtime v1 contract blob is 8a0a97b2cce8ac7de22c6fe19ed6f9321d5d8f19 and pins actions/python-versions CPython 3.12.10 artifact python-3.12.10-linux-24.04-x64.tar.gz at 121612690 bytes with SHA-256 b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33 while rejecting archive links.",
+      "provenance": [
+        {
+          "kind": "public_ref",
+          "reference": "contracts/graphify-acceptance-runtime.v1.json blob 8a0a97b2cce8ac7de22c6fe19ed6f9321d5d8f19"
+        }
+      ]
+    },
+    {
+      "statement": "The #85 control recovery anchor remains agent/infra-0085-graphify-runtime-acquisition at c2ab2ed9ba7236f60d802dd42c0401b49519169d; the actual #85 hwm-lab recovery carrier is agent/infra-0007-i10-0085-graphify-runtime-acquisition at 95f9bd98729a8b44b832aa16173c2a751eafc197. The #73 anchors remain 994730d637d4e4c7c4eb492b22c49993e971d1e4 and 1595b39b4684143bc34cb5d157eabf1ad4d86c37.",
+      "provenance": [
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#91"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Keep the exact pinned artifact and add forward-only runtime contract v2 that permits only the exact validated link layout discovered from inert tar headers.",
+      "rationale": "Live evidence proves artifact identity is valid while v1 link rejection is incompatible with the pinned archive; the owner explicitly forbids artifact substitution or unrestricted extraction."
+    },
+    {
+      "decision": "Keep I10-0073 and I10-0085 active while I10-0091 is claimed; pause #85 and preserve all #85/#73 recovery branches as immutable anchors.",
+      "rationale": "I10-0091 is an architecture barrier and must complete before any fresh #85 implementation branch may continue."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Select a different CPython artifact or mutable manifest.",
+      "reason": "Owner-approved artifact identity is exact and immutable."
+    },
+    {
+      "alternative": "Weaken v1 or use unrestricted tar extraction.",
+      "reason": "The correction must be forward-only v2 and containment-safe."
+    },
+    {
+      "alternative": "Continue #85 source or rerun failed CI 33128282449 before reconciliation.",
+      "reason": "The failure is a protected contract contradiction, not an in-scope #85 implementation defect."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I10-0085.json",
+    "knowledge-deltas/I10-0091.json"
+  ],
+  "tests": [
+    {
+      "name": "Phase 0 protected heads, Issue states, #85/#73 anchors, live CI stack trace, protected v1/KD/BUILD_STATUS and equivalent-task readback",
+      "status": "pass"
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#91"
+    },
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#85"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33128282449"
+    },
+    {
+      "kind": "public_ref",
+      "reference": "contracts/graphify-acceptance-runtime.v1.json"
+    }
+  ],
+  "followups": [
+    "Revalidate and inventory the exact pinned archive as inert tar-header data without extraction or execution.",
+    "Publish focused RED contract tests, then runtime v2, ADR 0011, INFRA_SPEC §40 and the final lifecycle delta through the controlled publisher."
+  ],
+  "unresolved": [
+    "Exact canonical archive inventory counts/digest and link allowlist have not yet been established.",
+    "Runtime v2, ADR 0011, INFRA_SPEC §40, focused tests, protected PR/merge and post-merge lifecycle remain pending."
+  ]
+}

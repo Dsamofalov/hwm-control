@@ -1,0 +1,84 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 85,
+  "goal": "Implement exact in-job Graphify acceptance runtime acquisition for CPython 3.12.10 under ADR 0010 and INFRA_SPEC §39 without changing #73 builder semantics or .github/**.",
+  "verified_facts": [
+    {
+      "statement": "I10-0089 is completed and protected hwm-control/main authorizes exact in-job runtime acquisition while I10-0087 remains superseded/not-planned and I10-0073 remains active and paused.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "protected hwm-control/main claim base",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "b0bda55894c3445654c8f73feea0af75da2d26d2"
+        }
+      ]
+    },
+    {
+      "statement": "The only authorized runtime artifact is actions/python-versions tag 3.12.10-14343898437, python-3.12.10-linux-24.04-x64.tar.gz, 121612690 bytes, SHA-256 b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "contracts/graphify-acceptance-runtime.v1.json on protected claim base",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "b0bda55894c3445654c8f73feea0af75da2d26d2"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Keep I10-0073 active/claimed and paused while adding I10-0085 as a second active task during implementation.",
+      "rationale": "The dependency-remediation task is independent ownership while #73 must remain paused and historically anchored until #85 reaches terminal completion."
+    },
+    {
+      "decision": "Use only the ordinary controlled hwm-lab source publisher for non-.github source/tests and obtain real GitHub-hosted-runner acceptance before terminal projection.",
+      "rationale": "ADR 0010 explicitly rejects protected-path repair and requires the in-job task-local acquisition route."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Reuse hwm-control#87 protected-path installer or its deleted acceptance branch.",
+      "reason": "I10-0087 is superseded/not-planned and its P0B route is explicitly non-authoritative."
+    },
+    {
+      "alternative": "Resume or modify the historical hwm-lab #73 branch.",
+      "reason": "I10-0073 is paused; future resumption must use a fresh replacement branch from then-current hwm-lab/main."
+    },
+    {
+      "alternative": "Use actions/setup-python, runner toolcache, mirrors, mutable manifests, or credentials.",
+      "reason": "The protected runtime contract forbids all such fallback or credentialed paths."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I10-0085.json"
+  ],
+  "tests": [
+    {
+      "name": "Phase 0 exact-head/lifecycle/publisher/contract discovery",
+      "status": "pass"
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#85"
+    },
+    {
+      "kind": "public_ref",
+      "reference": "docs/ADR/0010-defer-protected-path-credentials-and-use-in-job-runtime-acquisition.md"
+    },
+    {
+      "kind": "public_ref",
+      "reference": "contracts/graphify-acceptance-runtime.v1.json"
+    }
+  ],
+  "followups": [
+    "Publish RED tests and minimal runtime acquisition implementation on a fresh hwm-lab #85 carrier branch from protected hwm-lab/main.",
+    "Obtain exact-head ordinary CI and real GitHub-hosted-runner acceptance, protected merge, and post-merge verification before terminal lifecycle projection."
+  ],
+  "unresolved": [
+    "Live hwm-lab implementation and exact-runtime acceptance have not yet been executed."
+  ]
+}
