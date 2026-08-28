@@ -18,6 +18,7 @@ ARTIFACT_FILENAME = "python-3.12.10-linux-24.04-x64.tar.gz"
 ARTIFACT_SIZE = 121612690
 ARTIFACT_SHA256 = "b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33"
 FINAL_HOST = "release-assets.githubusercontent.com"
+ROOT_SENTINEL_RAW_NAME = "."
 _DRIVE = re.compile(r"^[A-Za-z]:")
 _REDIRECTS = {301, 302, 303, 307, 308}
 
@@ -40,7 +41,7 @@ def _request(url: str) -> tuple[http.client.HTTPSConnection, http.client.HTTPRes
     connection = http.client.HTTPSConnection(parsed.hostname, parsed.port or 443, timeout=30)
     headers = {
         "Accept": "application/octet-stream",
-        "User-Agent": "hwm-i10-0091-archive-inventory/1",
+        "User-Agent": "hwm-i10-0091-archive-inventory/2",
     }
     # Deliberately no Authorization, Cookie, Proxy-Authorization, or credential-derived headers.
     connection.request("GET", target, headers=headers)
@@ -155,18 +156,77 @@ def _member_type(member: tarfile.TarInfo) -> str:
     return "other"
 
 
+def _tar_type(member: tarfile.TarInfo) -> str:
+    value = member.type
+    if isinstance(value, bytes):
+        return value.decode("latin-1")
+    return str(value)
+
+
+def _root_sentinel_record(member: tarfile.TarInfo) -> dict[str, object]:
+    # Owner-authorized exception: exact raw "." only, after all eight header conditions hold.
+    if member.name != ROOT_SENTINEL_RAW_NAME:
+        raise InventoryEvidenceError(f"root sentinel raw name mismatch: {member.name!r}")
+    if not member.isdir():
+        raise InventoryEvidenceError(
+            f"exact root sentinel is not a directory/archive-root marker: tar_type={_tar_type(member)!r}"
+        )
+    if member.size != 0:
+        raise InventoryEvidenceError(f"exact root sentinel size is not zero: {member.size}")
+    if member.issym():
+        raise InventoryEvidenceError("exact root sentinel is a symlink")
+    if member.islnk():
+        raise InventoryEvidenceError("exact root sentinel is a hardlink")
+    if member.linkname != "":
+        raise InventoryEvidenceError(f"exact root sentinel linkname is not empty: {member.linkname!r}")
+
+    # For a tar member, a non-zero header size is the payload byte count. Re-check explicitly
+    # so the authorization's no-payload condition remains a distinct fail-closed assertion.
+    payload_bytes = member.size
+    if payload_bytes != 0:
+        raise InventoryEvidenceError(f"exact root sentinel contains payload bytes: {payload_bytes}")
+
+    return {
+        "raw_name": ROOT_SENTINEL_RAW_NAME,
+        "member_type": "archive_root_sentinel",
+        "tar_type": _tar_type(member),
+        "mode": member.mode,
+        "size": 0,
+        "linkname": "",
+        "normalized_path": None,
+        "extract": False,
+    }
+
+
 def _inventory(archive_path: Path) -> tuple[bytes, dict[str, object]]:
-    # Artifact identity has already been verified. This function reads tar headers only.
+    # Artifact identity has already been verified. This function reads inert tar headers only:
+    # it never extracts members, opens archive payload streams, imports archive code, or executes
+    # setup.sh/any archive member.
     with tarfile.open(archive_path, mode="r:gz") as archive:
         members = archive.getmembers()
 
     records: list[dict[str, object]] = []
     seen: set[str] = set()
+    root_sentinel: dict[str, object] | None = None
+    root_sentinel_count = 0
+
     for member in members:
+        if member.name == ROOT_SENTINEL_RAW_NAME:
+            root_sentinel_count += 1
+            if root_sentinel_count != 1:
+                raise InventoryEvidenceError(
+                    f"exact root sentinel appears more than once: count={root_sentinel_count}"
+                )
+            root_sentinel = _root_sentinel_record(member)
+            continue
+
+        # No other exception exists. "./", "foo/.", "./foo", or any "." path segment
+        # reaches the ordinary normalizer and is rejected fail closed.
         path = _normalize_member_path(member.name)
         if path in seen:
             raise InventoryEvidenceError(f"duplicate normalized archive path: {path!r}")
         seen.add(path)
+
         member_type = _member_type(member)
         record: dict[str, object] = {
             "path": path,
@@ -185,10 +245,16 @@ def _inventory(archive_path: Path) -> tuple[bytes, dict[str, object]]:
             record["resolved_target"] = resolved
         records.append(record)
 
+    if root_sentinel_count != 1 or root_sentinel is None:
+        raise InventoryEvidenceError(
+            f"exact archive must contain exactly one root sentinel: count={root_sentinel_count}"
+        )
+
     records.sort(key=lambda item: (str(item["path"]), str(item["type"])))
     by_path = {str(item["path"]): item for item in records}
 
     def terminal(path: str, stack: tuple[str, ...] = ()) -> tuple[str, str]:
+        # Root sentinel is deliberately absent from by_path and can never be a link target.
         if path not in by_path:
             raise InventoryEvidenceError(f"dangling archive link target: {path!r}")
         if path in stack:
@@ -228,18 +294,28 @@ def _inventory(archive_path: Path) -> tuple[bytes, dict[str, object]]:
         elif item_type == "other":
             specials.append(dict(item))
 
-    canonical = json.dumps(records, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    counts = {kind: sum(item["type"] == kind for item in records) for kind in ("directory", "regular", "symlink", "hardlink", "other")}
+    canonical_records: list[dict[str, object]] = [root_sentinel, *records]
+    canonical = json.dumps(
+        canonical_records,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+
     summary: dict[str, object] = {
-        "member_count": len(records),
-        "counts": counts,
-        "canonical_inventory_sha256": hashlib.sha256(canonical).hexdigest(),
+        "root_sentinel": root_sentinel,
+        "total_member_count": len(canonical_records),
+        "archive_root_sentinel_count": root_sentinel_count,
+        "directory_count": sum(item["type"] == "directory" for item in records),
+        "regular_count": sum(item["type"] == "regular" for item in records),
+        "symlink_count": len(symlinks),
+        "hardlink_count": len(hardlinks),
+        "special_count": len(specials),
         "symlinks": symlinks,
         "hardlinks": hardlinks,
         "specials": specials,
+        "canonical_inventory_sha256": hashlib.sha256(canonical).hexdigest(),
     }
-    if specials:
-        raise InventoryEvidenceError("special archive members are forbidden: " + json.dumps(specials, sort_keys=True))
     return canonical, summary
 
 
@@ -251,9 +327,22 @@ class ExactPinnedArchiveInventoryEvidence(unittest.TestCase):
             identity = _download_exact(archive_path)
             canonical, summary = _inventory(archive_path)
             print("I10-0091 ARTIFACT_IDENTITY " + json.dumps(identity, sort_keys=True, separators=(",", ":")))
-            print("I10-0091 CANONICAL_INVENTORY " + json.dumps(summary, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+            print(
+                "I10-0091 ROOT_SENTINEL "
+                + json.dumps(summary["root_sentinel"], ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            )
+            print(
+                "I10-0091 CANONICAL_INVENTORY "
+                + json.dumps(summary, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            )
             print("I10-0091 CANONICAL_BYTES " + str(len(canonical)))
-            self.assertFalse(summary["specials"])
+
+            self.assertEqual(summary["archive_root_sentinel_count"], 1)
+            self.assertFalse(
+                summary["specials"],
+                "special archive members are forbidden: "
+                + json.dumps(summary["specials"], ensure_ascii=False, sort_keys=True),
+            )
 
 
 if __name__ == "__main__":
