@@ -41,7 +41,7 @@ def _request(url: str) -> tuple[http.client.HTTPSConnection, http.client.HTTPRes
     connection = http.client.HTTPSConnection(parsed.hostname, parsed.port or 443, timeout=30)
     headers = {
         "Accept": "application/octet-stream",
-        "User-Agent": "hwm-i10-0091-archive-inventory/2",
+        "User-Agent": "hwm-i10-0091-archive-inventory/3",
     }
     # Deliberately no Authorization, Cookie, Proxy-Authorization, or credential-derived headers.
     connection.request("GET", target, headers=headers)
@@ -110,38 +110,57 @@ def _download_exact(destination: Path) -> dict[str, object]:
         second_connection.close()
 
 
-def _normalize_member_path(raw: str) -> str:
+def _validate_text(raw: str, *, context: str) -> None:
     if not raw or raw.startswith("/") or _DRIVE.match(raw) or "\\" in raw or _has_control(raw):
-        raise InventoryEvidenceError(f"unsafe archive member path: {raw!r}")
+        raise InventoryEvidenceError(f"unsafe {context}: {raw!r}")
     if unicodedata.normalize("NFC", raw) != raw:
-        raise InventoryEvidenceError(f"non-NFC archive member path: {raw!r}")
-    parts = raw.split("/")
+        raise InventoryEvidenceError(f"non-NFC {context}: {raw!r}")
+
+
+def _normalize_member_path(raw: str, *, member_type: str) -> str:
+    _validate_text(raw, context="archive member path")
+    value = raw
+    if value.startswith("./"):
+        value = value[2:]
+    if not value or value.startswith("./"):
+        raise InventoryEvidenceError(f"unsafe archive member transport prefix: {raw!r}")
+
+    # Prefix removal must not reveal an absolute or drive-prefixed path.
+    _validate_text(value, context="archive member path after transport normalization")
+
+    if value.endswith("/"):
+        if member_type != "directory":
+            raise InventoryEvidenceError(f"trailing slash on non-directory archive member: {raw!r}")
+        value = value[:-1]
+        if not value or value.endswith("/"):
+            raise InventoryEvidenceError(f"unsafe repeated directory trailing slash: {raw!r}")
+
+    parts = value.split("/")
     if any(part in {"", ".", ".."} for part in parts):
         raise InventoryEvidenceError(f"unsafe archive member segment: {raw!r}")
     return "/".join(parts)
 
 
-def _validate_linkname(raw: str) -> None:
-    if not raw or raw.startswith("/") or _DRIVE.match(raw) or "\\" in raw or _has_control(raw):
-        raise InventoryEvidenceError(f"unsafe archive linkname: {raw!r}")
-    if unicodedata.normalize("NFC", raw) != raw:
-        raise InventoryEvidenceError(f"non-NFC archive linkname: {raw!r}")
+def _normalize_linkname(raw: str) -> str:
+    _validate_text(raw, context="archive linkname")
+    value = raw
+    if value.startswith("./"):
+        value = value[2:]
+    if not value or value.startswith("./"):
+        raise InventoryEvidenceError(f"unsafe archive linkname transport prefix: {raw!r}")
+    _validate_text(value, context="archive linkname after transport normalization")
+    parts = value.split("/")
+    if any(part in {"", ".", ".."} for part in parts):
+        raise InventoryEvidenceError(f"unsafe archive linkname segment: {raw!r}")
+    return "/".join(parts)
 
 
-def _lexical(parts: list[str]) -> str:
-    resolved: list[str] = []
-    for part in parts:
-        if part in {"", "."}:
-            continue
-        if part == "..":
-            if not resolved:
-                raise InventoryEvidenceError("archive link target escapes extraction root")
-            resolved.pop()
-        else:
-            resolved.append(part)
-    if not resolved:
-        raise InventoryEvidenceError("archive link target resolves to extraction root, not an exact member")
-    return "/".join(resolved)
+def _resolve_symlink_target(path: str, normalized_linkname: str) -> str:
+    parent = path.split("/")[:-1]
+    target = parent + normalized_linkname.split("/")
+    if not target or any(part in {"", ".", ".."} for part in target):
+        raise InventoryEvidenceError(f"unsafe resolved symlink target: {path!r} -> {normalized_linkname!r}")
+    return "/".join(target)
 
 
 def _member_type(member: tarfile.TarInfo) -> str:
@@ -153,7 +172,7 @@ def _member_type(member: tarfile.TarInfo) -> str:
         return "symlink"
     if member.islnk():
         return "hardlink"
-    return "other"
+    return "special"
 
 
 def _tar_type(member: tarfile.TarInfo) -> str:
@@ -164,7 +183,6 @@ def _tar_type(member: tarfile.TarInfo) -> str:
 
 
 def _root_sentinel_record(member: tarfile.TarInfo) -> dict[str, object]:
-    # Owner-authorized exception: exact raw "." only, after all eight header conditions hold.
     if member.name != ROOT_SENTINEL_RAW_NAME:
         raise InventoryEvidenceError(f"root sentinel raw name mismatch: {member.name!r}")
     if not member.isdir():
@@ -179,9 +197,6 @@ def _root_sentinel_record(member: tarfile.TarInfo) -> dict[str, object]:
         raise InventoryEvidenceError("exact root sentinel is a hardlink")
     if member.linkname != "":
         raise InventoryEvidenceError(f"exact root sentinel linkname is not empty: {member.linkname!r}")
-
-    # For a tar member, a non-zero header size is the payload byte count. Re-check explicitly
-    # so the authorization's no-payload condition remains a distinct fail-closed assertion.
     payload_bytes = member.size
     if payload_bytes != 0:
         raise InventoryEvidenceError(f"exact root sentinel contains payload bytes: {payload_bytes}")
@@ -199,14 +214,13 @@ def _root_sentinel_record(member: tarfile.TarInfo) -> dict[str, object]:
 
 
 def _inventory(archive_path: Path) -> tuple[bytes, dict[str, object]]:
-    # Artifact identity has already been verified. This function reads inert tar headers only:
-    # it never extracts members, opens archive payload streams, imports archive code, or executes
-    # setup.sh/any archive member.
+    # Artifact identity has already been verified. Read inert tar metadata only.
+    # No member is extracted, opened as payload, imported, or executed.
     with tarfile.open(archive_path, mode="r:gz") as archive:
         members = archive.getmembers()
 
     records: list[dict[str, object]] = []
-    seen: set[str] = set()
+    seen: dict[str, str] = {}
     root_sentinel: dict[str, object] | None = None
     root_sentinel_count = 0
 
@@ -220,28 +234,34 @@ def _inventory(archive_path: Path) -> tuple[bytes, dict[str, object]]:
             root_sentinel = _root_sentinel_record(member)
             continue
 
-        # No other exception exists. "./", "foo/.", "./foo", or any "." path segment
-        # reaches the ordinary normalizer and is rejected fail closed.
-        path = _normalize_member_path(member.name)
-        if path in seen:
-            raise InventoryEvidenceError(f"duplicate normalized archive path: {path!r}")
-        seen.add(path)
-
         member_type = _member_type(member)
+        path = _normalize_member_path(member.name, member_type=member_type)
+        previous_raw = seen.get(path)
+        if previous_raw is not None:
+            raise InventoryEvidenceError(
+                f"duplicate canonical archive path: {path!r} from {previous_raw!r} and {member.name!r}"
+            )
+        seen[path] = member.name
+
         record: dict[str, object] = {
-            "path": path,
-            "type": member_type,
+            "raw_name": member.name,
+            "normalized_path": path,
+            "member_type": member_type,
+            "tar_type": _tar_type(member),
             "mode": member.mode,
             "size": member.size,
+            "linkname": member.linkname,
+            "extract": member_type in {"directory", "regular", "symlink", "hardlink"},
         }
+
         if member_type in {"symlink", "hardlink"}:
-            _validate_linkname(member.linkname)
+            normalized_linkname = _normalize_linkname(member.linkname)
             if member_type == "symlink":
-                resolved = _lexical(path.split("/")[:-1] + member.linkname.split("/"))
+                resolved = _resolve_symlink_target(path, normalized_linkname)
             else:
-                # POSIX tar hardlink linkname names a member from the archive namespace root.
-                resolved = _lexical(member.linkname.split("/"))
-            record["linkname"] = member.linkname
+                # Owner-authorized tar hardlink semantics: linkname addresses archive root.
+                resolved = normalized_linkname
+            record["normalized_linkname"] = normalized_linkname
             record["resolved_target"] = resolved
         records.append(record)
 
@@ -250,48 +270,48 @@ def _inventory(archive_path: Path) -> tuple[bytes, dict[str, object]]:
             f"exact archive must contain exactly one root sentinel: count={root_sentinel_count}"
         )
 
-    records.sort(key=lambda item: (str(item["path"]), str(item["type"])))
-    by_path = {str(item["path"]): item for item in records}
+    records.sort(
+        key=lambda item: (
+            str(item["normalized_path"]),
+            str(item["member_type"]),
+            str(item["raw_name"]),
+        )
+    )
+    by_path = {str(item["normalized_path"]): item for item in records}
 
     def terminal(path: str, stack: tuple[str, ...] = ()) -> tuple[str, str]:
-        # Root sentinel is deliberately absent from by_path and can never be a link target.
         if path not in by_path:
             raise InventoryEvidenceError(f"dangling archive link target: {path!r}")
         if path in stack:
             raise InventoryEvidenceError("archive link cycle: " + " -> ".join(stack + (path,)))
         item = by_path[path]
-        item_type = str(item["type"])
-        if item_type == "symlink":
+        item_type = str(item["member_type"])
+        if item_type in {"symlink", "hardlink"}:
             return terminal(str(item["resolved_target"]), stack + (path,))
-        if item_type == "hardlink":
-            target = by_path.get(str(item["resolved_target"]))
-            if target is None or target["type"] != "regular":
-                raise InventoryEvidenceError(f"hardlink target is not an exact regular member: {path!r}")
-            return str(target["path"]), "regular"
-        if item_type == "other":
+        if item_type == "special":
             raise InventoryEvidenceError(f"archive link resolves to special member: {path!r}")
+        if item_type not in {"regular", "directory"}:
+            raise InventoryEvidenceError(f"archive link has unsupported terminal type: {path!r} -> {item_type!r}")
         return path, item_type
 
     symlinks: list[dict[str, object]] = []
     hardlinks: list[dict[str, object]] = []
     specials: list[dict[str, object]] = []
     for item in records:
-        item_type = str(item["type"])
+        item_type = str(item["member_type"])
         if item_type == "symlink":
-            terminal_path, terminal_type = terminal(str(item["path"]))
+            terminal_path, terminal_type = terminal(str(item["normalized_path"]))
             allowed = dict(item)
             allowed["terminal_target"] = terminal_path
             allowed["terminal_target_type"] = terminal_type
             symlinks.append(allowed)
         elif item_type == "hardlink":
-            target = by_path.get(str(item["resolved_target"]))
-            if target is None or target["type"] != "regular":
-                raise InventoryEvidenceError(f"hardlink target is not an exact regular member: {item!r}")
+            terminal_path, terminal_type = terminal(str(item["normalized_path"]))
             allowed = dict(item)
-            allowed["terminal_target"] = str(target["path"])
-            allowed["terminal_target_type"] = "regular"
+            allowed["terminal_target"] = terminal_path
+            allowed["terminal_target_type"] = terminal_type
             hardlinks.append(allowed)
-        elif item_type == "other":
+        elif item_type == "special":
             specials.append(dict(item))
 
     canonical_records: list[dict[str, object]] = [root_sentinel, *records]
@@ -306,20 +326,76 @@ def _inventory(archive_path: Path) -> tuple[bytes, dict[str, object]]:
         "root_sentinel": root_sentinel,
         "total_member_count": len(canonical_records),
         "archive_root_sentinel_count": root_sentinel_count,
-        "directory_count": sum(item["type"] == "directory" for item in records),
-        "regular_count": sum(item["type"] == "regular" for item in records),
+        "directory_count": sum(item["member_type"] == "directory" for item in records),
+        "regular_count": sum(item["member_type"] == "regular" for item in records),
         "symlink_count": len(symlinks),
         "hardlink_count": len(hardlinks),
         "special_count": len(specials),
         "symlinks": symlinks,
         "hardlinks": hardlinks,
         "specials": specials,
+        "raw_to_normalized": [
+            {
+                "raw_name": item["raw_name"],
+                "normalized_path": item["normalized_path"],
+            }
+            for item in records
+        ],
         "canonical_inventory_sha256": hashlib.sha256(canonical).hexdigest(),
     }
     return canonical, summary
 
 
 class ExactPinnedArchiveInventoryEvidence(unittest.TestCase):
+    def test_owner_authorized_transport_normalization_examples(self) -> None:
+        self.assertEqual(
+            _normalize_member_path("./setup.sh", member_type="regular"),
+            "setup.sh",
+        )
+        self.assertEqual(
+            _normalize_member_path("./bin/", member_type="directory"),
+            "bin",
+        )
+        self.assertEqual(_normalize_linkname("./bin/python3.12"), "bin/python3.12")
+
+        rejected_members = [
+            ("./", "directory"),
+            ("././foo", "regular"),
+            ("foo/./bar", "regular"),
+            ("foo/../bar", "regular"),
+            (".//x", "regular"),
+            ("foo//bar", "regular"),
+            ("foo/", "regular"),
+            ("foo//", "directory"),
+            ("/x", "regular"),
+            ("C:/x", "regular"),
+            ("./C:/x", "regular"),
+            ("foo\\bar", "regular"),
+        ]
+        for raw, member_type in rejected_members:
+            with self.subTest(raw=raw, member_type=member_type):
+                with self.assertRaises(InventoryEvidenceError):
+                    _normalize_member_path(raw, member_type=member_type)
+
+        rejected_linknames = [
+            "",
+            "./",
+            "././foo",
+            "../x",
+            "./../x",
+            "foo/.",
+            "foo/../bar",
+            "foo//bar",
+            "/x",
+            "C:/x",
+            "./C:/x",
+            "foo\\bar",
+        ]
+        for raw in rejected_linknames:
+            with self.subTest(linkname=raw):
+                with self.assertRaises(InventoryEvidenceError):
+                    _normalize_linkname(raw)
+
     def test_exact_pinned_archive_header_inventory_only(self) -> None:
         self.assertEqual(os.environ.get("GITHUB_ACTIONS"), "true")
         with tempfile.TemporaryDirectory(prefix="i10-0091-inventory-") as temporary:
