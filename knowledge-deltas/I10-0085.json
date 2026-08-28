@@ -1,53 +1,143 @@
 {
   "schema": "hwm-knowledge-delta/v1",
   "task_id": 85,
-  "goal": "Implement exact in-job Graphify acceptance runtime acquisition for CPython 3.12.10 under ADR 0010 and INFRA_SPEC §39 without changing #73 builder semantics or .github/**.",
+  "goal": "Implement exact in-job Graphify acceptance runtime acquisition for CPython 3.12.10 under ADR 0010, ADR 0011, INFRA_SPEC §§39-40, and hwm-graphify-acceptance-runtime/v2 without changing #73 builder semantics or .github/**.",
   "verified_facts": [
     {
-      "statement": "I10-0089 is completed and protected hwm-control/main authorizes exact in-job runtime acquisition while I10-0087 remains superseded/not-planned and I10-0073 remains active and paused.",
+      "statement": "I10-0089 and I10-0091 are completed; protected hwm-control/main bc898469237c088b79a2f6bce1de9996afe82570 authorizes the forward-only hwm-graphify-acceptance-runtime/v2 contract while I10-0087 remains superseded/not-planned.",
       "provenance": [
         {
           "kind": "commit",
-          "reference": "protected hwm-control/main claim base",
+          "reference": "protected hwm-control/main runtime-v2 authority",
           "repo": "Dsamofalov/hwm-control",
-          "sha": "b0bda55894c3445654c8f73feea0af75da2d26d2"
+          "sha": "bc898469237c088b79a2f6bce1de9996afe82570"
+        },
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#91"
         }
       ]
     },
     {
-      "statement": "The only authorized runtime artifact is actions/python-versions tag 3.12.10-14343898437, python-3.12.10-linux-24.04-x64.tar.gz, 121612690 bytes, SHA-256 b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33.",
+      "statement": "The only authorized runtime artifact remains actions/python-versions tag 3.12.10-14343898437, python-3.12.10-linux-24.04-x64.tar.gz, 121612690 bytes, SHA-256 b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33, acquired anonymously with one redirect ending at release-assets.githubusercontent.com.",
+      "provenance": [
+        {
+          "kind": "public_ref",
+          "reference": "contracts/graphify-acceptance-runtime.v2.json"
+        },
+        {
+          "kind": "ci_run",
+          "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33194461513 / job 98927933025"
+        }
+      ]
+    },
+    {
+      "statement": "Exact-head live acceptance completed successfully on hwm-lab head 53bd2bb48d0fd309627da275192a3f32b4e2bdb7 in Publisher Ordinary CI 33194461513 / job 98927933025: 88 tests, 0 failures, and the acceptance executable reported exactly CPython 3.12.10.",
       "provenance": [
         {
           "kind": "commit",
-          "reference": "contracts/graphify-acceptance-runtime.v1.json on protected claim base",
-          "repo": "Dsamofalov/hwm-control",
-          "sha": "b0bda55894c3445654c8f73feea0af75da2d26d2"
+          "reference": "exact controlled hwm-lab acceptance head",
+          "repo": "Dsamofalov/hwm-lab",
+          "sha": "53bd2bb48d0fd309627da275192a3f32b4e2bdb7"
+        },
+        {
+          "kind": "ci_run",
+          "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33194461513 / job 98927933025"
+        }
+      ]
+    },
+    {
+      "statement": "The accepted archive canonical inventory is exact: 9341 total members comprising one archive-root sentinel, 447 directories, 8884 regular files, nine symlinks, zero hardlinks and zero special members; canonical inventory is 2361714 bytes with SHA-256 266fbc38be6ffdc9c565953d44cc208e74d6db8a2f038186580fd4904279f3db, and all nine symlinks are containment-safe and terminate at regular members.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33194461513 / job 98927933025"
+        },
+        {
+          "kind": "public_ref",
+          "reference": "contracts/graphify-acceptance-runtime.v2.json"
+        }
+      ]
+    },
+    {
+      "statement": "Live acceptance proved task-local runtime binding, credentials absent, protected-path authority absent, network denial before artifact_setup/product_parsing/graphify_invocation, runtime acquisition/setup before the 900-second semantic builder timer, after-runtime-ready timer ordering, cleanup, and absence of actions/setup-python, toolcache, mirror, mutable-manifest, or current-main-version-manifest fallback.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33194461513 / job 98927933025"
+        }
+      ]
+    },
+    {
+      "statement": "Protected hwm-lab PR #8 merged the exact six-path +1538/-0 runtime-v2 carrier with no .github/** changes; the real merge SHA and final protected hwm-lab/main are 8799c3b9a706d737ff063a521a08e2b3a97130bd.",
+      "provenance": [
+        {
+          "kind": "pull_request",
+          "reference": "Dsamofalov/hwm-lab#8"
+        },
+        {
+          "kind": "commit",
+          "reference": "protected hwm-lab merge",
+          "repo": "Dsamofalov/hwm-lab",
+          "sha": "8799c3b9a706d737ff063a521a08e2b3a97130bd"
+        }
+      ]
+    },
+    {
+      "statement": "Post-merge verification succeeded on exact hwm-lab merge SHA 8799c3b9a706d737ff063a521a08e2b3a97130bd: Publisher Ordinary CI 33199444296 / job 98944900583 and Repository Bootstrap CI 33199444173 / job 98944900054 both completed successfully, including their required contract/security test steps.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33199444296 / job 98944900583"
+        },
+        {
+          "kind": "ci_run",
+          "reference": "Dsamofalov/hwm-lab Repository Bootstrap CI 33199444173 / job 98944900054"
+        },
+        {
+          "kind": "commit",
+          "reference": "final protected hwm-lab/main",
+          "repo": "Dsamofalov/hwm-lab",
+          "sha": "8799c3b9a706d737ff063a521a08e2b3a97130bd"
+        }
+      ]
+    },
+    {
+      "statement": "Historical #85 anchors remain immutable provenance: hwm-control agent/infra-0085-graphify-runtime-acquisition at c2ab2ed9ba7236f60d802dd42c0401b49519169d and hwm-lab agent/infra-0007-i10-0085-graphify-runtime-acquisition at 95f9bd98729a8b44b832aa16173c2a751eafc197.",
+      "provenance": [
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#85"
         }
       ]
     }
   ],
   "decisions": [
     {
-      "decision": "Keep I10-0073 active/claimed and paused while adding I10-0085 as a second active task during implementation.",
-      "rationale": "The dependency-remediation task is independent ownership while #73 must remain paused and historically anchored until #85 reaches terminal completion."
+      "decision": "Project I10-0085 from active to completed because runtime-v2 implementation, exact-head live acceptance, protected hwm-lab merge, and exact-merge post-merge CI are all terminally green.",
+      "rationale": "The Issue's required acceptance is satisfied by immutable exact-head and protected-main evidence without introducing credentials or protected-path authority."
     },
     {
-      "decision": "Use only the ordinary controlled hwm-lab source publisher for non-.github source/tests and obtain real GitHub-hosted-runner acceptance before terminal projection.",
-      "rationale": "ADR 0010 explicitly rejects protected-path repair and requires the in-job task-local acquisition route."
+      "decision": "Keep I10-0073 active as a distinct task and remove only its obsolete paused-on-#85 blocker; any later #73 resumption must use a fresh replacement hwm-lab branch based on then-current protected hwm-lab/main.",
+      "rationale": "#85 is prerequisite remediation only and does not implement, complete, or mutate #73."
+    },
+    {
+      "decision": "Keep terminal lifecycle and replacement-branch cleanup separate from this completion projection.",
+      "rationale": "T2 is limited to BUILD_STATUS.json and knowledge-deltas/I10-0085.json; issue/branch lifecycle cleanup is reserved for T3."
     }
   ],
   "rejected_alternatives": [
     {
-      "alternative": "Reuse hwm-control#87 protected-path installer or its deleted acceptance branch.",
-      "reason": "I10-0087 is superseded/not-planned and its P0B route is explicitly non-authoritative."
+      "alternative": "Reuse hwm-control#87 protected-path installer or introduce protected-path credentials/capabilities.",
+      "reason": "I10-0087 is superseded/not-planned and runtime-v2 acceptance proves the authorized ordinary in-job path without protected-path authority."
     },
     {
-      "alternative": "Resume or modify the historical hwm-lab #73 branch.",
-      "reason": "I10-0073 is paused; future resumption must use a fresh replacement branch from then-current hwm-lab/main."
+      "alternative": "Resume or modify a historical #73 or #85 hwm-lab branch.",
+      "reason": "Historical anchors are immutable; future #73 resumption requires a fresh replacement branch from then-current hwm-lab/main."
     },
     {
-      "alternative": "Use actions/setup-python, runner toolcache, mirrors, mutable manifests, or credentials.",
-      "reason": "The protected runtime contract forbids all such fallback or credentialed paths."
+      "alternative": "Use actions/setup-python, runner toolcache, mirrors, mutable manifests, or current-main version-manifest lookup.",
+      "reason": "The protected runtime-v2 contract and live acceptance forbid and reject these fallback paths."
     }
   ],
   "changed_components": [
@@ -56,8 +146,29 @@
   ],
   "tests": [
     {
-      "name": "Phase 0 exact-head/lifecycle/publisher/contract discovery",
-      "status": "pass"
+      "name": "Exact-head runtime-v2 live acceptance",
+      "status": "pass",
+      "reference": "hwm-lab Publisher Ordinary CI 33194461513 / job 98927933025 on 53bd2bb48d0fd309627da275192a3f32b4e2bdb7; 88 tests, 0 failures"
+    },
+    {
+      "name": "Protected hwm-lab PR bootstrap",
+      "status": "pass",
+      "reference": "run 33194596359 / job 98928387757"
+    },
+    {
+      "name": "Protected hwm-lab PR publisher CI",
+      "status": "pass",
+      "reference": "run 33194596321 / job 98928387595"
+    },
+    {
+      "name": "Post-merge hwm-lab Publisher Ordinary CI",
+      "status": "pass",
+      "reference": "run 33199444296 / job 98944900583 on 8799c3b9a706d737ff063a521a08e2b3a97130bd"
+    },
+    {
+      "name": "Post-merge hwm-lab Repository Bootstrap CI",
+      "status": "pass",
+      "reference": "run 33199444173 / job 98944900054 on 8799c3b9a706d737ff063a521a08e2b3a97130bd"
     }
   ],
   "evidence": [
@@ -66,19 +177,39 @@
       "reference": "Dsamofalov/hwm-control#85"
     },
     {
-      "kind": "public_ref",
-      "reference": "docs/ADR/0010-defer-protected-path-credentials-and-use-in-job-runtime-acquisition.md"
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#91"
     },
     {
       "kind": "public_ref",
-      "reference": "contracts/graphify-acceptance-runtime.v1.json"
+      "reference": "contracts/graphify-acceptance-runtime.v2.json"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33194461513 / job 98927933025"
+    },
+    {
+      "kind": "pull_request",
+      "reference": "Dsamofalov/hwm-lab#8"
+    },
+    {
+      "kind": "commit",
+      "reference": "Dsamofalov/hwm-lab protected merge/main 8799c3b9a706d737ff063a521a08e2b3a97130bd",
+      "repo": "Dsamofalov/hwm-lab",
+      "sha": "8799c3b9a706d737ff063a521a08e2b3a97130bd"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33199444296 / job 98944900583"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Dsamofalov/hwm-lab Repository Bootstrap CI 33199444173 / job 98944900054"
     }
   ],
   "followups": [
-    "Publish RED tests and minimal runtime acquisition implementation on a fresh hwm-lab #85 carrier branch from protected hwm-lab/main.",
-    "Obtain exact-head ordinary CI and real GitHub-hosted-runner acceptance, protected merge, and post-merge verification before terminal lifecycle projection."
+    "Perform T3 terminal lifecycle/replacement-branch cleanup for I10-0085 without altering immutable historical anchors.",
+    "Resume I10-0073 only in a separate later task through a fresh replacement hwm-lab branch based on then-current protected hwm-lab/main."
   ],
-  "unresolved": [
-    "Live hwm-lab implementation and exact-runtime acceptance have not yet been executed."
-  ]
+  "unresolved": []
 }
