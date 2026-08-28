@@ -422,7 +422,7 @@ class ExactPinnedArchiveInventoryEvidence(unittest.TestCase):
 
 
 def git_blob_sha_bytes(data: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\\0" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + bytes([0]) + data).hexdigest()
 
 
 RUNTIME_V1_PATH = Path(__file__).resolve().parents[1] / "contracts" / "graphify-acceptance-runtime.v1.json"
