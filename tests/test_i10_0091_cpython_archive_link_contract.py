@@ -421,7 +421,7 @@ class ExactPinnedArchiveInventoryEvidence(unittest.TestCase):
             )
 
 
-RUNTIME_V1_PATH = Path(__file__).resolve().parents[1] / "contracts" / "graphify-acceptance-runtime.v1.json"
+def git_blob_sha_bytes(data: bytes) -> str:\n    return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\\0" + data).hexdigest()\n\n\nRUNTIME_V1_PATH = Path(__file__).resolve().parents[1] / "contracts" / "graphify-acceptance-runtime.v1.json"
 RUNTIME_V2_PATH = Path(__file__).resolve().parents[1] / "contracts" / "graphify-acceptance-runtime.v2.json"
 ADR11_PATH = Path(__file__).resolve().parents[1] / "docs" / "ADR" / "0011-exact-cpython-archive-link-layout-and-safe-extraction.md"
 INFRA_SPEC_PATH = Path(__file__).resolve().parents[1] / "docs" / "INFRA_SPEC.md"
