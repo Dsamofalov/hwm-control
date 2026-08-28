@@ -2334,3 +2334,17 @@ Do not use `actions/setup-python`. There is no runtime lookup through the curren
 Runtime acquisition and verified bounded setup occur before the 900-second semantic builder timer. Network is denied before `artifact_setup`, `product_parsing`, and `graphify_invocation` as declared by `contracts/graphify-acceptance-runtime.v1.json`. Runtime and artifact provenance must be recorded, and the executable report must be exactly `CPython 3.12.10`.
 
 This reconciliation changes no hwm-lab source and performs no Graphify invocation. #73 remains paused until completed #85. When #73 later resumes, it must use a fresh replacement hwm-lab branch created from then-current `hwm-lab/main`; the historical #73 recovery branches remain immutable anchors.
+
+# 40. Exact runtime archive link containment
+
+I10-0091 defines runtime v2 as the forward-only extraction contract for the exact pinned CPython 3.12.10 archive. Runtime v1 and ADR 0010 remain historical evidence; runtime v2 preserves every v1 artifact, URL, size, SHA-256, anonymous acquisition, redirect-host, no-credential, no-cache, network-denial, runtime-verification, cleanup, and 900-second semantic builder timer rule.
+
+The exact inert-header evidence contains 9341 canonical records: one archive-root sentinel, 447 directories, 8884 regular files, 9 symlinks, 0 hardlinks, and 0 special members. Canonical inventory bytes are 2361714 and canonical inventory SHA-256 is 266fbc38be6ffdc9c565953d44cc208e74d6db8a2f038186580fd4904279f3db.
+
+The exact raw "." directory marker is an archive-root sentinel, has no normalized filesystem path, is never extracted, and remains part of canonical identity. For ordinary members only one leading "./" is accepted as tar transport syntax; raw-to-canonical mapping remains in inventory identity. One trailing slash is accepted only for a directory. Embedded/repeated dot segments, traversal, absolute/drive/backslash/control/non-NFC paths, duplicate canonical paths, and root escape remain forbidden.
+
+The exact ordered 9 symlinks and their raw names, canonical paths, raw/normalized linknames, resolved targets, terminal regular-file targets, tar types, modes, and sizes are allowlisted in hwm-graphify-acceptance-runtime/v2. There are 0 hardlinks and 0 special members. Any archive-layout or inventory-digest mismatch fails closed.
+
+Containment-safe extraction is two-pass after complete pass-0 validation: pass 1 creates directories and regular files without following links and with real-directory parents; pass 2 creates only exact allowlisted links without overwriting entries. Post-extraction verification proves exact counts, target containment, no dangling links or cycles, no unexpected objects, and no write outside task-local root. Cleanup is mandatory.
+
+This is the I10-0091 runtime v2 decision. #85 may resume only after I10-0091 completes and must use fresh replacement control and hwm-lab branches from then-current protected heads. Historical #85 and #73 branches remain immutable. This section does not install a runtime, execute Graphify, mutate hwm-lab, change .github paths, or introduce credentials.

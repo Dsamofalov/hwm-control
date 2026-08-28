@@ -1,0 +1,218 @@
+{
+  "schema": "hwm-knowledge-delta/v1",
+  "task_id": 91,
+  "goal": "Reconcile the exact pinned CPython 3.12.10 archive link layout and define a containment-safe forward-only runtime v2 extraction contract without continuing #85 implementation.",
+  "verified_facts": [
+    {
+      "statement": "Protected hwm-control/main is b0bda55894c3445654c8f73feea0af75da2d26d2; hwm-lab/main is 18f24ccc0866b29c24c56659479ca02f20fb4b9c; hwm-context/main is d651f40d0bb3a3ef0e52fca95e5400ed3db3d772; hwm_predictor/main is 8fd669336b36064e842252d69fb4016cc526a9d4.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "protected hwm-control/main claim base",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "b0bda55894c3445654c8f73feea0af75da2d26d2"
+        }
+      ]
+    },
+    {
+      "statement": "hwm-lab Publisher Ordinary CI 33128282449, job 98711544342, ran exact head 95f9bd98729a8b44b832aa16173c2a751eafc197 via workflow_dispatch; all pre-live tests passed and the sole live error was RuntimeAcquisitionError: archive symlink entries are forbidden during archive validation after exact acquisition identity checks.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33128282449"
+        }
+      ]
+    },
+    {
+      "statement": "The protected runtime v1 contract blob is 8a0a97b2cce8ac7de22c6fe19ed6f9321d5d8f19 and pins actions/python-versions CPython 3.12.10 artifact python-3.12.10-linux-24.04-x64.tar.gz at 121612690 bytes with SHA-256 b9bd943c5fc9244f796deef42c59d29ab9278d8a718851c67de6b44846320f33 while rejecting archive links.",
+      "provenance": [
+        {
+          "kind": "public_ref",
+          "reference": "contracts/graphify-acceptance-runtime.v1.json blob 8a0a97b2cce8ac7de22c6fe19ed6f9321d5d8f19"
+        }
+      ]
+    },
+    {
+      "statement": "The #85 control recovery anchor remains agent/infra-0085-graphify-runtime-acquisition at c2ab2ed9ba7236f60d802dd42c0401b49519169d; the actual #85 hwm-lab recovery carrier is agent/infra-0007-i10-0085-graphify-runtime-acquisition at 95f9bd98729a8b44b832aa16173c2a751eafc197. The #73 anchors remain 994730d637d4e4c7c4eb492b22c49993e971d1e4 and 1595b39b4684143bc34cb5d157eabf1ad4d86c37.",
+      "provenance": [
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#91"
+        }
+      ]
+    },
+    {
+      "statement": "Owner-authorized evidence-v3 completed on exact task head 20c9a2f6e812b5e5cf158ab5e18f96f5e0ba9b96 in Infrastructure CI 33159987768/job 98811838917. The exact archive inventory contains 9341 records: one root sentinel, 447 directories, 8884 regular files, 9 symlinks, 0 hardlinks and 0 special members; canonical bytes are 2361714 and SHA-256 is 266fbc38be6ffdc9c565953d44cc208e74d6db8a2f038186580fd4904279f3db.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Infrastructure CI 33159987768 / job 98811838917"
+        },
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#91 comment 5451251371"
+        }
+      ]
+    },
+    {
+      "statement": "The exact root sentinel is raw '.', tar type '5', mode 493, size 0, empty linkname, normalized_path null and extract=false. All 9 exact allowlisted symlinks resolve within archive root and terminate at regular files; hardlinks and special members are absent.",
+      "provenance": [
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#91 exact inventory evidence comment 5451251371"
+        }
+      ]
+    },
+    {
+      "statement": "TDD RED was proven on exact head 6d433fe5270ef484a47329b032009d55fa4633e9 in Infrastructure CI 33162860614 after test-harness corrections; failures were limited to missing runtime v2, ADR 0011 and INFRA_SPEC §40.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Infrastructure CI 33162860614 expected RED"
+        },
+        {
+          "kind": "commit",
+          "reference": "final RED head",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "6d433fe5270ef484a47329b032009d55fa4633e9"
+        }
+      ]
+    },
+    {
+      "statement": "Controlled GREEN publication i10-0091-runtime-v2-green-v1 produced exact source head 25605f175e3f2190f699db6dc8446d6a01c374db with runtime v2 blob cf39207ca0fcf38f6022ca1bf355762bb0e011ae, ADR 0011 blob 39e328693fbdc9a2ffab918ae8e8be0ed37bc590 and append-only INFRA_SPEC blob e40bb1d873b557db0265b8bc71cc0f0ad12db509.",
+      "provenance": [
+        {
+          "kind": "commit",
+          "reference": "runtime v2 GREEN source head",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "25605f175e3f2190f699db6dc8446d6a01c374db"
+        },
+        {
+          "kind": "issue",
+          "reference": "Dsamofalov/hwm-control#91 request/result comments 5454710899/5454714980"
+        }
+      ]
+    },
+    {
+      "statement": "Infrastructure CI 33187578463 succeeded on exact GREEN head 25605f175e3f2190f699db6dc8446d6a01c374db, proving runtime v1 immutability, exact v2 inventory/link allowlist, ADR 0011, append-only INFRA_SPEC §40 and full repository regression.",
+      "provenance": [
+        {
+          "kind": "ci_run",
+          "reference": "Infrastructure CI 33187578463 success"
+        },
+        {
+          "kind": "commit",
+          "reference": "validated GREEN head",
+          "repo": "Dsamofalov/hwm-control",
+          "sha": "25605f175e3f2190f699db6dc8446d6a01c374db"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Keep the exact pinned artifact and add forward-only runtime contract v2 that permits only the exact validated link layout discovered from inert tar headers.",
+      "rationale": "Live evidence proves artifact identity is valid while v1 link rejection is incompatible with the pinned archive; the owner explicitly forbids artifact substitution or unrestricted extraction."
+    },
+    {
+      "decision": "Keep I10-0073 and I10-0085 active while I10-0091 is claimed; pause #85 and preserve all #85/#73 recovery branches as immutable anchors.",
+      "rationale": "I10-0091 is an architecture barrier and must complete before any fresh #85 implementation branch may continue."
+    },
+    {
+      "decision": "Authorize only the exact nine symlinks bound by runtime-v2 canonical inventory identity and keep hardlinks/specials forbidden for this artifact.",
+      "rationale": "The evidence inventory is complete and all links terminate at contained regular members."
+    },
+    {
+      "decision": "Use complete pass-0 validation, pass-1 directory/regular extraction without following links, pass-2 exact allowlisted link creation, and post-extraction containment verification.",
+      "rationale": "Two-pass extraction preserves runtime layout without permitting archive-controlled writes or link traversal."
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "alternative": "Select a different CPython artifact or mutable manifest.",
+      "reason": "Owner-approved artifact identity is exact and immutable."
+    },
+    {
+      "alternative": "Weaken v1 or use unrestricted tar extraction.",
+      "reason": "The correction must be forward-only v2 and containment-safe."
+    },
+    {
+      "alternative": "Continue #85 source or rerun failed CI 33128282449 before reconciliation.",
+      "reason": "The failure is a protected contract contradiction, not an in-scope #85 implementation defect."
+    }
+  ],
+  "changed_components": [
+    "BUILD_STATUS.json",
+    "knowledge-deltas/I10-0085.json",
+    "knowledge-deltas/I10-0091.json",
+    "tests/test_i10_0091_cpython_archive_link_contract.py",
+    "contracts/graphify-acceptance-runtime.v2.json",
+    "docs/ADR/0011-exact-cpython-archive-link-layout-and-safe-extraction.md",
+    "docs/INFRA_SPEC.md §40"
+  ],
+  "tests": [
+    {
+      "name": "Exact pinned archive inventory evidence",
+      "status": "pass",
+      "reference": "33159987768 on 20c9a2f6e812b5e5cf158ab5e18f96f5e0ba9b96"
+    },
+    {
+      "name": "Final TDD RED runtime-v2 contract gate",
+      "status": "fail",
+      "reference": "33162860614 on 6d433fe5270ef484a47329b032009d55fa4633e9; expected missing v2/ADR/§40 only"
+    },
+    {
+      "name": "Runtime-v2 exact-head GREEN Infrastructure CI",
+      "status": "pass",
+      "reference": "33187578463 on 25605f175e3f2190f699db6dc8446d6a01c374db"
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#91"
+    },
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#85"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Dsamofalov/hwm-lab Publisher Ordinary CI 33128282449"
+    },
+    {
+      "kind": "public_ref",
+      "reference": "contracts/graphify-acceptance-runtime.v1.json"
+    },
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#91 comment 5450830109 owner normalization authority"
+    },
+    {
+      "kind": "issue",
+      "reference": "Dsamofalov/hwm-control#91 comment 5451251371 exact inventory"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Infrastructure CI 33159987768"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Infrastructure CI 33162860614"
+    },
+    {
+      "kind": "ci_run",
+      "reference": "Infrastructure CI 33187578463"
+    },
+    {
+      "kind": "commit",
+      "reference": "validated runtime-v2 source",
+      "repo": "Dsamofalov/hwm-control",
+      "sha": "25605f175e3f2190f699db6dc8446d6a01c374db"
+    }
+  ],
+  "followups": [
+    "Resume #85 only through fresh replacement control and hwm-lab branches from then-current protected heads, implementing runtime v2 without mutating historical #85 branches; keep #73 paused until #85 completes."
+  ],
+  "unresolved": []
+}
